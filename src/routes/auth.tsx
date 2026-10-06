@@ -1,3 +1,4 @@
+import nssLogo from "@/assets/nss-logo.png";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -6,10 +7,12 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — Titan Log" },
-      { name: "description", content: "Sign in or create your Titan Log account." },
-      { property: "og:title", content: "Sign in — Titan Log" },
-      { property: "og:description", content: "Sign in or create your Titan Log account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { title: "Sign in — NSS" },
+      { name: "description", content: "Sign in or create your NSS account." },
+      { property: "og:title", content: "Sign in — NSS" },
+      { property: "og:description", content: "Sign in or create your NSS account." },
     ],
   }),
   component: AuthPage,
@@ -48,8 +51,8 @@ function AuthPage() {
 
   return (
     <div className="flex min-h-[100dvh] flex-col justify-center px-6 pt-safe pb-safe">
-      <img src="/icon-192.png" alt="" width={72} height={72} className="mb-6 rounded-2xl" />
-      <h1 className="font-display text-5xl font-extrabold uppercase tracking-tight">Titan Log</h1>
+      <img src={nssLogo} alt="NSS logo" width={72} height={72} className="mb-6 rounded-2xl" />
+      <h1 className="font-display text-5xl font-extrabold uppercase tracking-tight">NSS</h1>
       <p className="mt-2 text-muted-foreground">{mode === "in" ? "Welcome back. Time to lift." : "Create your account."}</p>
       <form onSubmit={submit} className="mt-8 space-y-3">
         {mode === "up" && <input className={field} placeholder="Display name" required maxLength={40} value={name} onChange={(e) => setName(e.target.value)} />}

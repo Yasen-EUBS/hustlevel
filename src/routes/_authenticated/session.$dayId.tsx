@@ -24,9 +24,11 @@ export const Route = createFileRoute("/_authenticated/session/$dayId")({
   validateSearch: z.object({ date: z.string().optional(), ex: z.number().int().optional() }),
   head: () => ({
     meta: [
-      { title: "Session — Titan Log" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { title: "Session — NSS" },
       { name: "description", content: "Log your sets, reps and weights." },
-      { property: "og:title", content: "Session — Titan Log" },
+      { property: "og:title", content: "Session — NSS" },
       { property: "og:description", content: "Log your sets, reps and weights." },
     ],
   }),

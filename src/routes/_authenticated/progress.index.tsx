@@ -8,9 +8,11 @@ import { PageTitle, TabShell } from "@/components/TabShell";
 export const Route = createFileRoute("/_authenticated/progress/")({
   head: () => ({
     meta: [
-      { title: "Progress — Titan Log" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { title: "Progress — NSS" },
       { name: "description", content: "Track your estimated 1RM and volume per lift." },
-      { property: "og:title", content: "Progress — Titan Log" },
+      { property: "og:title", content: "Progress — NSS" },
       { property: "og:description", content: "Track your estimated 1RM and volume per lift." },
     ],
   }),

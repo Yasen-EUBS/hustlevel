@@ -8,9 +8,11 @@ import { fmtKg, fromISO } from "@/lib/titan";
 export const Route = createFileRoute("/_authenticated/history/$sessionId")({
   head: () => ({
     meta: [
-      { title: "Session details — Titan Log" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { title: "Session details — NSS" },
       { name: "description", content: "Every set from a completed session." },
-      { property: "og:title", content: "Session details — Titan Log" },
+      { property: "og:title", content: "Session details — NSS" },
       { property: "og:description", content: "Every set from a completed session." },
     ],
   }),

@@ -8,10 +8,12 @@ import { PageTitle, TabShell } from "@/components/TabShell";
 export const Route = createFileRoute("/_authenticated/me")({
   head: () => ({
     meta: [
-      { title: "Me — Titan Log" },
-      { name: "description", content: "Your Titan Log account." },
-      { property: "og:title", content: "Me — Titan Log" },
-      { property: "og:description", content: "Your Titan Log account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { title: "Me — NSS" },
+      { name: "description", content: "Your NSS account." },
+      { property: "og:title", content: "Me — NSS" },
+      { property: "og:description", content: "Your NSS account." },
     ],
   }),
   component: MePage,

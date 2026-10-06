@@ -1,3 +1,4 @@
+import nssLogo from "@/assets/nss-logo.png";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
@@ -11,9 +12,11 @@ export const Route = createFileRoute("/_authenticated/training")({
   validateSearch: z.object({ date: z.string().optional() }),
   head: () => ({
     meta: [
-      { title: "Training — Titan Log" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { title: "Training — NSS" },
       { name: "description", content: "Today's workout from your Titan Build program." },
-      { property: "og:title", content: "Training — Titan Log" },
+      { property: "og:title", content: "Training — NSS" },
       { property: "og:description", content: "Today's workout from your Titan Build program." },
     ],
   }),
@@ -108,7 +111,7 @@ function TrainingPage() {
       ) : (
         <div className="px-5">
           <div className="flex items-center gap-3">
-            <img src="/icon-192.png" alt="" width={56} height={56} className="h-14 w-14 rounded-xl" />
+            <img src={nssLogo} alt="NSS logo" loading="lazy" width={56} height={56} className="h-14 w-14 rounded-xl" />
             <div className="min-w-0">
               <div className="truncate text-sm text-muted-foreground">{p.name}</div>
               <div className="font-display text-2xl font-bold uppercase leading-tight">{day.title}</div>
