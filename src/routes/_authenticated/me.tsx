@@ -40,9 +40,14 @@ function MePage() {
     <TabShell>
       <PageTitle>Me</PageTitle>
       <div className="space-y-3 px-5">
+        {profile.isSuccess && !profile.data?.display_name && (
+          <div className="rounded-2xl bg-accent p-4 text-sm">
+            <b>Add a display name</b> so friends can see you on leaderboards. Until then you show up as "Athlete".
+          </div>
+        )}
         <div className="rounded-2xl bg-card p-4">
           <label className="text-[11px] font-bold tracking-widest text-muted-foreground">DISPLAY NAME</label>
-          <input value={name} onChange={(e) => setName(e.target.value)} onBlur={save} className="mt-1 w-full bg-transparent text-lg font-semibold outline-none" />
+          <input value={name} onChange={(e) => setName(e.target.value)} onBlur={save} placeholder="Athlete" maxLength={40} className="mt-1 w-full bg-transparent text-lg font-semibold outline-none placeholder:text-muted-foreground" />
         </div>
         <div className="rounded-2xl bg-card p-4">
           <div className="text-[11px] font-bold tracking-widest text-muted-foreground">EMAIL</div>

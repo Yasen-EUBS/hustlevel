@@ -4,9 +4,9 @@ import { format } from "date-fns";
 import { ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageTitle, TabShell } from "@/components/TabShell";
-import { fromISO } from "@/lib/titan";
+import { fromISO, myId } from "@/lib/titan";
 
-export const Route = createFileRoute("/_authenticated/history")({
+export const Route = createFileRoute("/_authenticated/history/")({
   head: () => ({
     meta: [
       { title: "History — Titan Log" },
@@ -22,9 +22,11 @@ function HistoryPage() {
   const q = useQuery({
     queryKey: ["history"],
     queryFn: async () => {
+      const uid = await myId();
       const { data, error } = await supabase
         .from("workout_sessions")
         .select("id, session_date, day_title, started_at, completed_at, set_logs(reps, weight_kg, completed)")
+        .eq("user_id", uid)
         .not("completed_at", "is", null)
         .order("session_date", { ascending: false });
       if (error) throw error;

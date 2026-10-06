@@ -1,12 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { z } from "zod";
+import { fetchBoard } from "@/lib/board";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ChevronLeft, Trophy } from "lucide-react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
-import { epley, fmtKg, fromISO } from "@/lib/titan";
+import { epley, fmtKg, fromISO, myId } from "@/lib/titan";
 
 export const Route = createFileRoute("/_authenticated/progress/$key")({
+  validateSearch: z.object({ tab: z.enum(["charts", "leaderboard"]).optional() }),
   head: () => ({
     meta: [
       { title: "Exercise progress — Titan Log" },
@@ -20,13 +23,22 @@ export const Route = createFileRoute("/_authenticated/progress/$key")({
 
 function ExerciseProgress() {
   const { key } = Route.useParams();
+  const { tab = "charts" } = Route.useSearch();
+  const { user } = Route.useRouteContext();
+  const navigate = useNavigate({ from: "/progress/$key" });
+  const nameQ = useQuery({
+    queryKey: ["exercise-name", key],
+    queryFn: async () => (await supabase.from("set_logs").select("exercise_name").eq("exercise_key", key).limit(1).maybeSingle()).data?.exercise_name ?? key,
+  });
   const q = useQuery({
     queryKey: ["exercise-progress", key],
     queryFn: async () => {
+      const uid = await myId();
       const { data, error } = await supabase
         .from("set_logs")
         .select("id, exercise_name, set_number, reps, weight_kg, session_id, workout_sessions!inner(session_date, started_at)")
         .eq("exercise_key", key)
+        .eq("user_id", uid)
         .eq("completed", true)
         .not("reps", "is", null);
       if (error) throw error;
@@ -67,9 +79,24 @@ function ExerciseProgress() {
       <Link to="/progress" className="-ml-2 flex items-center py-3 font-semibold text-primary">
         <ChevronLeft className="h-5 w-5" /> Progress
       </Link>
-      {d && (
+      <h1 className="font-display text-3xl font-extrabold uppercase">{nameQ.data ?? ""}</h1>
+      <div className="mt-4 grid grid-cols-2 rounded-full bg-card p-1 text-sm font-bold">
+        {(["charts", "leaderboard"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => navigate({ search: { tab: t }, replace: true })}
+            className={`h-10 rounded-full capitalize ${tab === t ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            {t === "charts" ? "My Progress" : "Leaderboard"}
+          </button>
+        ))}
+      </div>
+      {tab === "leaderboard" && <Leaderboard exerciseKey={key} me={user.id} />}
+      {tab === "charts" && d && d.sessions.length === 0 && (
+        <p className="mt-6 rounded-2xl bg-card p-6 text-center text-muted-foreground">You haven't logged this exercise yet.</p>
+      )}
+      {tab === "charts" && d && d.sessions.length > 0 && (
         <>
-          <h1 className="font-display text-3xl font-extrabold uppercase">{d.name}</h1>
           {d.best && (
             <div className="mt-4 flex items-center gap-3 rounded-2xl bg-card p-4">
               <Trophy className="h-6 w-6 text-chart-3" />
@@ -122,5 +149,39 @@ function Chart({ title, data, dataKey, color }: { title: string; data: object[];
         </ResponsiveContainer>
       </div>
     </div>
+  );
+}
+
+const medals = ["bg-medal-gold", "bg-medal-silver", "bg-medal-bronze"];
+
+function Leaderboard({ exerciseKey, me }: { exerciseKey: string; me: string }) {
+  const q = useQuery({ queryKey: ["board", exerciseKey], queryFn: () => fetchBoard(exerciseKey) });
+  if (q.isLoading) return <p className="mt-6 text-muted-foreground">Loading…</p>;
+  const rows = q.data ?? [];
+  if (!rows.length) return <p className="mt-6 rounded-2xl bg-card p-6 text-center text-muted-foreground">Nobody has logged this yet.</p>;
+  return (
+    <ol className="mt-4 space-y-2 pb-10">
+      {rows.map((e, i) => (
+        <li
+          key={e.userId}
+          className={`flex items-center gap-3 rounded-2xl p-4 ${e.userId === me ? "bg-accent ring-2 ring-primary" : "bg-card"}`}
+        >
+          <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${medals[i] ? `${medals[i]} text-primary-foreground` : "text-muted-foreground"}`}>{i + 1}</span>
+          <div className="min-w-0 flex-1">
+            <div className="truncate font-semibold">
+              {e.name}
+              {e.userId === me && <span className="ml-1 text-xs text-primary">(you)</span>}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {fmtKg(e.best.kg)} kg × {e.best.reps} · {format(fromISO(e.best.date), "d MMM yyyy")}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-[10px] font-bold tracking-widest text-muted-foreground">MAX</div>
+            <div className="font-bold text-success">{e.max} kg</div>
+          </div>
+        </li>
+      ))}
+    </ol>
   );
 }

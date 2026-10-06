@@ -25,6 +25,10 @@ function AuthPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "up" && !name.trim()) {
+      toast.error("Please enter a display name.");
+      return;
+    }
     setBusy(true);
     const res =
       mode === "in"
@@ -32,7 +36,7 @@ function AuthPage() {
         : await supabase.auth.signUp({
             email,
             password,
-            options: { emailRedirectTo: window.location.origin, data: { display_name: name || undefined } },
+            options: { emailRedirectTo: window.location.origin, data: { display_name: name.trim() } },
           });
     setBusy(false);
     if (res.error) { toast.error(res.error.message); return; }
@@ -48,7 +52,7 @@ function AuthPage() {
       <h1 className="font-display text-5xl font-extrabold uppercase tracking-tight">Titan Log</h1>
       <p className="mt-2 text-muted-foreground">{mode === "in" ? "Welcome back. Time to lift." : "Create your account."}</p>
       <form onSubmit={submit} className="mt-8 space-y-3">
-        {mode === "up" && <input className={field} placeholder="Display name" value={name} onChange={(e) => setName(e.target.value)} />}
+        {mode === "up" && <input className={field} placeholder="Display name" required maxLength={40} value={name} onChange={(e) => setName(e.target.value)} />}
         <input className={field} type="email" autoComplete="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         <input className={field} type="password" autoComplete={mode === "in" ? "current-password" : "new-password"} placeholder="Password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
         <button disabled={busy} className="h-14 w-full rounded-full bg-primary text-lg font-bold text-primary-foreground disabled:opacity-60">

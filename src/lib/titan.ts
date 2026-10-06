@@ -87,10 +87,19 @@ export function weekOf(startDate: string, date: Date) {
   return Math.floor(diff / 7) + 1;
 }
 
+export async function myId() {
+  const { data } = await supabase.auth.getSession();
+  const id = data.session?.user.id;
+  if (!id) throw new Error("Not signed in");
+  return id;
+}
+
 export async function fetchSessions() {
+  const uid = await myId();
   const { data, error } = await supabase
     .from("workout_sessions")
     .select("*")
+    .eq("user_id", uid)
     .order("session_date", { ascending: false });
   if (error) throw error;
   return data;
@@ -100,7 +109,7 @@ let audioCtx: AudioContext | null = null;
 export function unlockAudio() {
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    if (audioCtx.state === "suspended") audioCtx.resume();
+    if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
   } catch {}
 }
 export function beep() {

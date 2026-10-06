@@ -8,6 +8,20 @@
       "when": 1791324485084,
       "tag": "0000_titan_log_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791325461357,
+      "tag": "0001_shared_lifts_visibility",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791325552710,
+      "tag": "0002_profile_name_no_email",
+      "breakpoints": true
     }
   ]
 }

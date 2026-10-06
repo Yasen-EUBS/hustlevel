@@ -31,6 +31,9 @@
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --color-surface: var(--surface);
+  --color-medal-gold: oklch(0.82 0.15 85);
+  --color-medal-silver: oklch(0.8 0.01 270);
+  --color-medal-bronze: oklch(0.66 0.11 55);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
