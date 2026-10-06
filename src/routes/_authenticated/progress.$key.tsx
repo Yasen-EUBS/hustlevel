@@ -12,9 +12,11 @@ export const Route = createFileRoute("/_authenticated/progress/$key")({
   validateSearch: z.object({ tab: z.enum(["charts", "leaderboard"]).optional() }),
   head: () => ({
     meta: [
-      { title: "Exercise progress — Titan Log" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { title: "Exercise progress — NSS" },
       { name: "description", content: "Charts and every logged set for one exercise." },
-      { property: "og:title", content: "Exercise progress — Titan Log" },
+      { property: "og:title", content: "Exercise progress — NSS" },
       { property: "og:description", content: "Charts and every logged set for one exercise." },
     ],
   }),

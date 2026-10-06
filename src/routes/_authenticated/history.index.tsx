@@ -9,9 +9,11 @@ import { fromISO, myId } from "@/lib/titan";
 export const Route = createFileRoute("/_authenticated/history/")({
   head: () => ({
     meta: [
-      { title: "History — Titan Log" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { title: "History — NSS" },
       { name: "description", content: "All your completed training sessions." },
-      { property: "og:title", content: "History — Titan Log" },
+      { property: "og:title", content: "History — NSS" },
       { property: "og:description", content: "All your completed training sessions." },
     ],
   }),
