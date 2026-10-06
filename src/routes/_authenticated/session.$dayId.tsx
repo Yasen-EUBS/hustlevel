@@ -133,7 +133,7 @@ function SessionPage() {
       const mine = logs.data.sets.filter((s) => s.exercise_key === k).sort((a, b) => a.set_number - b.set_number);
       persisted.current[k] = new Set(mine.map((m) => m.set_number));
       const last = stats[k]?.last ?? [];
-      const count = Math.max(e.duration_seconds ? 1 : e.sets, mine.length ? mine[mine.length - 1].set_number : 0);
+      const count = Math.max(e.duration_seconds ? 1 : e.sets, mine.length ? mine[mine.length - 1]!.set_number : 0);
       init[k] = Array.from({ length: count }, (_, i) => {
         const m = mine.find((x) => x.set_number === i + 1);
         if (m) return { reps: m.reps?.toString() ?? "", kg: m.weight_kg?.toString() ?? "", done: m.completed };
@@ -250,7 +250,7 @@ function SessionPage() {
     if (!rows) return [];
     return exercises.flatMap((e) => {
       const k = normKey(e.name);
-      const best = Math.max(0, ...((rows![k] ?? []) ?? []).filter((r) => r.done).map((r) => epley(parseFloat(r.kg) || 0, parseInt(r.reps, 10) || 0)));
+      const best = Math.max(0, ...(rows[k] ?? []).filter((r) => r.done).map((r) => epley(parseFloat(r.kg) || 0, parseInt(r.reps, 10) || 0)));
       const prev = stats[k]?.max ?? 0;
       return best > prev && best > 0 ? [{ name: e.name, best, prev }] : [];
     });
@@ -262,7 +262,7 @@ function SessionPage() {
     setFinishing(true);
     const { error } = await supabase.from("workout_sessions").update({ completed_at: new Date().toISOString() }).eq("id", sessionId);
     setFinishing(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     qc.invalidateQueries();
     toast.success("Session saved");
     navigate({ to: "/history/$sessionId", params: { sessionId } });
@@ -285,12 +285,12 @@ function SessionPage() {
   return (
     <div
       className="mx-auto flex min-h-[100dvh] max-w-lg flex-col pt-safe"
-      onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
+      onTouchStart={(e) => (touchX.current = e.touches[0]!.clientX)}
       onTouchEnd={(e) => {
         if (touchX.current == null) return;
         const target = e.target as HTMLElement;
         if (target.closest("input,textarea")) return;
-        const dx = e.changedTouches[0].clientX - touchX.current;
+        const dx = e.changedTouches[0]!.clientX - touchX.current;
         if (Math.abs(dx) > 70) go(dx < 0 ? 1 : -1);
         touchX.current = null;
       }}

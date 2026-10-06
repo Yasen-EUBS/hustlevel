@@ -74,10 +74,10 @@ function TrainingPage() {
 
       <div
         className="flex px-3 pb-4"
-        onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
+        onTouchStart={(e) => (touchX.current = e.touches[0]!.clientX)}
         onTouchEnd={(e) => {
           if (touchX.current == null) return;
-          const dx = e.changedTouches[0].clientX - touchX.current;
+          const dx = e.changedTouches[0]!.clientX - touchX.current;
           if (Math.abs(dx) > 50) setDate(addDays(sel, dx < 0 ? 7 : -7));
           touchX.current = null;
         }}
@@ -154,7 +154,7 @@ function TrainingPage() {
 
           <ul className="mt-5 space-y-1 pb-4">
             {day.program_exercises.map((e, i) => {
-              const showSection = i === 0 || day.program_exercises[i - 1].section !== e.section;
+              const showSection = i === 0 || day.program_exercises[i - 1]?.section !== e.section;
               return (
                 <li key={e.id}>
                   {showSection && <div className="pb-2 pt-4 text-xs font-bold tracking-widest text-muted-foreground">{e.section}</div>}
