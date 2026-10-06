@@ -5,6 +5,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Check, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Timer, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Friends } from "@/components/Friends";
 import {
   beep,
   epley,
@@ -20,7 +21,7 @@ import {
 } from "@/lib/titan";
 
 export const Route = createFileRoute("/_authenticated/session/$dayId")({
-  validateSearch: z.object({ date: z.string().optional() }),
+  validateSearch: z.object({ date: z.string().optional(), ex: z.number().int().optional() }),
   head: () => ({
     meta: [
       { title: "Session — Titan Log" },
@@ -37,7 +38,8 @@ type HistSet = { exercise_key: string; reps: number | null; weight_kg: number | 
 
 function SessionPage() {
   const { dayId } = Route.useParams();
-  const { date: dateParam } = Route.useSearch();
+  const { date: dateParam, ex: exParam } = Route.useSearch();
+  const { user } = Route.useRouteContext();
   const date = dateParam ?? toISO(new Date());
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -55,6 +57,7 @@ function SessionPage() {
       const { data: existing } = await supabase
         .from("workout_sessions")
         .select("*")
+        .eq("user_id", user.id)
         .eq("program_day_id", dayId)
         .eq("session_date", date)
         .maybeSingle();
@@ -94,6 +97,7 @@ function SessionPage() {
         .from("set_logs")
         .select("exercise_key, reps, weight_kg, set_number, session_id, completed, workout_sessions!inner(session_date, started_at)")
         .in("exercise_key", keys)
+        .eq("user_id", user.id)
         .neq("session_id", sessionId!)
         .eq("completed", true);
       if (error) throw error;
@@ -145,7 +149,7 @@ function SessionPage() {
     setNotes(Object.fromEntries(logs.data.notes.map((n) => [n.exercise_key, n.note])));
   }, [logs.data, history.data, rows, exercises, stats]);
 
-  const [idx, setIdx] = useState(0);
+  const [idx, setIdx] = useState(exParam ?? 0);
   const total = exercises.length;
 
   // Rest timer
@@ -370,6 +374,7 @@ function SessionPage() {
                 </>
               )}
             </div>
+            {!ex.duration_seconds && <Friends exerciseKey={k} me={user.id} />}
             {ex.note && <p className="mt-3 rounded-xl bg-accent px-4 py-3 text-sm">{ex.note}</p>}
 
             {ex.duration_seconds ? (
