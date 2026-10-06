@@ -152,7 +152,7 @@ function Chart({ title, data, dataKey, color }: { title: string; data: object[];
   );
 }
 
-const medals = ["🥇", "🥈", "🥉"];
+const medals = ["bg-medal-gold", "bg-medal-silver", "bg-medal-bronze"];
 
 function Leaderboard({ exerciseKey, me }: { exerciseKey: string; me: string }) {
   const q = useQuery({ queryKey: ["board", exerciseKey], queryFn: () => fetchBoard(exerciseKey) });
@@ -166,7 +166,7 @@ function Leaderboard({ exerciseKey, me }: { exerciseKey: string; me: string }) {
           key={e.userId}
           className={`flex items-center gap-3 rounded-2xl p-4 ${e.userId === me ? "bg-accent ring-2 ring-primary" : "bg-card"}`}
         >
-          <span className="w-8 text-center text-lg font-bold">{medals[i] ?? i + 1}</span>
+          <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${medals[i] ? `${medals[i]} text-primary-foreground` : "text-muted-foreground"}`}>{i + 1}</span>
           <div className="min-w-0 flex-1">
             <div className="truncate font-semibold">
               {e.name}
