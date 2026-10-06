@@ -11,7 +11,7 @@ export function toISO(d: Date) {
   return `${y}-${m}-${day}`;
 }
 export function fromISO(s: string) {
-  const [y, m, d] = s.split("-").map(Number);
+  const [y = 0, m = 1, d = 1] = s.split("-").map(Number);
   return new Date(y, m - 1, d);
 }
 export const isoWeekday = (d: Date) => ((d.getDay() + 6) % 7) + 1;
@@ -56,13 +56,15 @@ export type SetRow = { reps: number | null; weight_kg: number | null };
 
 export function formatLast(sets: SetRow[]) {
   const s = sets.filter((x) => x.reps != null);
-  if (!s.length) return "—";
+  const first = s[0];
+  if (!first) return "—";
   const ws = s.map((x) => Number(x.weight_kg ?? 0));
-  const sameW = ws.every((w) => w === ws[0]);
-  const sameR = s.every((x) => x.reps === s[0].reps);
-  if (sameW && sameR && s.length > 1) return `${s.length} x ${s[0].reps} @ ${fmtKg(ws[0])} kg`;
-  if (sameW) return `${s.map((x) => x.reps).join(", ")} @ ${fmtKg(ws[0])} kg`;
-  return s.map((x, i) => `${x.reps}@${fmtKg(ws[i])}`).join(", ") + " kg";
+  const w0 = ws[0] ?? 0;
+  const sameW = ws.every((w) => w === w0);
+  const sameR = s.every((x) => x.reps === first.reps);
+  if (sameW && sameR && s.length > 1) return `${s.length} x ${first.reps} @ ${fmtKg(w0)} kg`;
+  if (sameW) return `${s.map((x) => x.reps).join(", ")} @ ${fmtKg(w0)} kg`;
+  return s.map((x, i) => `${x.reps}@${fmtKg(ws[i] ?? 0)}`).join(", ") + " kg";
 }
 
 export async function fetchActiveProgram() {
