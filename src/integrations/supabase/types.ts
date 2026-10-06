@@ -14,7 +14,268 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      exercise_notes: {
+        Row: {
+          exercise_key: string
+          id: string
+          note: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          exercise_key: string
+          id?: string
+          note?: string
+          session_id: string
+          user_id?: string
+        }
+        Update: {
+          exercise_key?: string
+          id?: string
+          note?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_notes_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      program_days: {
+        Row: {
+          day_notes: string | null
+          id: string
+          program_id: string
+          sort_order: number
+          title: string
+          weekday: number
+        }
+        Insert: {
+          day_notes?: string | null
+          id?: string
+          program_id: string
+          sort_order?: number
+          title: string
+          weekday: number
+        }
+        Update: {
+          day_notes?: string | null
+          id?: string
+          program_id?: string
+          sort_order?: number
+          title?: string
+          weekday?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_days_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      program_exercises: {
+        Row: {
+          duration_seconds: number | null
+          id: string
+          letter: string
+          name: string
+          note: string | null
+          program_day_id: string
+          rep_max: number | null
+          rep_min: number | null
+          rest_max_seconds: number
+          rest_min_seconds: number
+          section: string
+          sets: number
+          tempo: string | null
+        }
+        Insert: {
+          duration_seconds?: number | null
+          id?: string
+          letter: string
+          name: string
+          note?: string | null
+          program_day_id: string
+          rep_max?: number | null
+          rep_min?: number | null
+          rest_max_seconds?: number
+          rest_min_seconds?: number
+          section?: string
+          sets?: number
+          tempo?: string | null
+        }
+        Update: {
+          duration_seconds?: number | null
+          id?: string
+          letter?: string
+          name?: string
+          note?: string | null
+          program_day_id?: string
+          rep_max?: number | null
+          rep_min?: number | null
+          rest_max_seconds?: number
+          rest_min_seconds?: number
+          section?: string
+          sets?: number
+          tempo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_exercises_program_day_id_fkey"
+            columns: ["program_day_id"]
+            isOneToOne: false
+            referencedRelation: "program_days"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      programs: {
+        Row: {
+          block_name: string
+          coach_notes: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          start_date: string
+          total_weeks: number
+        }
+        Insert: {
+          block_name: string
+          coach_notes?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          start_date: string
+          total_weeks: number
+        }
+        Update: {
+          block_name?: string
+          coach_notes?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          start_date?: string
+          total_weeks?: number
+        }
+        Relationships: []
+      }
+      set_logs: {
+        Row: {
+          completed: boolean
+          created_at: string
+          exercise_key: string
+          exercise_name: string
+          id: string
+          reps: number | null
+          session_id: string
+          set_number: number
+          user_id: string
+          weight_kg: number | null
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          exercise_key: string
+          exercise_name: string
+          id?: string
+          reps?: number | null
+          session_id: string
+          set_number: number
+          user_id?: string
+          weight_kg?: number | null
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          exercise_key?: string
+          exercise_name?: string
+          id?: string
+          reps?: number | null
+          session_id?: string
+          set_number?: number
+          user_id?: string
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "set_logs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_sessions: {
+        Row: {
+          completed_at: string | null
+          day_title: string | null
+          id: string
+          notes: string | null
+          program_day_id: string | null
+          session_date: string
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          day_title?: string | null
+          id?: string
+          notes?: string | null
+          program_day_id?: string | null
+          session_date: string
+          started_at?: string
+          user_id?: string
+        }
+        Update: {
+          completed_at?: string | null
+          day_title?: string | null
+          id?: string
+          notes?: string | null
+          program_day_id?: string | null
+          session_date?: string
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_sessions_program_day_id_fkey"
+            columns: ["program_day_id"]
+            isOneToOne: false
+            referencedRelation: "program_days"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
