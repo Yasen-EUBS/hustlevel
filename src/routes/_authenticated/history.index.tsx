@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageTitle, TabShell } from "@/components/TabShell";
 import { fromISO, myId } from "@/lib/titan";
 
-export const Route = createFileRoute("/_authenticated/history")({
+export const Route = createFileRoute("/_authenticated/history/")({
   head: () => ({
     meta: [
       { title: "History — Titan Log" },

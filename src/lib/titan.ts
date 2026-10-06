@@ -109,7 +109,7 @@ let audioCtx: AudioContext | null = null;
 export function unlockAudio() {
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    if (audioCtx.state === "suspended") audioCtx.resume();
+    if (audioCtx.state === "suspended") audioCtx.resume().catch(() => {});
   } catch {}
 }
 export function beep() {

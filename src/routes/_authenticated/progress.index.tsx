@@ -5,7 +5,7 @@ import { ChevronRight, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageTitle, TabShell } from "@/components/TabShell";
 
-export const Route = createFileRoute("/_authenticated/progress")({
+export const Route = createFileRoute("/_authenticated/progress/")({
   head: () => ({
     meta: [
       { title: "Progress — Titan Log" },
