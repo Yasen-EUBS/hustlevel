@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { addDays, addMonths, format, startOfMonth, startOfWeek } from "date-fns";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, ChevronRight } from "lucide-react";
 import { TabShell } from "@/components/TabShell";
 import { fetchActiveProgram, fetchSessions, fromISO, isoWeekday, repText, toISO, weekOf } from "@/lib/titan";
 
@@ -158,7 +158,12 @@ function TrainingPage() {
               return (
                 <li key={e.id}>
                   {showSection && <div className="pb-2 pt-4 text-xs font-bold tracking-widest text-muted-foreground">{e.section}</div>}
-                  <div className="flex items-center gap-4 rounded-xl py-3">
+                  <Link
+                    to="/session/$dayId"
+                    params={{ dayId: day.id }}
+                    search={{ date: selected, ex: i }}
+                    className="-mx-3 flex items-center gap-4 rounded-xl px-3 py-3 transition active:scale-[0.98] active:bg-card"
+                  >
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-primary text-sm font-bold">
                       {e.letter}
                     </span>
@@ -166,7 +171,8 @@ function TrainingPage() {
                       <div className="font-semibold">{e.name}</div>
                       <div className="text-sm font-semibold text-primary">{repText(e)}</div>
                     </div>
-                  </div>
+                    <ChevronRight className="ml-auto h-5 w-5 shrink-0 text-muted-foreground" />
+                  </Link>
                 </li>
               );
             })}
