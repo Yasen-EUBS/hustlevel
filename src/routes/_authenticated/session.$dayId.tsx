@@ -10,7 +10,7 @@ import {
   epley,
   fetchActiveProgram,
   fmtDuration,
-  fmtKg,
+
   fmtRest,
   formatLast,
   normKey,
@@ -552,4 +552,3 @@ function CardioBlock({ seconds, done, onToggle }: { seconds: number; done: boole
   );
 }
 
-export { fmtKg };
