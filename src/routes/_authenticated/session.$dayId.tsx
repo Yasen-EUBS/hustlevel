@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { Check, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Timer, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Friends } from "@/components/Friends";
+import { ExerciseVideoSheet, ExerciseVideoTile } from "@/components/ExerciseVideo";
+import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
 import {
   beep,
   epley,
@@ -47,6 +49,8 @@ function SessionPage() {
   const qc = useQueryClient();
 
   const program = useQuery({ queryKey: ["program"], queryFn: fetchActiveProgram });
+  const media = useExerciseMedia();
+  const [playing, setPlaying] = useState<ExerciseMedia | null>(null);
   const day = program.data?.program_days.find((d) => d.id === dayId);
   const exercises = (day?.program_exercises ?? []) as ProgramExercise[];
   const keys = useMemo(() => exercises.map((e) => normKey(e.name)), [exercises]);
@@ -283,6 +287,7 @@ function SessionPage() {
 
   const ex = exercises[idx];
   const k = ex ? normKey(ex.name) : "";
+  const demo = media.data?.[k];
   const st = ex ? stats[k] : null;
   const currentBest = ex ? Math.max(0, ...(rows![k] ?? []).filter((r) => r.done).map((r) => epley(parseFloat(r.kg) || 0, parseInt(r.reps, 10) || 0))) : 0;
   const workingMax = Math.max(st?.max ?? 0, currentBest);
@@ -336,16 +341,21 @@ function SessionPage() {
             </div>
             <h1 className="font-display text-3xl font-extrabold uppercase leading-tight">{ex.name}</h1>
 
-            {!ex.duration_seconds && (
-              <div className="mt-4 grid grid-cols-2 divide-x divide-border rounded-2xl bg-card py-4 text-center">
-                <div>
+            {(demo || !ex.duration_seconds) && (
+              <div className="mt-4 flex items-stretch gap-3">
+                {demo && <ExerciseVideoTile media={demo} name={ex.name} onPlay={() => setPlaying(demo)} />}
+                {!ex.duration_seconds && (
+                <div className="grid min-w-0 flex-1 grid-cols-2 divide-x divide-border rounded-2xl bg-card py-4 text-center">
+                <div className="min-w-0 px-1">
                   <div className="text-[11px] font-bold tracking-widest text-muted-foreground">WORKING MAX</div>
                   <div className="mt-1 text-2xl font-bold">{workingMax ? `${workingMax} kg` : "—"}</div>
                 </div>
-                <div className="px-2">
+                <div className="min-w-0 px-2">
                   <div className="text-[11px] font-bold tracking-widest text-muted-foreground">LAST</div>
                   <div className="mt-1 text-base font-bold leading-snug">{formatLast(st?.last ?? [])}</div>
                 </div>
+                </div>
+                )}
               </div>
             )}
 
@@ -483,6 +493,7 @@ function SessionPage() {
           </div>
         )}
       </main>
+      <ExerciseVideoSheet media={playing} onClose={() => setPlaying(null)} />
 
       <footer className="fixed inset-x-0 bottom-0 border-t bg-background/95 backdrop-blur pb-safe">
         <div className="mx-auto flex max-w-lg items-center gap-2 px-4 pt-2">

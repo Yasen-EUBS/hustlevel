@@ -17,3 +17,4 @@
 - Session runner persists each set immediately (upsert on session_id+exercise_key+set_number) so nothing is lost mid-session.
 
 - Derive every installed-app icon and favicon from the shared NSS logo asset so the brand stays consistent across app placements.
+- Exercise demos use read-only exercise_media keyed by normKey and one shared player sheet for Training and session pages; unmount its iframe on close to stop playback without changing logging state.

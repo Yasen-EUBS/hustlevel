@@ -4,9 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { addDays, addMonths, format, startOfMonth, startOfWeek } from "date-fns";
-import { Check, ChevronDown, ChevronRight } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, Play } from "lucide-react";
 import { TabShell } from "@/components/TabShell";
-import { fetchActiveProgram, fetchSessions, fromISO, isoWeekday, repText, toISO, weekOf } from "@/lib/titan";
+import { Button } from "@/components/ui/button";
+import { ExerciseVideoSheet } from "@/components/ExerciseVideo";
+import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
+import { fetchActiveProgram, fetchSessions, fromISO, isoWeekday, normKey, repText, toISO, weekOf } from "@/lib/titan";
 
 export const Route = createFileRoute("/_authenticated/training")({
   validateSearch: z.object({ date: z.string().optional() }),
@@ -33,6 +36,8 @@ function TrainingPage() {
 
   const program = useQuery({ queryKey: ["program"], queryFn: fetchActiveProgram });
   const sessions = useQuery({ queryKey: ["sessions"], queryFn: fetchSessions });
+  const media = useExerciseMedia();
+  const [playing, setPlaying] = useState<ExerciseMedia | null>(null);
   const [monthOpen, setMonthOpen] = useState(false);
   const [notesOpen, setNotesOpen] = useState(false);
 
@@ -158,14 +163,16 @@ function TrainingPage() {
           <ul className="mt-5 space-y-1 pb-4">
             {day.program_exercises.map((e, i) => {
               const showSection = i === 0 || day.program_exercises[i - 1]?.section !== e.section;
+              const demo = media.data?.[normKey(e.name)];
               return (
                 <li key={e.id}>
                   {showSection && <div className="pb-2 pt-4 text-xs font-bold tracking-widest text-muted-foreground">{e.section}</div>}
+                  <div className="-mx-3 flex items-center">
                   <Link
                     to="/session/$dayId"
                     params={{ dayId: day.id }}
                     search={{ date: selected, ex: i }}
-                    className="-mx-3 flex items-center gap-4 rounded-xl px-3 py-3 transition active:scale-[0.98] active:bg-card"
+                    className="flex min-w-0 flex-1 items-center gap-4 rounded-xl px-3 py-3 transition active:scale-[0.98] active:bg-card"
                   >
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-primary text-sm font-bold">
                       {e.letter}
@@ -176,12 +183,26 @@ function TrainingPage() {
                     </div>
                     <ChevronRight className="ml-auto h-5 w-5 shrink-0 text-muted-foreground" />
                   </Link>
+                  {demo && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-11 w-11 shrink-0 rounded-full text-primary active:bg-card"
+                      aria-label={`Watch ${e.name} demo`}
+                      title={`Watch ${e.name} demo`}
+                      onClick={() => setPlaying(demo)}
+                    >
+                      <Play className="fill-current" />
+                    </Button>
+                  )}
+                  </div>
                 </li>
               );
             })}
           </ul>
         </div>
       )}
+      <ExerciseVideoSheet media={playing} onClose={() => setPlaying(null)} />
     </TabShell>
   );
 }

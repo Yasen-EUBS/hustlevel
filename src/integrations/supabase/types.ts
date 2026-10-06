@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      exercise_media: {
+        Row: {
+          created_at: string
+          exercise_key: string
+          title: string | null
+          youtube_id: string
+        }
+        Insert: {
+          created_at?: string
+          exercise_key: string
+          title?: string | null
+          youtube_id: string
+        }
+        Update: {
+          created_at?: string
+          exercise_key?: string
+          title?: string | null
+          youtube_id?: string
+        }
+        Relationships: []
+      }
       exercise_notes: {
         Row: {
           exercise_key: string
