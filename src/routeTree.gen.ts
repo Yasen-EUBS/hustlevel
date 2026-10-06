@@ -12,11 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
-import { Route as AuthenticatedProgressRouteImport } from './routes/_authenticated/progress'
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
+import { Route as AuthenticatedHistoryIndexRouteImport } from './routes/_authenticated/history.index'
 import { Route as AuthenticatedHistorySessionIdRouteImport } from './routes/_authenticated/history.$sessionId'
+import { Route as AuthenticatedProgressIndexRouteImport } from './routes/_authenticated/progress.index'
 import { Route as AuthenticatedProgressKeyRouteImport } from './routes/_authenticated/progress.$key'
 import { Route as AuthenticatedSessionDayIdRouteImport } from './routes/_authenticated/session.$dayId'
 
@@ -34,19 +34,9 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
-  id: '/history',
-  path: '/history',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
   id: '/me',
   path: '/me',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedProgressRoute = AuthenticatedProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTrainingRoute = AuthenticatedTrainingRouteImport.update({
@@ -54,17 +44,29 @@ const AuthenticatedTrainingRoute = AuthenticatedTrainingRouteImport.update({
   path: '/training',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedHistoryIndexRoute =
+  AuthenticatedHistoryIndexRouteImport.update({
+    id: '/history/',
+    path: '/history/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedHistorySessionIdRoute =
   AuthenticatedHistorySessionIdRouteImport.update({
-    id: '/$sessionId',
-    path: '/$sessionId',
-    getParentRoute: () => AuthenticatedHistoryRoute,
+    id: '/history/$sessionId',
+    path: '/history/$sessionId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProgressIndexRoute =
+  AuthenticatedProgressIndexRouteImport.update({
+    id: '/progress/',
+    path: '/progress/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedProgressKeyRoute =
   AuthenticatedProgressKeyRouteImport.update({
-    id: '/$key',
-    path: '/$key',
-    getParentRoute: () => AuthenticatedProgressRoute,
+    id: '/progress/$key',
+    path: '/progress/$key',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSessionDayIdRoute =
   AuthenticatedSessionDayIdRouteImport.update({
@@ -76,73 +78,73 @@ const AuthenticatedSessionDayIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/history': typeof AuthenticatedHistoryRouteWithChildren
   '/me': typeof AuthenticatedMeRoute
-  '/progress': typeof AuthenticatedProgressRouteWithChildren
   '/training': typeof AuthenticatedTrainingRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
+  '/history/': typeof AuthenticatedHistoryIndexRoute
+  '/progress/': typeof AuthenticatedProgressIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/history': typeof AuthenticatedHistoryRouteWithChildren
   '/me': typeof AuthenticatedMeRoute
-  '/progress': typeof AuthenticatedProgressRouteWithChildren
   '/training': typeof AuthenticatedTrainingRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
+  '/history': typeof AuthenticatedHistoryIndexRoute
+  '/progress': typeof AuthenticatedProgressIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/history': typeof AuthenticatedHistoryRouteWithChildren
   '/_authenticated/me': typeof AuthenticatedMeRoute
-  '/_authenticated/progress': typeof AuthenticatedProgressRouteWithChildren
   '/_authenticated/training': typeof AuthenticatedTrainingRoute
   '/_authenticated/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/_authenticated/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/_authenticated/session/$dayId': typeof AuthenticatedSessionDayIdRoute
+  '/_authenticated/history/': typeof AuthenticatedHistoryIndexRoute
+  '/_authenticated/progress/': typeof AuthenticatedProgressIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
-    | '/history'
     | '/me'
-    | '/progress'
     | '/training'
     | '/history/$sessionId'
     | '/progress/$key'
     | '/session/$dayId'
+    | '/history/'
+    | '/progress/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/history'
     | '/me'
-    | '/progress'
     | '/training'
     | '/history/$sessionId'
     | '/progress/$key'
     | '/session/$dayId'
+    | '/history'
+    | '/progress'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/_authenticated/history'
     | '/_authenticated/me'
-    | '/_authenticated/progress'
     | '/_authenticated/training'
     | '/_authenticated/history/$sessionId'
     | '/_authenticated/progress/$key'
     | '/_authenticated/session/$dayId'
+    | '/_authenticated/history/'
+    | '/_authenticated/progress/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,25 +176,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/history': {
-      id: '/_authenticated/history'
-      path: '/history'
-      fullPath: '/history'
-      preLoaderRoute: typeof AuthenticatedHistoryRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/me': {
       id: '/_authenticated/me'
       path: '/me'
       fullPath: '/me'
       preLoaderRoute: typeof AuthenticatedMeRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/progress': {
-      id: '/_authenticated/progress'
-      path: '/progress'
-      fullPath: '/progress'
-      preLoaderRoute: typeof AuthenticatedProgressRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/training': {
@@ -202,19 +190,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTrainingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/history/': {
+      id: '/_authenticated/history/'
+      path: '/history'
+      fullPath: '/history/'
+      preLoaderRoute: typeof AuthenticatedHistoryIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/history/$sessionId': {
       id: '/_authenticated/history/$sessionId'
-      path: '/$sessionId'
+      path: '/history/$sessionId'
       fullPath: '/history/$sessionId'
       preLoaderRoute: typeof AuthenticatedHistorySessionIdRouteImport
-      parentRoute: typeof AuthenticatedHistoryRoute
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/progress/': {
+      id: '/_authenticated/progress/'
+      path: '/progress'
+      fullPath: '/progress/'
+      preLoaderRoute: typeof AuthenticatedProgressIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/progress/$key': {
       id: '/_authenticated/progress/$key'
-      path: '/$key'
+      path: '/progress/$key'
       fullPath: '/progress/$key'
       preLoaderRoute: typeof AuthenticatedProgressKeyRouteImport
-      parentRoute: typeof AuthenticatedProgressRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/session/$dayId': {
       id: '/_authenticated/session/$dayId'
@@ -226,44 +228,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedHistoryRouteChildren {
-  AuthenticatedHistorySessionIdRoute: typeof AuthenticatedHistorySessionIdRoute
-}
-
-const AuthenticatedHistoryRouteChildren: AuthenticatedHistoryRouteChildren = {
-  AuthenticatedHistorySessionIdRoute: AuthenticatedHistorySessionIdRoute,
-}
-
-const AuthenticatedHistoryRouteWithChildren =
-  AuthenticatedHistoryRoute._addFileChildren(AuthenticatedHistoryRouteChildren)
-
-interface AuthenticatedProgressRouteChildren {
-  AuthenticatedProgressKeyRoute: typeof AuthenticatedProgressKeyRoute
-}
-
-const AuthenticatedProgressRouteChildren: AuthenticatedProgressRouteChildren = {
-  AuthenticatedProgressKeyRoute: AuthenticatedProgressKeyRoute,
-}
-
-const AuthenticatedProgressRouteWithChildren =
-  AuthenticatedProgressRoute._addFileChildren(
-    AuthenticatedProgressRouteChildren,
-  )
-
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRouteWithChildren
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
-  AuthenticatedProgressRoute: typeof AuthenticatedProgressRouteWithChildren
   AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRoute
+  AuthenticatedHistorySessionIdRoute: typeof AuthenticatedHistorySessionIdRoute
+  AuthenticatedProgressKeyRoute: typeof AuthenticatedProgressKeyRoute
   AuthenticatedSessionDayIdRoute: typeof AuthenticatedSessionDayIdRoute
+  AuthenticatedHistoryIndexRoute: typeof AuthenticatedHistoryIndexRoute
+  AuthenticatedProgressIndexRoute: typeof AuthenticatedProgressIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedHistoryRoute: AuthenticatedHistoryRouteWithChildren,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
-  AuthenticatedProgressRoute: AuthenticatedProgressRouteWithChildren,
   AuthenticatedTrainingRoute: AuthenticatedTrainingRoute,
+  AuthenticatedHistorySessionIdRoute: AuthenticatedHistorySessionIdRoute,
+  AuthenticatedProgressKeyRoute: AuthenticatedProgressKeyRoute,
   AuthenticatedSessionDayIdRoute: AuthenticatedSessionDayIdRoute,
+  AuthenticatedHistoryIndexRoute: AuthenticatedHistoryIndexRoute,
+  AuthenticatedProgressIndexRoute: AuthenticatedProgressIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
