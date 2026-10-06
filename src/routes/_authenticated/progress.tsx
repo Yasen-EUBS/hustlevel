@@ -22,15 +22,15 @@ function ProgressPage() {
   const list = useQuery({
     queryKey: ["exercise-list"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("set_logs").select("exercise_key, exercise_name").eq("completed", true).not("reps", "is", null);
+      const { data, error } = await supabase.from("set_logs").select("exercise_key, exercise_name, user_id").eq("completed", true).not("reps", "is", null);
       if (error) throw error;
-      const m = new Map<string, { name: string; count: number }>();
+      const m = new Map<string, { name: string; users: Set<string> }>();
       data.forEach((d) => {
-        const e = m.get(d.exercise_key) ?? { name: d.exercise_name, count: 0 };
-        e.count++;
+        const e = m.get(d.exercise_key) ?? { name: d.exercise_name, users: new Set<string>() };
+        e.users.add(d.user_id);
         m.set(d.exercise_key, e);
       });
-      return [...m.entries()].map(([key, v]) => ({ key, ...v })).sort((a, b) => a.name.localeCompare(b.name));
+      return [...m.entries()].map(([key, v]) => ({ key, name: v.name, count: v.users.size })).sort((a, b) => a.name.localeCompare(b.name));
     },
   });
   const filtered = useMemo(() => (list.data ?? []).filter((e) => e.name.toLowerCase().includes(q.toLowerCase())), [list.data, q]);
@@ -49,7 +49,7 @@ function ProgressPage() {
             <Link key={e.key} to="/progress/$key" params={{ key: e.key }} className="flex items-center rounded-2xl bg-card p-4">
               <div className="flex-1">
                 <div className="font-semibold">{e.name}</div>
-                <div className="text-sm text-muted-foreground">{e.count} sets logged</div>
+                <div className="text-sm text-muted-foreground">{e.count} {e.count === 1 ? "athlete" : "athletes"}</div>
               </div>
               <ChevronRight className="h-5 w-5 text-muted-foreground" />
             </Link>
