@@ -161,6 +161,7 @@ function SessionPage() {
       beep();
       setRest(null);
     }
+    return undefined;
   }, [rest, restRemaining]);
 
   async function persist(e: ProgramExercise, i: number, row: Row) {
@@ -186,8 +187,8 @@ function SessionPage() {
     const k = normKey(e.name);
     setRows((r) => {
       if (!r) return r;
-      const list = [...r[k]];
-      list[i] = { ...list[i], ...patch };
+      const list = [...(r[k] ?? [])];
+      list[i] = { ...list[i]!, ...patch };
       return { ...r, [k]: list };
     });
   }
@@ -195,7 +196,7 @@ function SessionPage() {
   function toggleSet(e: ProgramExercise, i: number) {
     unlockAudio();
     const k = normKey(e.name);
-    const row = rows![k][i];
+    const row = (rows![k] ?? [])[i]!;
     let next = { ...row, done: !row.done };
     if (next.done && !e.duration_seconds && next.reps === "") next.reps = String(e.rep_min ?? "");
     updateRow(e, i, next);
@@ -207,17 +208,17 @@ function SessionPage() {
     const k = normKey(e.name);
     setRows((r) => {
       if (!r) return r;
-      const list = r[k];
+      const list = r[k] ?? [];
       const last = list[list.length - 1];
       return { ...r, [k]: [...list, { reps: "", kg: last?.kg ?? "", done: false }] };
     });
   }
   async function removeSet(e: ProgramExercise) {
     const k = normKey(e.name);
-    const list = rows![k];
+    const list = (rows![k] ?? []);
     if (list.length <= 1) return;
     const n = list.length;
-    setRows((r) => (r ? { ...r, [k]: r[k].slice(0, -1) } : r));
+    setRows((r) => (r ? { ...r, [k]: (r[k] ?? []).slice(0, -1) } : r));
     if (persisted.current[k]?.has(n) && sessionId) {
       await supabase.from("set_logs").delete().eq("session_id", sessionId).eq("exercise_key", k).eq("set_number", n);
       persisted.current[k].delete(n);
@@ -249,7 +250,7 @@ function SessionPage() {
     if (!rows) return [];
     return exercises.flatMap((e) => {
       const k = normKey(e.name);
-      const best = Math.max(0, ...(rows[k] ?? []).filter((r) => r.done).map((r) => epley(parseFloat(r.kg) || 0, parseInt(r.reps, 10) || 0)));
+      const best = Math.max(0, ...((rows![k] ?? []) ?? []).filter((r) => r.done).map((r) => epley(parseFloat(r.kg) || 0, parseInt(r.reps, 10) || 0)));
       const prev = stats[k]?.max ?? 0;
       return best > prev && best > 0 ? [{ name: e.name, best, prev }] : [];
     });
@@ -277,7 +278,7 @@ function SessionPage() {
   const ex = exercises[idx];
   const k = ex ? normKey(ex.name) : "";
   const st = ex ? stats[k] : null;
-  const currentBest = ex ? Math.max(0, ...rows[k].filter((r) => r.done).map((r) => epley(parseFloat(r.kg) || 0, parseInt(r.reps, 10) || 0))) : 0;
+  const currentBest = ex ? Math.max(0, ...(rows![k] ?? []).filter((r) => r.done).map((r) => epley(parseFloat(r.kg) || 0, parseInt(r.reps, 10) || 0))) : 0;
   const workingMax = Math.max(st?.max ?? 0, currentBest);
   const range = ex ? (ex.rep_max && ex.rep_max !== ex.rep_min ? `${ex.rep_min}-${ex.rep_max}` : `${ex.rep_min ?? ""}`) : "";
 
@@ -300,7 +301,7 @@ function SessionPage() {
         </button>
         <div className="flex flex-1 items-center justify-center gap-1.5">
           {exercises.map((e, i) => {
-            const done = rows[normKey(e.name)].every((r) => r.done);
+            const done = (rows![normKey(e.name)] ?? []).every((r) => r.done);
             return (
               <button
                 key={e.id}
@@ -374,7 +375,7 @@ function SessionPage() {
             {ex.duration_seconds ? (
               <CardioBlock
                 seconds={ex.duration_seconds}
-                done={rows[k][0]?.done ?? false}
+                done={(rows![k] ?? [])[0]?.done ?? false}
                 onToggle={() => toggleSet(ex, 0)}
               />
             ) : (
@@ -386,7 +387,7 @@ function SessionPage() {
                   <div />
                 </div>
                 <div className="mt-2 space-y-2">
-                  {rows[k].map((r, i) => (
+                  {(rows![k] ?? []).map((r, i) => (
                     <div key={i} className="grid grid-cols-[3rem_1fr_1fr_3.5rem] items-center gap-2">
                       <div className="pl-2 text-lg font-bold">{i + 1}</div>
                       <input
@@ -395,7 +396,7 @@ function SessionPage() {
                         placeholder={range}
                         value={r.reps}
                         onChange={(e) => updateRow(ex, i, { reps: e.target.value.replace(/[^0-9]/g, "") })}
-                        onBlur={() => r.done && persist(ex, i, rows[k][i])}
+                        onBlur={() => r.done && persist(ex, i, (rows![k] ?? [])[i]!)}
                         className="h-14 w-full rounded-xl bg-card text-center text-lg font-bold outline-none ring-primary placeholder:font-medium placeholder:text-muted-foreground focus:ring-2"
                       />
                       <input
@@ -403,7 +404,7 @@ function SessionPage() {
                         placeholder="kg"
                         value={r.kg}
                         onChange={(e) => updateRow(ex, i, { kg: e.target.value.replace(/[^0-9.,]/g, "") })}
-                        onBlur={() => r.done && persist(ex, i, rows[k][i])}
+                        onBlur={() => r.done && persist(ex, i, (rows![k] ?? [])[i]!)}
                         className="h-14 w-full rounded-xl bg-card text-center text-lg font-bold outline-none ring-primary placeholder:font-medium placeholder:text-muted-foreground focus:ring-2"
                       />
                       <button
@@ -511,7 +512,7 @@ function CardioBlock({ seconds, done, onToggle }: { seconds: number; done: boole
   const [left, setLeft] = useState(seconds);
   const [running, setRunning] = useState(false);
   useEffect(() => {
-    if (!running) return;
+    if (!running) return undefined;
     const t = setInterval(() => {
       setLeft((l) => {
         if (l <= 1) {

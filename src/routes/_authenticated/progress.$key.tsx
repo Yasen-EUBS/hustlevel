@@ -49,14 +49,15 @@ function ExerciseProgress() {
           };
         })
         .sort((a, b) => (a.date === b.date ? a.started.localeCompare(b.started) : a.date.localeCompare(b.date)));
-      let best: { reps: number; kg: number; e: number; date: string } | null = null;
+      type Best = { reps: number; kg: number; e: number; date: string };
+      const bestRef: { v: Best | null } = { v: null };
       sessions.forEach((s) =>
         s.sets.forEach((x) => {
           const e = epley(x.kg, x.reps);
-          if (!best || e > best.e) best = { reps: x.reps, kg: x.kg, e, date: s.date };
+          if (!bestRef.v || e > bestRef.v.e) bestRef.v = { reps: x.reps, kg: x.kg, e, date: s.date };
         }),
       );
-      return { name: data[0]?.exercise_name ?? key, sessions, best: best as typeof best };
+      return { name: data[0]?.exercise_name ?? key, sessions, best: bestRef.v };
     },
   });
 

@@ -25,7 +25,9 @@ function MePage() {
     queryFn: async () => (await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()).data,
   });
   const [name, setName] = useState("");
-  useEffect(() => setName(profile.data?.display_name ?? ""), [profile.data]);
+  useEffect(() => {
+    setName(profile.data?.display_name ?? "");
+  }, [profile.data]);
 
   async function save() {
     const { error } = await supabase.from("profiles").upsert({ id: user.id, display_name: name.trim() || null });
