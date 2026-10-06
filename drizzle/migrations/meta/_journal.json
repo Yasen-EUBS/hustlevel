@@ -22,6 +22,13 @@
       "when": 1791325552710,
       "tag": "0002_profile_name_no_email",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791326824239,
+      "tag": "0003_create_exercise_media",
+      "breakpoints": true
     }
   ]
 }
