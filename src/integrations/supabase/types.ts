@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      conversation_members: {
+        Row: {
+          conversation_id: string
+          last_read_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          last_read_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          last_read_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_members_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          type?: string
+        }
+        Relationships: []
+      }
       exercise_media: {
         Row: {
           created_at: string
@@ -67,21 +114,104 @@ export type Database = {
           },
         ]
       }
+      message_reactions: {
+        Row: {
+          created_at: string
+          emoji: string
+          message_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emoji: string
+          message_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string
+          message_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_reactions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          kind: string
+          media_path: string | null
+          media_type: string | null
+          sender_id: string
+          workout_session_id: string | null
+        }
+        Insert: {
+          body?: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          kind?: string
+          media_path?: string | null
+          media_type?: string | null
+          sender_id?: string
+          workout_session_id?: string | null
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          media_path?: string | null
+          media_type?: string | null
+          sender_id?: string
+          workout_session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_workout_session_id_fkey"
+            columns: ["workout_session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
           display_name: string | null
           id: string
+          share_workouts: boolean
         }
         Insert: {
           created_at?: string
           display_name?: string | null
           id: string
+          share_workouts?: boolean
         }
         Update: {
           created_at?: string
           display_name?: string | null
           id?: string
+          share_workouts?: boolean
         }
         Relationships: []
       }
@@ -302,7 +432,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_see_message: { Args: { _message_id: string }; Returns: boolean }
+      get_or_create_dm: { Args: { other_user_id: string }; Returns: string }
+      is_member: { Args: { _conversation_id: string }; Returns: boolean }
+      is_member_path: { Args: { _path: string }; Returns: boolean }
+      my_conversations: {
+        Args: never
+        Returns: {
+          id: string
+          last_at: string
+          last_body: string
+          last_kind: string
+          last_media_type: string
+          last_sender: string
+          name: string
+          other_name: string
+          other_user_id: string
+          type: string
+          unread: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

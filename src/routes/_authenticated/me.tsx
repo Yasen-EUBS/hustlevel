@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { PageTitle, TabShell } from "@/components/TabShell";
+import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/_authenticated/me")({
   head: () => ({
@@ -55,6 +56,20 @@ function MePage() {
           <div className="text-[11px] font-bold tracking-widest text-muted-foreground">EMAIL</div>
           <div className="mt-1 text-lg font-semibold">{user.email}</div>
         </div>
+        <label className="flex items-center justify-between gap-4 rounded-2xl bg-card p-4">
+          <span>
+            <span className="block font-semibold">Share finished workouts to NSS Squad</span>
+            <span className="text-sm text-muted-foreground">Posts a summary card when you tap Finish.</span>
+          </span>
+          <Switch
+            checked={profile.data?.share_workouts ?? true}
+            onCheckedChange={async (v) => {
+              const { error } = await supabase.from("profiles").update({ share_workouts: v }).eq("id", user.id);
+              if (error) toast.error(error.message);
+              qc.invalidateQueries({ queryKey: ["profile"] });
+            }}
+          />
+        </label>
         <div className="rounded-2xl bg-card p-4">
           <div className="text-[11px] font-bold tracking-widest text-muted-foreground">UNITS</div>
           <div className="mt-1 text-lg font-semibold">Kilograms (kg)</div>

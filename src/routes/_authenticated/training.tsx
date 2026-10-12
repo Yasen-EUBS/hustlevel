@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { addDays, addMonths, format, startOfMonth, startOfWeek } from "date-fns";
-import { Check, ChevronDown, ChevronRight, Play } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, Play, Timer } from "lucide-react";
+import { timers } from "@/lib/timers";
 import { TabShell } from "@/components/TabShell";
 import { Button } from "@/components/ui/button";
 import { ExerciseVideoSheet } from "@/components/ExerciseVideo";
@@ -59,9 +60,14 @@ function TrainingPage() {
           {format(sel, "MMM ''yy")}
           <ChevronDown className="h-6 w-6 text-primary" />
         </button>
-        <button onClick={() => setDate(new Date())} className="rounded-full border border-primary px-4 py-2 text-sm font-bold text-primary">
-          TODAY
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => timers.openSheet()} aria-label="Timers" className="flex items-center gap-1.5 rounded-full bg-card px-3 py-2 text-sm font-bold">
+            <Timer className="h-4 w-4 text-primary" /> Timers
+          </button>
+          <button onClick={() => setDate(new Date())} className="rounded-full border border-primary px-4 py-2 text-sm font-bold text-primary">
+            TODAY
+          </button>
+        </div>
       </header>
       {monthOpen && (
         <div className="no-scrollbar flex gap-2 overflow-x-auto px-5 pb-3">

@@ -14,6 +14,8 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
+import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
+import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated/chat.$conversationId'
 import { Route as AuthenticatedHistoryIndexRouteImport } from './routes/_authenticated/history.index'
 import { Route as AuthenticatedHistorySessionIdRouteImport } from './routes/_authenticated/history.$sessionId'
 import { Route as AuthenticatedProgressIndexRouteImport } from './routes/_authenticated/progress.index'
@@ -44,6 +46,17 @@ const AuthenticatedTrainingRoute = AuthenticatedTrainingRouteImport.update({
   path: '/training',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedChatConversationIdRoute =
+  AuthenticatedChatConversationIdRouteImport.update({
+    id: '/chat/$conversationId',
+    path: '/chat/$conversationId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedHistoryIndexRoute =
   AuthenticatedHistoryIndexRouteImport.update({
     id: '/history/',
@@ -80,9 +93,11 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/me': typeof AuthenticatedMeRoute
   '/training': typeof AuthenticatedTrainingRoute
+  '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
+  '/chat/': typeof AuthenticatedChatIndexRoute
   '/history/': typeof AuthenticatedHistoryIndexRoute
   '/progress/': typeof AuthenticatedProgressIndexRoute
 }
@@ -91,9 +106,11 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/me': typeof AuthenticatedMeRoute
   '/training': typeof AuthenticatedTrainingRoute
+  '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
+  '/chat': typeof AuthenticatedChatIndexRoute
   '/history': typeof AuthenticatedHistoryIndexRoute
   '/progress': typeof AuthenticatedProgressIndexRoute
 }
@@ -104,9 +121,11 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/training': typeof AuthenticatedTrainingRoute
+  '/_authenticated/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/_authenticated/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/_authenticated/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/_authenticated/session/$dayId': typeof AuthenticatedSessionDayIdRoute
+  '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/history/': typeof AuthenticatedHistoryIndexRoute
   '/_authenticated/progress/': typeof AuthenticatedProgressIndexRoute
 }
@@ -117,9 +136,11 @@ export interface FileRouteTypes {
     | '/auth'
     | '/me'
     | '/training'
+    | '/chat/$conversationId'
     | '/history/$sessionId'
     | '/progress/$key'
     | '/session/$dayId'
+    | '/chat/'
     | '/history/'
     | '/progress/'
   fileRoutesByTo: FileRoutesByTo
@@ -128,9 +149,11 @@ export interface FileRouteTypes {
     | '/auth'
     | '/me'
     | '/training'
+    | '/chat/$conversationId'
     | '/history/$sessionId'
     | '/progress/$key'
     | '/session/$dayId'
+    | '/chat'
     | '/history'
     | '/progress'
   id:
@@ -140,9 +163,11 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/me'
     | '/_authenticated/training'
+    | '/_authenticated/chat/$conversationId'
     | '/_authenticated/history/$sessionId'
     | '/_authenticated/progress/$key'
     | '/_authenticated/session/$dayId'
+    | '/_authenticated/chat/'
     | '/_authenticated/history/'
     | '/_authenticated/progress/'
   fileRoutesById: FileRoutesById
@@ -190,6 +215,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTrainingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/chat/': {
+      id: '/_authenticated/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof AuthenticatedChatIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/chat/$conversationId': {
+      id: '/_authenticated/chat/$conversationId'
+      path: '/chat/$conversationId'
+      fullPath: '/chat/$conversationId'
+      preLoaderRoute: typeof AuthenticatedChatConversationIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/history/': {
       id: '/_authenticated/history/'
       path: '/history'
@@ -231,9 +270,11 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRoute
+  AuthenticatedChatConversationIdRoute: typeof AuthenticatedChatConversationIdRoute
   AuthenticatedHistorySessionIdRoute: typeof AuthenticatedHistorySessionIdRoute
   AuthenticatedProgressKeyRoute: typeof AuthenticatedProgressKeyRoute
   AuthenticatedSessionDayIdRoute: typeof AuthenticatedSessionDayIdRoute
+  AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
   AuthenticatedHistoryIndexRoute: typeof AuthenticatedHistoryIndexRoute
   AuthenticatedProgressIndexRoute: typeof AuthenticatedProgressIndexRoute
 }
@@ -241,9 +282,11 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedTrainingRoute: AuthenticatedTrainingRoute,
+  AuthenticatedChatConversationIdRoute: AuthenticatedChatConversationIdRoute,
   AuthenticatedHistorySessionIdRoute: AuthenticatedHistorySessionIdRoute,
   AuthenticatedProgressKeyRoute: AuthenticatedProgressKeyRoute,
   AuthenticatedSessionDayIdRoute: AuthenticatedSessionDayIdRoute,
+  AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
   AuthenticatedHistoryIndexRoute: AuthenticatedHistoryIndexRoute,
   AuthenticatedProgressIndexRoute: AuthenticatedProgressIndexRoute,
 }
