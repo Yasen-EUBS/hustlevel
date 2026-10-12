@@ -3,11 +3,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Check, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Timer, Trophy } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Friends } from "@/components/Friends";
 import { ExerciseVideoSheet, ExerciseVideoTile } from "@/components/ExerciseVideo";
 import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
+import { SelectTimerButton, TimerSheet } from "@/components/Timers";
+import { timers } from "@/lib/timers";
+import { SQUAD_ID, type WorkoutPost } from "@/lib/chat";
 import {
   beep,
   epley,
@@ -158,21 +161,12 @@ function SessionPage() {
   const [idx, setIdx] = useState(exParam ?? 0);
   const total = exercises.length;
 
-  // Rest timer
-  const [rest, setRest] = useState<{ start: number; min: number; max: number; useMax: boolean } | null>(null);
-  const [now, setNow] = useState(Date.now());
+  // Rest timer defaults follow the current exercise
+  const curEx = exercises[idx];
   useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), 250);
-    return () => clearInterval(t);
-  }, []);
-  const restRemaining = rest ? Math.ceil((rest.start + (rest.useMax ? rest.max : rest.min) * 1000 - now) / 1000) : 0;
-  useEffect(() => {
-    if (rest && restRemaining <= 0) {
-      beep();
-      setRest(null);
-    }
-    return undefined;
-  }, [rest, restRemaining]);
+    timers.setRestDefaults(curEx && !curEx.duration_seconds ? { min: curEx.rest_min_seconds, max: curEx.rest_max_seconds } : null);
+  }, [curEx]);
+  useEffect(() => () => timers.setRestDefaults(null), []);
 
   async function persist(e: ProgramExercise, i: number, row: Row) {
     if (!sessionId) return;
@@ -211,7 +205,8 @@ function SessionPage() {
     if (next.done && !e.duration_seconds && next.reps === "") next.reps = String(e.rep_min ?? "");
     updateRow(e, i, next);
     persist(e, i, next);
-    if (next.done && !e.duration_seconds) setRest({ start: Date.now(), min: e.rest_min_seconds, max: e.rest_max_seconds, useMax: false });
+    const running = timers.get().timer;
+    if (next.done && !e.duration_seconds && (!running || running.type === "rest")) timers.startRest(e.rest_min_seconds, e.rest_max_seconds);
   }
 
   async function addSet(e: ProgramExercise) {
@@ -267,12 +262,39 @@ function SessionPage() {
   }, [rows, exercises, stats]);
 
   const [finishing, setFinishing] = useState(false);
+  async function postWorkout() {
+    if (!sessionId) return;
+    try {
+      const { data: prof } = await supabase.from("profiles").select("share_workouts").eq("id", user.id).maybeSingle();
+      if (prof && !prof.share_workouts) return;
+      const started = session.data?.started_at ? new Date(session.data.started_at).getTime() : Date.now();
+      const body: WorkoutPost = {
+        title: [day?.title, program.data?.block_name].filter(Boolean).join(" - "),
+        duration_sec: Math.max(0, Math.round((Date.now() - started) / 1000)),
+        reps: totals.reps,
+        volume: totals.vol,
+        prs: prs.map((p) => ({ name: p.name, kg: p.best })),
+      };
+      const { error } = await supabase.from("messages").insert({
+        conversation_id: SQUAD_ID,
+        sender_id: user.id,
+        kind: "workout",
+        workout_session_id: sessionId,
+        body: JSON.stringify(body),
+      });
+      // 23505 = already posted for this session; never double-post.
+      if (error && error.code !== "23505") console.warn("workout post failed", error.message);
+    } catch (err) {
+      console.warn("workout post failed", err);
+    }
+  }
   async function finish() {
     if (!sessionId) return;
     setFinishing(true);
     const { error } = await supabase.from("workout_sessions").update({ completed_at: new Date().toISOString() }).eq("id", sessionId);
     setFinishing(false);
     if (error) { toast.error(error.message); return; }
+    await postWorkout();
     qc.invalidateQueries();
     toast.success("Session saved");
     navigate({ to: "/history/$sessionId", params: { sessionId } });
@@ -494,6 +516,7 @@ function SessionPage() {
         )}
       </main>
       <ExerciseVideoSheet media={playing} onClose={() => setPlaying(null)} />
+      <TimerSheet />
 
       <footer className="fixed inset-x-0 bottom-0 border-t bg-background/95 backdrop-blur pb-safe">
         <div className="mx-auto flex max-w-lg items-center gap-2 px-4 pt-2">
@@ -501,21 +524,7 @@ function SessionPage() {
             <ChevronLeft className="h-5 w-5" /> Back
           </button>
           <div className="flex flex-1 justify-center">
-            {rest ? (
-              <button
-                onClick={() => setRest((r) => (r ? { ...r, useMax: !r.useMax } : r))}
-                onDoubleClick={() => setRest(null)}
-                className="flex h-12 items-center gap-2 rounded-full bg-primary px-5 text-lg font-bold tabular-nums text-primary-foreground"
-              >
-                <Timer className="h-5 w-5" />
-                {fmtDuration(Math.max(0, restRemaining))}
-                <span className="text-[10px] font-semibold opacity-70">{rest.useMax ? "MAX" : "MIN"}</span>
-              </button>
-            ) : (
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Timer className="h-4 w-4" /> Rest
-              </span>
-            )}
+            <SelectTimerButton />
           </div>
           <button onClick={() => go(1)} disabled={idx === total} className="flex h-12 items-center gap-1 px-2 font-semibold text-primary disabled:opacity-30">
             {idx === total - 1 ? "Finish" : "Next"} <ChevronRight className="h-5 w-5" />
