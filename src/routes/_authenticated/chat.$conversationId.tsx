@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { format, isSameDay, isToday, isYesterday } from "date-fns";
-import { ChevronLeft, Clock, Dumbbell, Paperclip, SendHorizontal, Trash2, Trophy, X } from "lucide-react";
+import { ChevronLeft, Clock, Dumbbell, Paperclip, SendHorizontal, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -364,7 +364,7 @@ function Bubble({ m, mine, me, name, showName, selected, onSelect, onReact, onUn
               <ul className="mt-3 space-y-1">
                 {workout.prs.map((p) => (
                   <li key={p.name} className="flex items-center gap-2 text-sm font-semibold">
-                    <Trophy className="h-4 w-4 shrink-0 text-chart-3" /> 🏆 {p.name} <span className="ml-auto text-success">{p.kg} kg</span>
+                    🏆 {p.name} <span className="ml-auto text-success">{p.kg} kg</span>
                   </li>
                 ))}
               </ul>
