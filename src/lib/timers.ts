@@ -92,7 +92,7 @@ export type Snapshot = {
 };
 
 export function snapshot(s: TimerState, now: number): Snapshot {
-  const elapsedMs = s.accumulated + (s.startedAt ? now - s.startedAt : 0);
+  const elapsedMs = s.accumulated + (s.startedAt != null ? now - s.startedAt : 0);
   const elapsed = elapsedMs / 1000;
   let t = elapsed;
   for (let i = 0; i < s.segments.length; i++) {
