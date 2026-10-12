@@ -18,3 +18,5 @@
 
 - Derive every installed-app icon and favicon from the shared NSS logo asset so the brand stays consistent across app placements.
 - Exercise demos use read-only exercise_media keyed by normKey and one shared player sheet for Training and session pages; unmount its iframe on close to stop playback without changing logging state.
+- Timers live in one module-level store (src/lib/timers.ts) computed from wall-clock deltas, so only one timer runs at a time and it survives route changes and backgrounding.
+- Chat access is gated by SECURITY DEFINER `is_member`; clients never insert conversation_members (DMs only via `get_or_create_dm`), and workout posts are deduped by a unique index on messages.workout_session_id.
