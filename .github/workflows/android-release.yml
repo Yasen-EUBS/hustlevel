@@ -1,0 +1,83 @@
+name: Android release
+
+# Builds the NSS Android app (a Capacitor shell around https://nss-gym.lovable.app)
+# and publishes it as NSS.apk on a GitHub Release.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "mobile/**"
+      - ".github/workflows/android-release.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      NSS_VERSION_CODE: ${{ github.run_number }}
+      NSS_VERSION_NAME: 1.0.${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Install Capacitor
+        run: npm ci
+
+      - name: Sync Android project
+        run: npx cap sync android
+
+      - name: Restore signing key
+        env:
+          NSS_KEYSTORE_BASE64: ${{ secrets.NSS_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$NSS_KEYSTORE_BASE64" ]; then
+            echo "::warning::Add the NSS_KEYSTORE_BASE64 and NSS_KEYSTORE_PASSWORD secrets to build a release."
+            exit 0
+          fi
+          echo "$NSS_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/nss-release.jks"
+          echo "NSS_KEYSTORE_PATH=$RUNNER_TEMP/nss-release.jks" >> "$GITHUB_ENV"
+
+      - name: Build signed APK
+        if: env.NSS_KEYSTORE_PATH != ''
+        working-directory: mobile/android
+        env:
+          NSS_KEYSTORE_PASSWORD: ${{ secrets.NSS_KEYSTORE_PASSWORD }}
+          NSS_KEY_PASSWORD: ${{ secrets.NSS_KEYSTORE_PASSWORD }}
+          NSS_KEY_ALIAS: nss
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/NSS.apk"
+
+      - name: Publish release
+        if: env.NSS_KEYSTORE_PATH != ''
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${NSS_VERSION_NAME}"
+          gh release create "$TAG" NSS.apk \
+            --title "NSS for Android ${NSS_VERSION_NAME}" \
+            --notes "Download **NSS.apk** below and open it on your Android phone. If asked, allow installs from your browser. Updates to the app itself arrive automatically; you only need a new APK when this page says so." \
+            --latest

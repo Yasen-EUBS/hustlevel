@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NSS: a training log for you and your gym crew</title>
+<meta name="description" content="NSS is a free workout logger for a small group of friends: log sets, track progress, compare lifts on leaderboards, run timers and chat. Android app and iPhone web app.">
+<meta property="og:title" content="NSS: a training log for you and your gym crew">
+<meta property="og:description" content="Log every set, watch your working max climb, and see who's lifting more.">
+<meta property="og:image" content="https://yasen-eubs.github.io/nss-gym/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#07080B">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#07080B; --surface:#12141A; --raise:#1A1D25; --line:#262A34;
+    --text:#F2F3F7; --muted:#9AA0AE; --blue:#6B8BF5; --green:#3DDC97;
+    --gold:#E7C35A; --silver:#C9CDD6; --bronze:#C08552;
+    --display:"Barlow Condensed", "Arial Narrow", sans-serif;
+    --body:"Barlow", system-ui, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--ink);color:var(--text);font-family:var(--body);font-size:18px;line-height:1.55}
+  a{color:inherit}
+  img{display:block;max-width:100%}
+  :focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:6px}
+  .wrap{width:min(1120px,100% - 32px);margin-inline:auto}
+
+  /* Header */
+  .top{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:.01em}
+  .brand img{width:40px;height:40px;border-radius:10px}
+  .top nav{display:flex;gap:22px;font-size:16px;color:var(--muted)}
+  .top nav a{text-decoration:none}
+  .top nav a:hover{color:var(--text)}
+
+  /* Hero */
+  .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;padding:56px 0 96px}
+  .hero h1{font-family:var(--display);font-weight:800;font-size:clamp(64px,10vw,132px);line-height:.86;margin:0;letter-spacing:-.01em}
+  .hero h1 span{display:block;color:var(--muted);font-weight:700;font-size:.42em;line-height:1.05;margin-top:18px;letter-spacing:0}
+  .hero p{color:var(--muted);max-width:30em;margin:22px 0 32px}
+  .ctas{display:flex;flex-wrap:wrap;gap:12px}
+  .btn{display:inline-flex;align-items:center;gap:10px;min-height:54px;padding:0 26px;border-radius:999px;font-weight:600;font-size:17px;text-decoration:none;border:1.5px solid var(--line)}
+  .btn svg{width:20px;height:20px;flex:none}
+  .btn.primary{background:var(--blue);border-color:var(--blue);color:var(--ink)}
+  .btn.primary:hover{background:#86A0F8}
+  .btn.ghost:hover{border-color:var(--muted)}
+  .small{font-size:15px;color:var(--muted);margin-top:14px}
+
+  /* The logging card: the characteristic moment */
+  .log{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:26px 24px 22px;box-shadow:0 30px 80px -30px rgba(107,139,245,.35)}
+  .dots{display:flex;gap:9px;align-items:center;justify-content:center;margin-bottom:18px}
+  .dots i{width:11px;height:11px;border-radius:50%;border:2px solid var(--green)}
+  .dots i.done{background:var(--green)}
+  .dots i.now{width:26px;height:26px;border-width:3px}
+  .totals{display:flex;justify-content:center;gap:26px;font-family:var(--display);font-weight:800;font-size:34px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+  .totals small{font-size:16px;font-weight:700;margin-left:4px}
+  .ex{font-family:var(--display);font-weight:700;font-size:30px;margin:18px 0 4px}
+  .rx{color:var(--muted);font-size:15px;margin:0 0 16px;display:flex;flex-wrap:wrap;gap:4px 14px}
+  .stats{display:grid;grid-template-columns:1fr 1fr;background:var(--raise);border-radius:16px;margin-bottom:16px}
+  .stats div{padding:12px 16px}
+  .stats div+div{border-left:1px solid var(--line)}
+  .stats b{display:block;font-size:13px;color:var(--muted);font-weight:500}
+  .stats em{white-space:nowrap;font-style:normal;font-family:var(--display);font-weight:700;font-size:24px;color:var(--blue)}
+  .sets{display:grid;grid-template-columns:28px 1fr 1fr 44px;gap:10px;align-items:center}
+  .sets .h{font-weight:600;font-size:14px;color:var(--muted)}
+  .sets .n{color:var(--muted);font-size:20px;text-align:center}
+  .sets .f{height:46px;border:1.5px solid var(--line);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500}
+  .ring{width:40px;height:40px;border-radius:50%;border:2.5px solid var(--green);display:grid;place-items:center}
+  .ring.ok{background:var(--green)}
+  .ring svg{width:20px;height:20px;opacity:0}
+  .ring.ok svg{opacity:1}
+  .friend{display:flex;align-items:center;gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:15px}
+  .friend .av{width:34px;height:34px;border-radius:50%;background:var(--raise);display:grid;place-items:center;font-weight:600}
+  .friend p{margin:0;color:var(--muted)}
+  .friend p strong{color:var(--text);font-weight:600}
+  .friend .max{white-space:nowrap;margin-left:auto;font-family:var(--display);font-weight:700;font-size:20px}
+
+  @media (prefers-reduced-motion:no-preference){
+    .ring.tick{animation:tick 3.6s ease-in-out infinite}
+    .ring.tick svg{animation:tickmark 3.6s ease-in-out infinite}
+    @keyframes tick{0%,38%{background:transparent}46%,100%{background:var(--green)}}
+    @keyframes tickmark{0%,40%{opacity:0;transform:scale(.4)}50%,100%{opacity:1;transform:scale(1)}}
+  }
+
+  /* Sections */
+  section{padding:88px 0;border-top:1px solid var(--line)}
+  h2{font-family:var(--display);font-weight:800;font-size:clamp(40px,5.5vw,64px);line-height:.95;margin:0 0 18px}
+  .lede{color:var(--muted);max-width:36em;margin:0 0 48px}
+
+  /* Features: a two-column list, not a card grid */
+  .features{display:grid;grid-template-columns:1fr 1fr;column-gap:64px}
+  .feature{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:26px 0;border-top:1px solid var(--line)}
+  .feature svg{width:28px;height:28px;color:var(--blue);margin-top:4px}
+  .feature h3{font-family:var(--display);font-weight:700;font-size:26px;margin:0 0 4px}
+  .feature p{margin:0;color:var(--muted);font-size:17px}
+
+  /* Rivalry board */
+  .rival{display:grid;grid-template-columns:.9fr 1.1fr;gap:56px;align-items:center}
+  .board{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .board li{display:grid;grid-template-columns:40px 1fr auto;gap:14px;align-items:center;padding:16px 20px;border-radius:18px;background:var(--surface)}
+  .board li.me{outline:2px solid var(--blue);background:#141A2C}
+  .rank{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:var(--ink);font-size:15px}
+  .r1{background:var(--gold)} .r2{background:var(--silver)} .r3{background:var(--bronze)}
+  .board .who{font-weight:600}
+  .board .who small{display:block;color:var(--muted);font-weight:400;font-size:14px}
+  .board .kg{font-family:var(--display);font-weight:700;font-size:26px;color:var(--green)}
+  .note{font-size:14px;color:var(--muted);margin-top:12px}
+
+  /* Install */
+  .install{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .platform{background:var(--surface);border-radius:28px;padding:32px}
+  .platform h3{font-family:var(--display);font-weight:800;font-size:34px;margin:0 0 6px;display:flex;align-items:center;gap:12px}
+  .platform h3 svg{width:28px;height:28px}
+  .platform > p{color:var(--muted);margin:0 0 20px;font-size:17px}
+  .platform ol{margin:0 0 26px;padding-left:22px;display:grid;gap:10px;font-size:17px}
+  .platform ol li::marker{color:var(--blue);font-weight:700}
+
+  /* Built with */
+  .built{display:grid;grid-template-columns:1fr 1fr;gap:64px}
+  .built p{color:var(--muted);margin:0 0 16px}
+  .stack{margin:0;padding:0;list-style:none;display:grid;gap:0}
+  .stack li{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--line);font-size:17px}
+  .stack li b{font-weight:600}
+  .stack li span{color:var(--muted)}
+
+  footer{border-top:1px solid var(--line);padding:36px 0 56px;color:var(--muted);font-size:15px;display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+  footer a{color:var(--text)}
+
+  @media (max-width:880px){
+    .hero,.rival,.built,.install,.features{grid-template-columns:1fr}
+    .hero{gap:48px;padding:28px 0 72px}
+    .features{column-gap:0}
+    .top nav{display:none}
+    section{padding:64px 0}
+    .stack li{grid-template-columns:120px 1fr}
+  }
+  @media (max-width:420px){
+    .btn{width:100%;justify-content:center}
+    .log{padding:22px 16px 18px}
+    .totals{font-size:28px;gap:18px}
+    .platform{padding:24px}
+    .stats em{font-size:21px}
+    .stats div{padding:12px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#"><img src="logo.png" alt="" width="40" height="40">NSS</a>
+    <nav aria-label="Page sections">
+      <a href="#features">Features</a>
+      <a href="#install">Install</a>
+      <a href="#built">How it's built</a>
+      <a href="https://github.com/Yasen-EUBS/nss-gym">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <h1>NSS<span>Log every set. See who's lifting more.</span></h1>
+        <p>A training log for a small crew of friends on the same program. Tick off your sets, watch your working max climb, and check where you rank on every lift.</p>
+        <div class="ctas">
+          <a class="btn primary" href="https://github.com/Yasen-EUBS/nss-gym/releases/latest/download/NSS.apk">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18a.38.38 0 00-.66-.38l-1.86 3.22a11.5 11.5 0 00-9.84 0L5.22 5.92a.38.38 0 00-.66.38L6.4 9.48A10.8 10.8 0 001 18h22a10.8 10.8 0 00-5.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg>
+            Download for Android
+          </a>
+          <a class="btn ghost" href="#iphone">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.87-.76a4.24 4.24 0 00-3.58 2.18c-1.53 2.65-.39 6.57 1.1 8.72.73 1.05 1.6 2.23 2.73 2.19 1.1-.05 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.3-.88-2.3-3.49zM14.2 6.13c.6-.73 1-1.74.9-2.75-.87.04-1.92.58-2.54 1.3-.56.64-1.05 1.67-.92 2.66.97.07 1.96-.49 2.56-1.21z"/></svg>
+            Use on iPhone
+          </a>
+        </div>
+        <p class="small">Free. No App Store needed.</p>
+      </div>
+
+      <figure class="log" aria-label="Illustration of the NSS session screen">
+        <div class="dots" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now"></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="totals"><span>56<small>REPS</small></span><span>4,339<small>KG</small></span></div>
+        <div class="ex">Leg Extensions</div>
+        <p class="rx"><span>2 × 8–12</span><span>Tempo 2-0-1-0</span><span>Rest 2 min</span></p>
+        <div class="stats">
+          <div><b>Working max</b><em>139 kg</em></div>
+          <div><b>Last time</b><em>2 × 9 @ 104</em></div>
+        </div>
+        <div class="sets" role="table" aria-label="Sets">
+          <span class="h">Set</span><span class="h">Reps</span><span class="h">Kg</span><span></span>
+          <span class="n">1</span><span class="f">10</span><span class="f">106</span>
+          <span class="ring ok"><svg viewBox="0 0 24 24" fill="none" stroke="#07080B" stroke-width="3" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+          <span class="n">2</span><span class="f">9</span><span class="f">106</span>
+          <span class="ring tick"><svg viewBox="0 0 24 24" fill="none" stroke="#07080B" stroke-width="3" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+        </div>
+        <div class="friend">
+          <span class="av" aria-hidden="true">M</span>
+          <p><strong>Your friend</strong><br>Last: 10, 8 @ 110 kg</p>
+          <span class="max">142 kg</span>
+        </div>
+      </figure>
+    </div>
+
+    <section id="features">
+      <h2>Built for the way you train</h2>
+      <p class="lede">Everyone runs the same program. The app loads each new training block, remembers what you lifted last time, and keeps your numbers next to your friends'.</p>
+      <div class="features">
+        <div class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>
+          <div><h3>Log sets in seconds</h3><p>Reps and kg for every set, with tempo, rest and coach notes on screen. Each ticked set saves right away.</p></div>
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>
+          <div><h3>See your progress</h3><p>Charts for estimated 1RM, top set and volume on every lift, plus your last session as a target.</p></div>
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4zM17 5h3v2a3 3 0 01-3 3M7 5H4v2a3 3 0 003 3"/></svg>
+          <div><h3>Compare on leaderboards</h3><p>Every lift ranks the whole crew by working max, with gold, silver and bronze for the top three.</p></div>
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>
+          <div><h3>Seven timers</h3><p>Rest timer that starts when you tick a set, plus stopwatch, AMRAP, For Time, Tabata, EMOM and custom intervals.</p></div>
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/></svg>
+          <div><h3>Group chat and DMs</h3><p>Photos, form-check videos and reactions. Finished workouts post to the group with your volume and PRs.</p></div>
+        </div>
+        <div class="feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10.5 9.5v5l4-2.5z" fill="currentColor"/></svg>
+          <div><h3>Demo for every lift</h3><p>Technique videos from evidence-based coaches, one tap away while you train.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rival-section">
+      <div class="rival">
+        <div>
+          <h2>One lift. Whole crew. Who's on top?</h2>
+          <p class="lede" style="margin-bottom:0">Your working max is calculated from your best set, so a heavy 8 counts as much as a lighter 12. Everyone can see the board. Only you can change your own numbers.</p>
+        </div>
+        <div>
+          <ol class="board" aria-label="Example leaderboard for Leg Extensions">
+            <li><span class="rank r1">1</span><span class="who">Athlete A<small>120 kg × 8</small></span><span class="kg">152 kg</span></li>
+            <li class="me"><span class="rank r2">2</span><span class="who">You<small>106 kg × 10</small></span><span class="kg">141 kg</span></li>
+            <li><span class="rank r3">3</span><span class="who">Athlete B<small>100 kg × 9</small></span><span class="kg">130 kg</span></li>
+          </ol>
+          <p class="note">Example board. Names are placeholders.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <h2>Get NSS on your phone</h2>
+      <p class="lede">It takes about a minute. Your account and logs are the same on every device.</p>
+      <div class="install">
+        <div class="platform">
+          <h3><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.48l1.84-3.18a.38.38 0 00-.66-.38l-1.86 3.22a11.5 11.5 0 00-9.84 0L5.22 5.92a.38.38 0 00-.66.38L6.4 9.48A10.8 10.8 0 001 18h22a10.8 10.8 0 00-5.4-8.52zM7 15.25a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5zm10 0a1.25 1.25 0 110-2.5 1.25 1.25 0 010 2.5z"/></svg>Android</h3>
+          <p>A real app you install from this page.</p>
+          <ol>
+            <li>Tap <strong>Download for Android</strong> below.</li>
+            <li>Open <strong>NSS.apk</strong> from your notifications or Downloads.</li>
+            <li>If Android asks, allow installs from your browser, then tap <strong>Install</strong>.</li>
+            <li>Open NSS and sign up with your email.</li>
+          </ol>
+          <a class="btn primary" href="https://github.com/Yasen-EUBS/nss-gym/releases/latest/download/NSS.apk">Download for Android</a>
+        </div>
+        <div class="platform" id="iphone">
+          <h3><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.87-.76a4.24 4.24 0 00-3.58 2.18c-1.53 2.65-.39 6.57 1.1 8.72.73 1.05 1.6 2.23 2.73 2.19 1.1-.05 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.3-.88-2.3-3.49zM14.2 6.13c.6-.73 1-1.74.9-2.75-.87.04-1.92.58-2.54 1.3-.56.64-1.05 1.67-.92 2.66.97.07 1.96-.49 2.56-1.21z"/></svg>iPhone</h3>
+          <p>Runs full screen from your home screen, like any other app.</p>
+          <ol>
+            <li>Open the link below in <strong>Safari</strong>.</li>
+            <li>Tap the <strong>Share</strong> button at the bottom of the screen.</li>
+            <li>Scroll down and tap <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li>
+            <li>Open NSS from your home screen and sign up.</li>
+          </ol>
+          <a class="btn ghost" href="https://nss-gym.lovable.app">Open NSS in Safari</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="built">
+      <div class="built">
+        <div>
+          <h2>How it's built</h2>
+          <p>NSS started because my training program lives in TrainHeroic, and I wanted my friends and me to log the same program side by side and compare numbers.</p>
+          <p>Every new training block arrives as screenshots. The program is pure data in the database, so a new block is a data update, not a code change. History follows each exercise by name, so progress carries over between blocks.</p>
+          <p>I designed and built it with AI-assisted development. The web app is built in Lovable, the Android app is a Capacitor shell, and GitHub Actions builds and publishes every Android release automatically.</p>
+          <p><a href="https://github.com/Yasen-EUBS/nss-gym">Read the code on GitHub</a></p>
+        </div>
+        <ul class="stack">
+          <li><b>App</b><span>React 19, TanStack Start and Router, Tailwind CSS</span></li>
+          <li><b>Data</b><span>PostgreSQL on Supabase with row-level security on every table</span></li>
+          <li><b>Realtime</b><span>Supabase Realtime for chat messages and reactions</span></li>
+          <li><b>Media</b><span>Private storage bucket with signed URLs for chat photos and videos</span></li>
+          <li><b>Charts</b><span>Recharts for 1RM, top set and volume trends</span></li>
+          <li><b>Android</b><span>Capacitor 8, signed APK built by GitHub Actions</span></li>
+          <li><b>iPhone</b><span>Installable web app with a manifest and home-screen icon</span></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Built by Yasen Kapitanov in Barcelona.</span>
+    <span><a href="https://github.com/Yasen-EUBS/nss-gym">GitHub</a> &nbsp; <a href="https://nss-gym.lovable.app">Open the web app</a></span>
+  </footer>
+</div>
+</body>
+</html>
