@@ -66,6 +66,7 @@ function AuthPage() {
         {mode === "in" ? "No account? " : "Have an account? "}
         <span className="font-semibold text-primary">{mode === "in" ? "Sign up" : "Log in"}</span>
       </button>
+      <InstallPrompt variant="card" />
     </div>
   );
 }

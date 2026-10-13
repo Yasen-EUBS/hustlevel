@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Dumbbell, History, MessageCircle, TrendingUp, User } from "lucide-react";
 import type { ReactNode } from "react";
 import { MiniTimer, TimerSheet } from "@/components/Timers";
+import { InstallPrompt } from "@/components/InstallBanner";
 import { useChatRealtime, useConversations } from "@/lib/chat";
 
 const tabs = [
