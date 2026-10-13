@@ -311,6 +311,7 @@ export type Database = {
           block_name: string
           coach_notes: string | null
           created_at: string
+          guide_url: string | null
           id: string
           is_active: boolean
           name: string
@@ -321,6 +322,7 @@ export type Database = {
           block_name: string
           coach_notes?: string | null
           created_at?: string
+          guide_url?: string | null
           id?: string
           is_active?: boolean
           name: string
@@ -331,6 +333,7 @@ export type Database = {
           block_name?: string
           coach_notes?: string | null
           created_at?: string
+          guide_url?: string | null
           id?: string
           is_active?: boolean
           name?: string

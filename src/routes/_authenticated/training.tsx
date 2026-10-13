@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { addDays, addMonths, format, startOfMonth, startOfWeek } from "date-fns";
-import { Check, ChevronDown, ChevronRight, Play, Timer } from "lucide-react";
+import { BookOpen, Check, ChevronDown, ChevronRight, ExternalLink, Play, Timer } from "lucide-react";
 import { timers } from "@/lib/timers";
 import { TabShell } from "@/components/TabShell";
 import { Button } from "@/components/ui/button";
@@ -162,6 +162,16 @@ function TrainingPage() {
                 )}
                 {day.day_notes && <p className="text-foreground">{day.day_notes}</p>}
                 {p.coach_notes && <p className="whitespace-pre-line">{p.coach_notes}</p>}
+                {p.guide_url && (
+                  <a
+                    href={p.guide_url}
+                    target="_blank"
+                    rel="noopener"
+                    className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-primary text-base font-bold text-primary"
+                  >
+                    <BookOpen className="h-5 w-5" /> Training guide <ExternalLink className="h-4 w-4" />
+                  </a>
+                )}
               </div>
             )}
           </div>
