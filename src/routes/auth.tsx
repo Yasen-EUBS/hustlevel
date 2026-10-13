@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { InstallPrompt } from "@/components/InstallBanner";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -66,6 +67,7 @@ function AuthPage() {
         {mode === "in" ? "No account? " : "Have an account? "}
         <span className="font-semibold text-primary">{mode === "in" ? "Sign up" : "Log in"}</span>
       </button>
+      <InstallPrompt variant="card" />
     </div>
   );
 }
