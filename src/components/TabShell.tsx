@@ -20,6 +20,11 @@ export function TabShell({ children }: { children: ReactNode }) {
   return (
     <div className="mx-auto min-h-[100dvh] max-w-lg pt-safe">
       <main className="pb-28">{children}</main>
+      <div className="fixed inset-x-0 bottom-[calc(7.5rem+env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-lg justify-start px-4 pointer-events-none">
+        <div className="pointer-events-auto">
+          <InstallPrompt variant="banner" />
+        </div>
+      </div>
       <div className="fixed inset-x-0 bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-lg justify-end px-4 pointer-events-none">
         <div className="pointer-events-auto">
           <MiniTimer className="shadow-lg" />
