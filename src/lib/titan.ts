@@ -67,6 +67,20 @@ export function formatLast(sets: SetRow[]) {
   return s.map((x, i) => `${x.reps}@${fmtKg(ws[i] ?? 0)}`).join(", ") + " kg";
 }
 
+/** TrainHeroic-style summary of completed sets: "2 x 9 @ 104kg", "5,4 @ 97kg", "8,8 @ 60,65kg". */
+export function formatDone(sets: SetRow[]) {
+  const s = sets.filter((x) => x.reps != null);
+  const first = s[0];
+  if (!first) return "Done";
+  const reps = s.map((x) => x.reps);
+  const ws = s.map((x) => Number(x.weight_kg ?? 0));
+  const sameR = reps.every((r) => r === first.reps);
+  const sameW = ws.every((w) => w === ws[0]);
+  const repPart = sameR ? `${s.length} x ${first.reps}` : reps.join(",");
+  if (ws.every((w) => w === 0)) return repPart; // bodyweight
+  return `${repPart} @ ${sameW ? fmtKg(ws[0] ?? 0) : ws.map(fmtKg).join(",")}kg`;
+}
+
 export async function fetchActiveProgram() {
   const { data, error } = await supabase
     .from("programs")

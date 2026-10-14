@@ -10,7 +10,8 @@ import { TabShell } from "@/components/TabShell";
 import { Button } from "@/components/ui/button";
 import { ExerciseVideoSheet } from "@/components/ExerciseVideo";
 import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
-import { fetchActiveProgram, fetchSessions, fromISO, isoWeekday, normKey, repText, toISO, weekOf } from "@/lib/titan";
+import { supabase } from "@/integrations/supabase/client";
+import { fetchActiveProgram, fetchSessions, formatDone, fromISO, isoWeekday, normKey, repText, toISO, weekOf } from "@/lib/titan";
 
 export const Route = createFileRoute("/_authenticated/training")({
   validateSearch: z.object({ date: z.string().optional() }),
@@ -50,6 +51,24 @@ function TrainingPage() {
   const day = p?.program_days?.find((d) => d.weekday === isoWeekday(sel));
   const session = (sessions.data ?? []).find((s) => s.session_date === selected && s.program_day_id === day?.id);
   const week = p ? weekOf(p.start_date, sel) : 0;
+
+  // Completed sets for the selected day's session, to mark exercises done like TrainHeroic.
+  const dayLogs = useQuery({
+    queryKey: ["day-logs", session?.id],
+    enabled: !!session?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("set_logs")
+        .select("exercise_key, set_number, reps, weight_kg")
+        .eq("session_id", session!.id)
+        .eq("completed", true)
+        .order("set_number");
+      if (error) throw error;
+      const byKey: Record<string, { reps: number | null; weight_kg: number | null }[]> = {};
+      for (const r of data) (byKey[r.exercise_key] ??= []).push({ reps: r.reps, weight_kg: r.weight_kg });
+      return byKey;
+    },
+  });
 
   const touchX = useRef<number | null>(null);
 
@@ -180,6 +199,9 @@ function TrainingPage() {
             {day.program_exercises.map((e, i) => {
               const showSection = i === 0 || day.program_exercises[i - 1]?.section !== e.section;
               const demo = media.data?.[normKey(e.name)];
+              const done = dayLogs.data?.[normKey(e.name)] ?? [];
+              const target = e.duration_seconds ? 1 : e.sets;
+              const status = done.length === 0 ? "none" : done.length >= target ? "done" : "partial";
               return (
                 <li key={e.id}>
                   {showSection && <div className="pb-2 pt-4 text-xs font-bold tracking-widest text-muted-foreground">{e.section}</div>}
@@ -190,12 +212,27 @@ function TrainingPage() {
                     search={{ date: selected, ex: i }}
                     className="flex min-w-0 flex-1 items-center gap-4 rounded-xl px-3 py-3 transition active:scale-[0.98] active:bg-card"
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-primary text-sm font-bold">
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                        status === "done"
+                          ? "bg-success text-success-foreground"
+                          : status === "partial"
+                            ? "bg-partial text-primary-foreground"
+                            : "border-2 border-primary"
+                      }`}
+                    >
                       {e.letter}
                     </span>
                     <div className="min-w-0">
                       <div className="font-semibold">{e.name}</div>
-                      <div className="text-sm font-semibold text-primary">{repText(e)}</div>
+                      {status === "none" ? (
+                        <div className="text-sm font-semibold text-primary">{repText(e)}</div>
+                      ) : (
+                        <>
+                          {status === "partial" && <div className="text-sm text-muted-foreground line-through">{repText(e)}</div>}
+                          <div className="text-sm font-bold text-foreground">{formatDone(done)}</div>
+                        </>
+                      )}
                     </div>
                     <ChevronRight className="ml-auto h-5 w-5 shrink-0 text-muted-foreground" />
                   </Link>
