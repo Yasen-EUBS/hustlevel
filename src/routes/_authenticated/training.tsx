@@ -47,7 +47,7 @@ function TrainingPage() {
   const sessionDates = useMemo(() => new Set((sessions.data ?? []).map((s) => s.session_date)), [sessions.data]);
 
   const p = program.data;
-  const day = p?.program_days.find((d) => d.weekday === isoWeekday(sel));
+  const day = p?.program_days?.find((d) => d.weekday === isoWeekday(sel));
   const session = (sessions.data ?? []).find((s) => s.session_date === selected && s.program_day_id === day?.id);
   const week = p ? weekOf(p.start_date, sel) : 0;
 

@@ -1,3 +1,4 @@
+import { fetchActiveProgram } from "@/lib/titan";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -28,11 +29,9 @@ function MePage() {
     queryKey: ["profile", user.id],
     queryFn: async () => (await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle()).data,
   });
-  const program = useQuery({
-    queryKey: ["program"],
-    queryFn: async () =>
-      (await supabase.from("programs").select("guide_url").eq("is_active", true).limit(1).maybeSingle()).data,
-  });
+  // Same key and fetcher as Training/session: sharing ["program"] with a partial
+  // select overwrote the cached program and crashed Training (no program_days).
+  const program = useQuery({ queryKey: ["program"], queryFn: fetchActiveProgram });
   const [name, setName] = useState("");
   useEffect(() => {
     setName(profile.data?.display_name ?? "");

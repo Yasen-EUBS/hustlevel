@@ -54,7 +54,7 @@ function SessionPage() {
   const program = useQuery({ queryKey: ["program"], queryFn: fetchActiveProgram });
   const media = useExerciseMedia();
   const [playing, setPlaying] = useState<ExerciseMedia | null>(null);
-  const day = program.data?.program_days.find((d) => d.id === dayId);
+  const day = program.data?.program_days?.find((d) => d.id === dayId);
   const exercises = (day?.program_exercises ?? []) as ProgramExercise[];
   const keys = useMemo(() => exercises.map((e) => normKey(e.name)), [exercises]);
 
