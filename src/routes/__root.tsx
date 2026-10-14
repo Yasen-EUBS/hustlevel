@@ -29,22 +29,42 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: ErrorComponentProps) {
+// Old JS chunks disappear after each publish; a long-lived home-screen app can
+// then fail to load a page it hasn't opened yet. Safari reports this as
+// "Importing a module script failed".
+const STALE_CHUNK =
+  /dynamically imported module|Importing a module script failed|error loading dynamically imported module|ChunkLoadError|Unable to preload CSS/i;
+
+function reloadOnce(): boolean {
+  try {
+    const last = Number(sessionStorage.getItem("nss_reload_at") ?? 0);
+    if (Date.now() - last < 15_000) return false; // avoid reload loops
+    sessionStorage.setItem("nss_reload_at", String(Date.now()));
+  } catch {
+    // storage unavailable: still reload once
+  }
+  window.location.reload();
+  return true;
+}
+
+function ErrorComponent({ error }: ErrorComponentProps) {
   console.error(error);
-  const router = useRouter();
+  const stale = STALE_CHUNK.test(String((error as Error)?.message ?? error));
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
+    if (stale) reloadOnce();
+  }, [error, stale]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold text-foreground">This page didn't load</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Something went wrong. Try again.</p>
+        <h1 className="text-xl font-semibold text-foreground">
+          {stale ? "Updating NSS…" : "This page didn't load"}
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {stale ? "A new version is available. Reloading." : "Check your connection, then try again."}
+        </p>
         <button
-          onClick={() => {
-            router.invalidate();
-            reset();
-          }}
+          onClick={() => window.location.reload()}
           className="mt-6 rounded-full bg-primary px-5 py-3 font-semibold text-primary-foreground"
         >
           Try again
@@ -105,6 +125,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  useEffect(() => {
+    const onPreloadError = (e: Event) => {
+      if (reloadOnce()) e.preventDefault();
+    };
+    window.addEventListener("vite:preloadError", onPreloadError);
+    return () => window.removeEventListener("vite:preloadError", onPreloadError);
+  }, []);
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
