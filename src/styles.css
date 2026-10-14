@@ -32,7 +32,7 @@
   --color-success-foreground: var(--success-foreground);
   --color-surface: var(--surface);
   --color-medal-gold: oklch(0.82 0.15 85);
-  --color-partial: oklch(0.86 0.17 92);
+  --color-partial: #FBBF24; /* amber: exercise partly done */
   --color-medal-silver: oklch(0.8 0.01 270);
   --color-medal-bronze: oklch(0.66 0.11 55);
   --color-border: var(--border);
@@ -64,7 +64,7 @@
   --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.64 0.21 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --success: oklch(0.74 0.19 150);
+  --success: #2DD4BF; /* teal: completed sets/exercises, pairs with the periwinkle accent */
   --success-foreground: oklch(0.12 0.005 270);
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 12%);
