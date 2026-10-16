@@ -1,9 +1,9 @@
 import { fetchActiveProgram } from "@/lib/titan";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { BookOpen, ExternalLink } from "lucide-react";
+import { BookOpen, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageTitle, TabShell } from "@/components/TabShell";
 import { Switch } from "@/components/ui/switch";
@@ -81,18 +81,13 @@ function MePage() {
           <p className="text-sm text-muted-foreground">All weights are logged and shown in kg.</p>
         </div>
         {program.data?.guide_url && (
-          <a
-            href={program.data.guide_url}
-            target="_blank"
-            rel="noopener"
-            className="flex h-14 items-center justify-between gap-3 rounded-2xl bg-card px-4"
-          >
+          <Link to="/guide/read" className="flex h-14 items-center justify-between gap-3 rounded-2xl bg-card px-4">
             <span className="flex items-center gap-3">
               <BookOpen className="h-5 w-5 text-primary" />
               <span className="font-semibold">Training guide</span>
             </span>
-            <ExternalLink className="h-4 w-4 text-muted-foreground" />
-          </a>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </Link>
         )}
         <button onClick={() => supabase.auth.signOut()} className="mt-4 h-14 w-full rounded-full border border-destructive font-bold text-destructive">
           Sign out

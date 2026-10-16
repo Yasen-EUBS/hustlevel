@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useCanGoBack, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Children, isValidElement, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
@@ -48,6 +48,10 @@ const slug = (s: string) =>
 
 function GuideReader() {
   const navigate = useNavigate();
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
+  // Return to wherever the guide was opened from (Training, Me or the Guide tab).
+  const goBack = () => (canGoBack ? router.history.back() : navigate({ to: "/guide" }));
   const program = useQuery({ queryKey: ["program"], queryFn: fetchActiveProgram });
   const pdfUrl = program.data?.guide_url;
   const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
@@ -58,11 +62,7 @@ function GuideReader() {
   return (
     <div className="mx-auto min-h-[100dvh] max-w-lg bg-background pb-safe">
       <header className="sticky top-0 z-10 flex items-center gap-2 border-b bg-background/95 px-2 pb-2 pt-safe backdrop-blur">
-        <button
-          aria-label="Back to guide"
-          onClick={() => navigate({ to: "/guide" })}
-          className="p-2"
-        >
+        <button aria-label="Back" onClick={goBack} className="p-2">
           <ChevronLeft className="h-7 w-7" />
         </button>
         <h1 className="flex-1 truncate font-display text-xl font-extrabold uppercase">
