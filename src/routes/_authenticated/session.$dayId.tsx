@@ -345,15 +345,16 @@ function SessionPage() {
             );
           })}
         </div>
-        <div className="text-right text-[11px] font-bold leading-tight text-muted-foreground">
-          <div>
-            <span className="text-foreground">{totals.reps}</span> REPS
-          </div>
-          <div>
-            <span className="text-foreground">{totals.vol}</span> KG
-          </div>
-        </div>
+        <SessionClock startedAt={session.data?.started_at} completedAt={session.data?.completed_at} />
       </header>
+      <div className="flex justify-center gap-6 pb-2 font-display text-lg font-extrabold">
+        <span>
+          {totals.reps} <span className="text-sm text-muted-foreground">REPS</span>
+        </span>
+        <span>
+          {totals.vol.toLocaleString("en-US")} <span className="text-sm text-muted-foreground">KG</span>
+        </span>
+      </div>
 
       <main className="flex-1 overflow-y-auto px-5 pb-36">
         {ex ? (
@@ -580,3 +581,26 @@ function CardioBlock({ seconds, done, onToggle }: { seconds: number; done: boole
   );
 }
 
+
+/** Elapsed workout time, TrainHeroic style (top right). Wall-clock based, so it stays right after the phone locks. */
+function SessionClock({ startedAt, completedAt }: { startedAt: string | null | undefined; completedAt: string | null | undefined }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (completedAt) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [completedAt]);
+  if (!startedAt) return <div className="w-20" />;
+  const end = completedAt ? new Date(completedAt).getTime() : now;
+  const secs = Math.max(0, Math.floor((end - new Date(startedAt).getTime()) / 1000));
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const sec = secs % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const text = h > 0 ? `${h}:${pad(m)}:${pad(sec)}` : `${m}:${pad(sec)}`;
+  return (
+    <div aria-label="Session time" className="w-20 text-right font-display text-xl font-bold tabular-nums text-primary">
+      {text}
+    </div>
+  );
+}
