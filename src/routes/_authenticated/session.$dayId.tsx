@@ -40,7 +40,7 @@ export const Route = createFileRoute("/_authenticated/session/$dayId")({
   component: SessionPage,
 });
 
-type Row = { reps: string; kg: string; done: boolean };
+type Row = { reps: string; kg: string; done: boolean; suggestedKg?: string | undefined };
 type HistSet = { exercise_key: string; reps: number | null; weight_kg: number | null; set_number: number; session_id: string; date: string; started: string };
 
 function SessionPage() {
@@ -151,7 +151,8 @@ function SessionPage() {
         const m = mine.find((x) => x.set_number === i + 1);
         if (m) return { reps: m.reps?.toString() ?? "", kg: m.weight_kg?.toString() ?? "", done: m.completed };
         const prev = last[i] ?? last[last.length - 1];
-        return { reps: "", kg: prev?.weight_kg != null ? String(prev.weight_kg) : "", done: false };
+        const kg = prev?.weight_kg != null ? String(prev.weight_kg) : "";
+        return { reps: "", kg, done: false, suggestedKg: kg || undefined };
       });
     });
     setRows(init);
@@ -206,6 +207,36 @@ function SessionPage() {
     });
   }
 
+  // Tapping an auto-filled weight clears it so the new weight can be typed straight away.
+  function focusKg(k: string, i: number) {
+    setRows((r) => {
+      const row = r?.[k]?.[i];
+      if (!r || !row || row.done || !row.suggestedKg || row.kg !== row.suggestedKg) return r;
+      const list = [...r[k]!];
+      list[i] = { ...row, kg: "" };
+      return { ...r, [k]: list };
+    });
+  }
+  // Leaving the field empty brings the suggested weight back.
+  function blurKg(k: string, i: number) {
+    setRows((r) => {
+      const row = r?.[k]?.[i];
+      if (!r || !row || row.kg !== "" || !row.suggestedKg) return r;
+      const list = [...r[k]!];
+      list[i] = { ...row, kg: row.suggestedKg };
+      return { ...r, [k]: list };
+    });
+  }
+  function carryWeightForward(k: string, i: number, kg: string) {
+    setRows((r) => {
+      if (!r) return r;
+      const list = (r[k] ?? []).map((row, j) =>
+        j > i && !row.done && (row.kg === "" || row.kg === row.suggestedKg) ? { ...row, kg, suggestedKg: kg } : row,
+      );
+      return { ...r, [k]: list };
+    });
+  }
+
   function toggleSet(e: ProgramExercise, i: number) {
     unlockAudio();
     const k = normKey(e.name);
@@ -215,6 +246,7 @@ function SessionPage() {
     if (next.done && !Object.values(rows!).some((list) => list.some((r) => r.done))) startClock();
     if (next.done && !e.duration_seconds && next.reps === "") next.reps = String(e.rep_min ?? "");
     updateRow(e, i, next);
+    if (next.done && next.kg !== "") carryWeightForward(k, i, next.kg);
     persist(e, i, next);
     const running = timers.get().timer;
     if (next.done && !e.duration_seconds && (!running || running.type === "rest")) timers.startRest(e.rest_min_seconds, e.rest_max_seconds);
@@ -226,7 +258,7 @@ function SessionPage() {
       if (!r) return r;
       const list = r[k] ?? [];
       const last = list[list.length - 1];
-      return { ...r, [k]: [...list, { reps: "", kg: last?.kg ?? "", done: false }] };
+      return { ...r, [k]: [...list, { reps: "", kg: last?.kg ?? "", done: false, suggestedKg: last?.kg || undefined }] };
     });
   }
   async function removeSet(e: ProgramExercise) {
@@ -456,10 +488,14 @@ function SessionPage() {
                       />
                       <input
                         inputMode="decimal"
-                        placeholder="kg"
+                        placeholder={r.suggestedKg ?? "kg"}
                         value={r.kg}
+                        onFocus={() => focusKg(k, i)}
                         onChange={(e) => updateRow(ex, i, { kg: e.target.value.replace(/[^0-9.,]/g, "") })}
-                        onBlur={() => r.done && persist(ex, i, (rows![k] ?? [])[i]!)}
+                        onBlur={() => {
+                          blurKg(k, i);
+                          if (r.done) persist(ex, i, (rows![k] ?? [])[i]!);
+                        }}
                         className="h-14 w-full rounded-xl bg-card text-center text-lg font-bold outline-none ring-primary placeholder:font-medium placeholder:text-muted-foreground focus:ring-2"
                       />
                       <button
