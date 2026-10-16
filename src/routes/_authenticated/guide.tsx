@@ -1,11 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { BookOpen, ChevronLeft, ExternalLink, SendHorizontal } from "lucide-react";
+import { BookOpen, ChevronLeft, ChevronRight, SendHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchActiveProgram } from "@/lib/titan";
 
 export const Route = createFileRoute("/_authenticated/guide")({
   head: () => ({
@@ -50,7 +48,6 @@ function useVisualViewport() {
 function GuidePage() {
   const navigate = useNavigate();
   const vp = useVisualViewport();
-  const program = useQuery({ queryKey: ["program"], queryFn: fetchActiveProgram });
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
@@ -120,7 +117,6 @@ function GuidePage() {
     }
   }
 
-  const guideUrl = program.data?.guide_url;
   const waiting = busy && msgs.at(-1)?.role !== "assistant";
 
   return (
@@ -145,13 +141,11 @@ function GuidePage() {
       </header>
 
       <div ref={scroller} className="flex-1 overflow-y-auto px-3 py-3">
-        {guideUrl && (
-          <a href={guideUrl} target="_blank" rel="noopener" className="flex items-center gap-3 rounded-2xl bg-card p-4 font-semibold">
-            <BookOpen className="h-6 w-6 text-primary" />
-            <span className="flex-1">Open full guide (PDF)</span>
-            <ExternalLink className="h-5 w-5 text-muted-foreground" />
-          </a>
-        )}
+        <Link to="/guide/read" className="flex items-center gap-3 rounded-2xl bg-card p-4 font-semibold active:opacity-80">
+          <BookOpen className="h-6 w-6 text-primary" />
+          <span className="flex-1">Read full guide</span>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </Link>
         <h2 className="px-1 pb-2 pt-5 text-xs font-bold tracking-widest text-muted-foreground">ASK THE GUIDE</h2>
         {msgs.length === 0 && (
           <div className="flex flex-wrap gap-2 px-1">

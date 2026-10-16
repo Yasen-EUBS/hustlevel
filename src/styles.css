@@ -101,3 +101,9 @@
 .guide-md strong { font-weight: 700; }
 .guide-md table { display: block; overflow-x: auto; border-collapse: collapse; font-size: 0.8125rem; }
 .guide-md th, .guide-md td { border: 1px solid var(--border); padding: 0.25rem 0.5rem; text-align: left; }
+.guide-doc h2 { margin-top: 1.75rem; font-family: var(--font-display, inherit); font-size: 1.375rem; font-weight: 800; text-transform: uppercase; line-height: 1.2; }
+.guide-doc h3 { margin-top: 1.25rem; font-size: 1.0625rem; font-weight: 700; color: var(--primary); }
+.guide-doc h2 + p, .guide-doc h3 + p, .guide-doc h2 + ul, .guide-doc h3 + ul, .guide-doc h3 + table, .guide-doc h2 + table { margin-top: 0.5rem; }
+.guide-doc p, .guide-doc ul, .guide-doc ol, .guide-doc table { margin-top: 0.75rem; }
+.guide-doc li + li { margin-top: 0.25rem; }
+.guide-doc table { font-size: 0.875rem; }
