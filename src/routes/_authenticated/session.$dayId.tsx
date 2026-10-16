@@ -197,11 +197,22 @@ function SessionPage() {
     });
   }
 
+  function startClock() {
+    if (!sessionId) return;
+    const now = new Date().toISOString();
+    qc.setQueryData(["session", dayId, date], (prev: typeof session.data) => (prev ? { ...prev, started_at: now } : prev));
+    void supabase.from("workout_sessions").update({ started_at: now }).eq("id", sessionId).then(({ error }) => {
+      if (!error) qc.invalidateQueries({ queryKey: ["sessions"] });
+    });
+  }
+
   function toggleSet(e: ProgramExercise, i: number) {
     unlockAudio();
     const k = normKey(e.name);
     const row = (rows![k] ?? [])[i]!;
     let next = { ...row, done: !row.done };
+    // Start the session clock on the first ticked set of the session (not when the session was opened).
+    if (next.done && !Object.values(rows!).some((list) => list.some((r) => r.done))) startClock();
     if (next.done && !e.duration_seconds && next.reps === "") next.reps = String(e.rep_min ?? "");
     updateRow(e, i, next);
     persist(e, i, next);
@@ -345,7 +356,11 @@ function SessionPage() {
             );
           })}
         </div>
-        <SessionClock startedAt={session.data?.started_at} completedAt={session.data?.completed_at} />
+        <SessionClock
+          startedAt={session.data?.started_at}
+          completedAt={session.data?.completed_at}
+          running={Object.values(rows).some((list) => list.some((r) => r.done))}
+        />
       </header>
       <div className="flex justify-center gap-6 pb-2 font-display text-lg font-extrabold">
         <span>
@@ -583,14 +598,30 @@ function CardioBlock({ seconds, done, onToggle }: { seconds: number; done: boole
 
 
 /** Elapsed workout time, TrainHeroic style (top right). Wall-clock based, so it stays right after the phone locks. */
-function SessionClock({ startedAt, completedAt }: { startedAt: string | null | undefined; completedAt: string | null | undefined }) {
+function SessionClock({
+  startedAt,
+  completedAt,
+  running,
+}: {
+  startedAt: string | null | undefined;
+  completedAt: string | null | undefined;
+  running: boolean;
+}) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    if (completedAt) return;
+    if (completedAt || !running) return;
+    setNow(Date.now());
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
-  }, [completedAt]);
+  }, [completedAt, running]);
   if (!startedAt) return <div className="w-20" />;
+  // Before the first set is ticked the clock waits at 0:00.
+  if (!running && !completedAt)
+    return (
+      <div aria-label="Session time" className="w-20 text-right font-display text-xl font-bold tabular-nums text-muted-foreground">
+        0:00
+      </div>
+    );
   const end = completedAt ? new Date(completedAt).getTime() : now;
   const secs = Math.max(0, Math.floor((end - new Date(startedAt).getTime()) / 1000));
   const h = Math.floor(secs / 3600);
