@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Check, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Friends } from "@/components/Friends";
+import { DurationEditor, fromDurationParts, toDurationParts } from "@/components/DurationEditor";
 import { ExerciseVideoSheet, ExerciseVideoTile } from "@/components/ExerciseVideo";
 import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
 import { SelectTimerButton, TimerSheet } from "@/components/Timers";
@@ -305,7 +306,7 @@ function SessionPage() {
   }, [rows, exercises, stats]);
 
   const [finishing, setFinishing] = useState(false);
-  async function postWorkout() {
+  async function postWorkout(durationSec: number) {
     if (!sessionId) return;
     try {
       const { data: prof } = await supabase.from("profiles").select("share_workouts").eq("id", user.id).maybeSingle();
@@ -313,7 +314,7 @@ function SessionPage() {
       const started = session.data?.started_at ? new Date(session.data.started_at).getTime() : Date.now();
       const body: WorkoutPost = {
         title: [day?.title, program.data?.block_name].filter(Boolean).join(" - "),
-        duration_sec: Math.max(0, Math.round((Date.now() - started) / 1000)),
+        duration_sec: durationSec > 0 ? durationSec : Math.max(0, Math.round((Date.now() - started) / 1000)),
         reps: totals.reps,
         volume: totals.vol,
         prs: prs.map((p) => ({ name: p.name, kg: p.best })),
@@ -334,14 +335,28 @@ function SessionPage() {
   async function finish() {
     if (!sessionId) return;
     setFinishing(true);
-    const { error } = await supabase.from("workout_sessions").update({ completed_at: new Date().toISOString() }).eq("id", sessionId);
+    const now = Date.now();
+    const durationSec = duration ? fromDurationParts(duration) : 0;
+    const patch: { completed_at: string; started_at?: string } = { completed_at: new Date(now).toISOString() };
+    // An edited duration is stored by moving the start time back from the finish time.
+    if (durationSec > 0) patch.started_at = new Date(now - durationSec * 1000).toISOString();
+    const { error } = await supabase.from("workout_sessions").update(patch).eq("id", sessionId);
     setFinishing(false);
     if (error) { toast.error(error.message); return; }
-    await postWorkout();
+    await postWorkout(durationSec);
     qc.invalidateQueries();
     toast.success("Session saved");
     navigate({ to: "/history/$sessionId", params: { sessionId } });
   }
+
+  const [duration, setDuration] = useState<{ hours: string; minutes: string } | null>(null);
+  const onSummary = rows != null && idx === total;
+  useEffect(() => {
+    if (!onSummary || duration) return;
+    const started = session.data?.started_at ? new Date(session.data.started_at).getTime() : Date.now();
+    const anyDone = Object.values(rows ?? {}).some((list) => list.some((r) => r.done));
+    setDuration(toDurationParts(anyDone ? (Date.now() - started) / 1000 : 0));
+  }, [onSummary, duration, rows, session.data?.started_at]);
 
   const touchX = useRef<number | null>(null);
   const go = (d: number) => setIdx((i) => Math.min(total, Math.max(0, i + d)));
@@ -542,6 +557,13 @@ function SessionPage() {
                 <div className="text-[11px] font-bold tracking-widest text-muted-foreground">VOLUME</div>
                 <div className="mt-1 text-3xl font-bold">{totals.vol} kg</div>
               </div>
+            </div>
+            <div className="mt-3 flex items-center justify-between rounded-2xl bg-card p-4">
+              <div>
+                <div className="text-[11px] font-bold tracking-widest text-muted-foreground">DURATION</div>
+                <div className="mt-1 text-sm text-muted-foreground">Tap to adjust</div>
+              </div>
+              {duration && <DurationEditor hours={duration.hours} minutes={duration.minutes} onChange={setDuration} />}
             </div>
             {prs.length > 0 && (
               <div className="mt-6">

@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
+import { DurationEditor, formatDuration, fromDurationParts, toDurationParts } from "@/components/DurationEditor";
 import { format } from "date-fns";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Pencil } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtKg, fromISO } from "@/lib/titan";
 
@@ -21,6 +24,7 @@ export const Route = createFileRoute("/_authenticated/history/$sessionId")({
 
 function SessionDetail() {
   const { sessionId } = Route.useParams();
+  const { user } = Route.useRouteContext();
   const q = useQuery({
     queryKey: ["session-detail", sessionId],
     queryFn: async () => {
@@ -53,6 +57,14 @@ function SessionDetail() {
           <div className="text-sm text-muted-foreground">{format(fromISO(q.data.session.session_date), "EEEE, d MMM yyyy")}</div>
           <h1 className="font-display text-3xl font-extrabold uppercase">{q.data.session.day_title}</h1>
           <div className="mt-1 text-sm font-semibold text-primary">{Math.round(vol)} kg total volume</div>
+          {q.data.session.completed_at && (
+            <DurationRow
+              sessionId={sessionId}
+              startedAt={q.data.session.started_at}
+              completedAt={q.data.session.completed_at}
+              editable={q.data.session.user_id === user.id}
+            />
+          )}
           <div className="mt-6 space-y-4 pb-8">
             {groups.map((g) => {
               const note = q.data!.notes.find((n) => n.exercise_key === g.key)?.note;
@@ -73,6 +85,78 @@ function SessionDetail() {
             })}
           </div>
         </>
+      )}
+    </div>
+  );
+}
+
+function DurationRow({
+  sessionId,
+  startedAt,
+  completedAt,
+  editable,
+}: {
+  sessionId: string;
+  startedAt: string;
+  completedAt: string;
+  editable: boolean;
+}) {
+  const qc = useQueryClient();
+  const seconds = (new Date(completedAt).getTime() - new Date(startedAt).getTime()) / 1000;
+  const [draft, setDraft] = useState<{ hours: string; minutes: string } | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    if (!draft) return;
+    const secs = fromDurationParts(draft);
+    if (secs <= 0) {
+      toast.error("Duration must be at least 1 minute");
+      return;
+    }
+    setSaving(true);
+    // Duration = completed_at - started_at, so move the start time.
+    const started = new Date(new Date(completedAt).getTime() - secs * 1000).toISOString();
+    const { error } = await supabase.from("workout_sessions").update({ started_at: started }).eq("id", sessionId);
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setDraft(null);
+    qc.invalidateQueries({ queryKey: ["session-detail", sessionId] });
+    qc.invalidateQueries({ queryKey: ["history"] });
+    qc.invalidateQueries({ queryKey: ["sessions"] });
+    toast.success("Duration updated");
+  }
+
+  if (draft) {
+    return (
+      <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl bg-card p-4">
+        <DurationEditor hours={draft.hours} minutes={draft.minutes} onChange={setDraft} />
+        <div className="flex flex-col gap-2">
+          <button onClick={save} disabled={saving} className="h-10 rounded-full bg-primary px-5 font-bold text-primary-foreground disabled:opacity-60">
+            {saving ? "Saving…" : "Save"}
+          </button>
+          <button onClick={() => setDraft(null)} className="h-10 rounded-full px-5 font-semibold text-muted-foreground">
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+      <span>
+        Duration <b className="text-foreground">{formatDuration(seconds)}</b>
+      </span>
+      {editable && (
+        <button
+          aria-label="Edit duration"
+          onClick={() => setDraft(toDurationParts(seconds))}
+          className="flex h-8 items-center gap-1 rounded-full px-2 font-semibold text-primary"
+        >
+          <Pencil className="h-3.5 w-3.5" /> Edit
+        </button>
       )}
     </div>
   );
