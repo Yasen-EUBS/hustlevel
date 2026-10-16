@@ -60,9 +60,9 @@ export const Route = createFileRoute("/api/guide-chat")({
             "X-Lovable-AIG-SDK": "fetch",
           },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash",
+            model: "google/gemini-3.8-flash",
             stream: true,
-            max_tokens: 600,
+            max_completion_tokens: 600,
             messages: [{ role: "system", content: SYSTEM }, ...messages],
           }),
         });
