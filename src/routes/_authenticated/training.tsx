@@ -75,17 +75,24 @@ function TrainingPage() {
   return (
     <TabShell>
       <header className="flex items-center justify-between px-5 pb-3 pt-3">
-        <button onClick={() => setMonthOpen((o) => !o)} className="flex items-center gap-1 font-display text-3xl font-extrabold uppercase">
-          {format(sel, "MMM ''yy")}
-          <ChevronDown className="h-6 w-6 text-primary" />
-        </button>
+        <div className="flex items-baseline gap-3">
+          <button onClick={() => setMonthOpen((o) => !o)} className="flex items-center gap-1 font-display text-3xl font-extrabold uppercase">
+            {format(sel, "MMM ''yy")}
+            <ChevronDown className="h-6 w-6 text-primary" />
+          </button>
+          {selected !== today && (
+            <button onClick={() => setDate(new Date())} className="text-sm font-bold text-primary">
+              Today
+            </button>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <button onClick={() => timers.openSheet()} aria-label="Timers" className="flex items-center gap-1.5 rounded-full bg-card px-3 py-2 text-sm font-bold">
             <Timer className="h-4 w-4 text-primary" /> Timers
           </button>
-          <button onClick={() => setDate(new Date())} className="rounded-full border border-primary px-4 py-2 text-sm font-bold text-primary">
-            TODAY
-          </button>
+          <Link to="/guide" className="flex items-center gap-1.5 rounded-full bg-card px-3 py-2 text-sm font-bold">
+            <BookOpen className="h-4 w-4 text-primary" /> Guide
+          </Link>
         </div>
       </header>
       {monthOpen && (
