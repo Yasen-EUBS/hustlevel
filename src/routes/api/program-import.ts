@@ -6,7 +6,7 @@ const SYSTEM = `You convert screenshots of a strength-training program (from app
 Read every screenshot. One training day can span several screenshots: merge them in order and never duplicate an exercise.
 Reply with ONLY a JSON object in this shape:
 {
-  "name": string,                 // program name, e.g. "Titan Build – 3 Day"; if absent, a short descriptive name
+  "name": string,                 // program name, e.g. "Push Pull Legs – 4 Day"; if absent, a short descriptive name
   "block_name": string|null,      // phase or block, e.g. "Intensity Phase 1"
   "total_weeks": number|null,     // e.g. "Week 6/8" means 8
   "current_week": number|null,    // e.g. "Week 6/8" means 6
