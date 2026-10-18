@@ -401,6 +401,35 @@ export type Database = {
         }
         Relationships: []
       }
+      session_reviews: {
+        Row: {
+          created_at: string
+          session_id: string
+          summary: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          session_id: string
+          summary: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          session_id?: string
+          summary?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_reviews_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       set_logs: {
         Row: {
           completed: boolean
@@ -518,6 +547,7 @@ export type Database = {
           unread: number
         }[]
       }
+      shares_workouts: { Args: { uid: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
