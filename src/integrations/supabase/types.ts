@@ -64,19 +64,25 @@ export type Database = {
       exercise_media: {
         Row: {
           created_at: string
+          execution: string | null
           exercise_key: string
+          setup: string | null
           title: string | null
           youtube_id: string
         }
         Insert: {
           created_at?: string
+          execution?: string | null
           exercise_key: string
+          setup?: string | null
           title?: string | null
           youtube_id: string
         }
         Update: {
           created_at?: string
+          execution?: string | null
           exercise_key?: string
+          setup?: string | null
           title?: string | null
           youtube_id?: string
         }
