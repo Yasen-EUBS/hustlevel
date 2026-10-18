@@ -1,6 +1,6 @@
 name: Android release
 
-# Builds the NSS Android app (a Capacitor shell around https://nss-gym.lovable.app)
+# Builds the HustLevel Android app (a Capacitor shell around https://nss-gym.lovable.app)
 # and publishes it as NSS.apk on a GitHub Release.
 on:
   workflow_dispatch:
@@ -78,6 +78,6 @@ jobs:
         run: |
           TAG="v${NSS_VERSION_NAME}"
           gh release create "$TAG" NSS.apk \
-            --title "NSS for Android ${NSS_VERSION_NAME}" \
+            --title "HustLevel for Android ${NSS_VERSION_NAME}" \
             --notes "Download **NSS.apk** below and open it on your Android phone. If asked, allow installs from your browser. Updates to the app itself arrive automatically; you only need a new APK when this page says so." \
             --latest
