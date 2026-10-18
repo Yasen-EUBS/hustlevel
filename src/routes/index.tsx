@@ -5,10 +5,10 @@ export const Route = createFileRoute("/")({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { title: "NSS — Strength Training Logger" },
-      { name: "description", content: "Log every set of the Titan Build program and track your working max." },
-      { property: "og:title", content: "NSS — Strength Training Logger" },
-      { property: "og:description", content: "Log every set of the Titan Build program and track your working max." },
+      { title: "HustLevel — Strength Training Logger" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "HustLevel — Strength Training Logger" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
     ],
   }),
   beforeLoad: () => {

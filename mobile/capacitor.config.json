@@ -1,6 +1,6 @@
 {
   "appId": "com.yasen.nss",
-  "appName": "NSS",
+  "appName": "HustLevel",
   "webDir": "www",
   "server": {
     "url": "https://nss-gym.lovable.app",
@@ -14,21 +14,21 @@
       "i.ytimg.com"
     ]
   },
-  "backgroundColor": "#07080B",
+  "backgroundColor": "#0B0F14",
   "android": {
-    "backgroundColor": "#07080B",
+    "backgroundColor": "#0B0F14",
     "allowMixedContent": false
   },
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 800,
-      "backgroundColor": "#07080B",
+      "backgroundColor": "#0B0F14",
       "showSpinner": false,
       "androidScaleType": "CENTER_INSIDE"
     },
     "StatusBar": {
       "style": "DARK",
-      "backgroundColor": "#07080B",
+      "backgroundColor": "#0B0F14",
       "overlaysWebView": false
     }
   }

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Dumbbell, History, MessageCircle, TrendingUp, User } from "lucide-react";
+import { HustLevelLogo } from "@/components/HustLevelLogo";
 import type { ReactNode } from "react";
 import { MiniTimer, TimerSheet } from "@/components/Timers";
 import { InstallPrompt } from "@/components/InstallBanner";
@@ -56,5 +57,5 @@ export function TabShell({ children }: { children: ReactNode }) {
 }
 
 export function PageTitle({ children }: { children: ReactNode }) {
-  return <h1 className="px-5 pb-4 pt-3 font-display text-4xl font-extrabold uppercase tracking-tight">{children}</h1>;
+  return <div className="px-5 pb-4 pt-3"><HustLevelLogo className="mb-4 text-xl" /><h1 className="font-display text-4xl font-extrabold uppercase">{children}</h1></div>;
 }

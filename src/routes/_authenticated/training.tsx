@@ -1,4 +1,5 @@
-import nssLogo from "@/assets/nss-logo.png";
+import { rebrandText } from "@/lib/brand";
+import { HustLevelLogo, HustLevelMark } from "@/components/HustLevelLogo";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
@@ -19,10 +20,10 @@ export const Route = createFileRoute("/_authenticated/training")({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { title: "Training — NSS" },
-      { name: "description", content: "Today's workout from your Titan Build program." },
-      { property: "og:title", content: "Training — NSS" },
-      { property: "og:description", content: "Today's workout from your Titan Build program." },
+      { title: "Training — HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "Training — HustLevel" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
     ],
   }),
   component: TrainingPage,
@@ -74,7 +75,8 @@ function TrainingPage() {
 
   return (
     <TabShell>
-      <header className="flex items-center justify-between px-5 pb-3 pt-3">
+      <div className="px-5 pb-2 pt-3"><HustLevelLogo className="text-2xl" /></div>
+      <header className="flex flex-wrap items-center justify-between gap-y-2 px-5 pb-3 pt-3">
         <div className="flex items-baseline gap-3">
           <button onClick={() => setMonthOpen((o) => !o)} className="flex items-center gap-1 font-display text-3xl font-extrabold uppercase">
             {format(sel, "MMM ''yy")}
@@ -148,9 +150,9 @@ function TrainingPage() {
       ) : (
         <div className="px-5">
           <div className="flex items-center gap-3">
-            <img src={nssLogo} alt="NSS logo" loading="lazy" width={56} height={56} className="h-14 w-14 rounded-xl" />
+            <HustLevelMark className="h-14 w-14" />
             <div className="min-w-0">
-              <div className="truncate text-sm text-muted-foreground">{p.name}</div>
+              <div className="truncate text-sm text-muted-foreground">{rebrandText(p.name)}</div>
               <div className="font-display text-2xl font-bold uppercase leading-tight">{day.title}</div>
             </div>
           </div>
@@ -186,8 +188,8 @@ function TrainingPage() {
                     This is week {week}/{p.total_weeks} – {p.block_name}
                   </p>
                 )}
-                {day.day_notes && <p className="text-foreground">{day.day_notes}</p>}
-                {p.coach_notes && <p className="whitespace-pre-line">{p.coach_notes}</p>}
+                {day.day_notes && <p className="text-foreground">{rebrandText(day.day_notes)}</p>}
+                {p.coach_notes && <p className="whitespace-pre-line">{rebrandText(p.coach_notes)}</p>}
                 {p.guide_url && (
                   <Link
                     to="/guide/read"

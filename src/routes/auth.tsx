@@ -1,4 +1,5 @@
-import nssLogo from "@/assets/nss-logo.png";
+import { HustLevelLogo } from "@/components/HustLevelLogo";
+import { Button } from "@/components/ui/button";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -10,10 +11,10 @@ export const Route = createFileRoute("/auth")({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { title: "Sign in — NSS" },
-      { name: "description", content: "Sign in or create your NSS account." },
-      { property: "og:title", content: "Sign in — NSS" },
-      { property: "og:description", content: "Sign in or create your NSS account." },
+      { title: "Sign in — HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "Sign in — HustLevel" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
     ],
   }),
   component: AuthPage,
@@ -48,25 +49,24 @@ function AuthPage() {
     navigate({ to: "/training" });
   }
 
-  const field = "h-14 w-full rounded-xl bg-card px-4 text-base text-foreground placeholder:text-muted-foreground outline-none ring-primary focus:ring-2";
+  const field = "h-14 w-full rounded-xl bg-input px-4 text-base text-foreground placeholder:text-muted-foreground outline-none ring-primary focus:ring-2";
 
   return (
     <div className="flex min-h-[100dvh] flex-col justify-center px-6 pt-safe pb-safe">
-      <img src={nssLogo} alt="NSS logo" width={72} height={72} className="mb-6 rounded-2xl" />
-      <h1 className="font-display text-5xl font-extrabold uppercase tracking-tight">NSS</h1>
+      <h1><HustLevelLogo className="text-4xl sm:text-5xl" /></h1>
       <p className="mt-2 text-muted-foreground">{mode === "in" ? "Welcome back. Time to lift." : "Create your account."}</p>
       <form onSubmit={submit} className="mt-8 space-y-3">
         {mode === "up" && <input className={field} placeholder="Display name" required maxLength={40} value={name} onChange={(e) => setName(e.target.value)} />}
         <input className={field} type="email" autoComplete="email" placeholder="Email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         <input className={field} type="password" autoComplete={mode === "in" ? "current-password" : "new-password"} placeholder="Password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button disabled={busy} className="h-14 w-full rounded-full bg-primary text-lg font-bold text-primary-foreground disabled:opacity-60">
+        <Button disabled={busy} className="h-14 w-full rounded-full bg-primary text-lg font-bold text-primary-foreground disabled:opacity-60">
           {busy ? "…" : mode === "in" ? "Log in" : "Sign up"}
-        </button>
+        </Button>
       </form>
-      <button onClick={() => setMode(mode === "in" ? "up" : "in")} className="mt-6 py-3 text-center text-sm text-muted-foreground">
+      <Button variant="ghost" onClick={() => setMode(mode === "in" ? "up" : "in")} className="mt-6 py-3 text-center text-sm text-muted-foreground">
         {mode === "in" ? "No account? " : "Have an account? "}
         <span className="font-semibold text-primary">{mode === "in" ? "Sign up" : "Log in"}</span>
-      </button>
+      </Button>
       <InstallPrompt variant="card" />
     </div>
   );

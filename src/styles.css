@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Barlow", system-ui, sans-serif;
-  --font-display: "Barlow Condensed", "Barlow", sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Inter", system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -19,6 +19,7 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-secondary-accent: var(--secondary-accent);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -47,31 +48,34 @@
 
 :root {
   --radius: 0.75rem;
-  --background: oklch(0.12 0.005 270);
-  --foreground: oklch(0.98 0 0);
-  --card: oklch(0.18 0.008 270);
-  --card-foreground: oklch(0.98 0 0);
-  --surface: oklch(0.23 0.01 270);
-  --popover: oklch(0.2 0.008 270);
-  --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.67 0.15 270);
-  --primary-foreground: oklch(0.12 0.005 270);
-  --secondary: oklch(0.25 0.01 270);
-  --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.22 0.008 270);
-  --muted-foreground: oklch(0.65 0.015 270);
-  --accent: oklch(0.28 0.04 270);
-  --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.64 0.21 25);
-  --destructive-foreground: oklch(0.98 0 0);
-  --success: #2DD4BF; /* teal: completed sets/exercises, pairs with the periwinkle accent */
-  --success-foreground: oklch(0.12 0.005 270);
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.67 0.15 270);
-  --chart-1: oklch(0.67 0.15 270);
-  --chart-2: oklch(0.74 0.19 150);
-  --chart-3: oklch(0.8 0.15 80);
+  --background: #0B0F14;
+  --foreground: #E6EAF0;
+  --card: #121821;
+  --card-foreground: var(--foreground);
+  --surface: #121821;
+  --popover: #1A222D;
+  --popover-foreground: var(--foreground);
+  --primary: #C6FF3D;
+  --primary-foreground: var(--background);
+  --secondary-accent: #5F7D22;
+  --secondary: #1A222D;
+  --secondary-foreground: var(--foreground);
+  --muted: #1A222D;
+  --muted-foreground: #8A95A5;
+  --accent: #1A222D;
+  --accent-foreground: var(--foreground);
+  --destructive: #FF4D4F;
+  --destructive-foreground: var(--background);
+  --success: var(--primary);
+  --success-foreground: var(--background);
+  --border: #263040;
+  --input: #1A222D;
+  --ring: var(--primary);
+  --chart-1: var(--primary);
+  --chart-2: var(--secondary-accent);
+  --chart-3: var(--primary);
+  --chart-4: var(--muted-foreground);
+  --chart-5: var(--foreground);
 }
 
 @layer base {
@@ -107,3 +111,5 @@
 .guide-doc p, .guide-doc ul, .guide-doc ol, .guide-doc table { margin-top: 0.75rem; }
 .guide-doc li + li { margin-top: 0.25rem; }
 .guide-doc table { font-size: 0.875rem; }
+
+.hustlevel-logo { font-family: var(--font-sans); letter-spacing: -0.025em; }

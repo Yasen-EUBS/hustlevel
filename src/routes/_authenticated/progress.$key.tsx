@@ -14,10 +14,10 @@ export const Route = createFileRoute("/_authenticated/progress/$key")({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { title: "Exercise progress — NSS" },
-      { name: "description", content: "Charts and every logged set for one exercise." },
-      { property: "og:title", content: "Exercise progress — NSS" },
-      { property: "og:description", content: "Charts and every logged set for one exercise." },
+      { title: "Exercise progress — HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "Exercise progress — HustLevel" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
     ],
   }),
   component: ExerciseProgress,
@@ -101,7 +101,7 @@ function ExerciseProgress() {
         <>
           {d.best && (
             <div className="mt-4 flex items-center gap-3 rounded-2xl bg-card p-4">
-              <Trophy className="h-6 w-6 text-chart-3" />
+              <Trophy className="h-6 w-6 text-primary" />
               <div className="flex-1">
                 <div className="text-[11px] font-bold tracking-widest text-muted-foreground">ALL-TIME BEST SET</div>
                 <div className="font-bold">
@@ -110,7 +110,7 @@ function ExerciseProgress() {
               </div>
               <div className="text-right">
                 <div className="text-[11px] font-bold tracking-widest text-muted-foreground">E1RM</div>
-                <div className="font-bold text-success">{d.best.e} kg</div>
+                <div className="font-bold text-primary">{d.best.e} kg</div>
               </div>
             </div>
           )}
@@ -180,7 +180,7 @@ function Leaderboard({ exerciseKey, me }: { exerciseKey: string; me: string }) {
           </div>
           <div className="text-right">
             <div className="text-[10px] font-bold tracking-widest text-muted-foreground">MAX</div>
-            <div className="font-bold text-success">{e.max} kg</div>
+            <div className="font-bold text-primary">{e.max} kg</div>
           </div>
         </li>
       ))}
