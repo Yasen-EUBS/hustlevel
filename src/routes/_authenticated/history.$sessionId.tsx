@@ -4,7 +4,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { DurationEditor, formatDuration, fromDurationParts, toDurationParts } from "@/components/DurationEditor";
 import { format } from "date-fns";
-import { ChevronLeft, Pencil } from "lucide-react";
+import { ChevronLeft, Pencil, RotateCw, Sparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import { fmtKg, fromISO } from "@/lib/titan";
 
@@ -64,6 +65,9 @@ function SessionDetail() {
               completedAt={q.data.session.completed_at}
               editable={q.data.session.user_id === user.id}
             />
+          )}
+          {q.data.session.user_id === user.id && q.data.session.completed_at && q.data.sets.some((x) => x.completed) && (
+            <CoachCard sessionId={sessionId} saved={q.data.session.coach_summary} completedAt={q.data.session.completed_at} />
           )}
           <div className="mt-6 space-y-4 pb-8">
             {groups.map((g) => {
@@ -159,5 +163,67 @@ function DurationRow({
         </button>
       )}
     </div>
+  );
+}
+
+/**
+ * AI review of the finished session. Generated once (server saves it), automatically for
+ * sessions finished in the last day, on request for older ones.
+ */
+function CoachCard({ sessionId, saved, completedAt }: { sessionId: string; saved: string | null; completedAt: string }) {
+  const qc = useQueryClient();
+  const recent = Date.now() - new Date(completedAt).getTime() < 86_400_000;
+  const [asked, setAsked] = useState(false);
+  const coach = useQuery({
+    queryKey: ["coach", sessionId],
+    enabled: !saved && (recent || asked),
+    staleTime: Infinity,
+    retry: false,
+    queryFn: async () => {
+      const { data } = await supabase.auth.getSession();
+      const res = await fetch("/api/coach-summary", {
+        method: "POST",
+        headers: { "content-type": "application/json", Authorization: `Bearer ${data.session?.access_token ?? ""}` },
+        body: JSON.stringify({ sessionId }),
+      });
+      const body = (await res.json().catch(() => null)) as { summary?: string; error?: string } | null;
+      if (!res.ok || !body?.summary) throw new Error(body?.error ?? "The coach couldn't review this session right now.");
+      qc.invalidateQueries({ queryKey: ["session-detail", sessionId] });
+      return body.summary;
+    },
+  });
+  const text = saved ?? coach.data;
+
+  return (
+    <section aria-label="Coach review" className="mt-5 rounded-2xl border border-primary/30 bg-card p-4">
+      <div className="flex items-center gap-2 text-[11px] font-bold tracking-widest text-primary">
+        <Sparkles className="h-3.5 w-3.5" /> COACH
+      </div>
+      {text ? (
+        <div className="guide-md mt-2 text-sm leading-relaxed">
+          <ReactMarkdown>{text}</ReactMarkdown>
+        </div>
+      ) : coach.isFetching ? (
+        <div className="mt-3 space-y-2" aria-label="Coach is reviewing your session">
+          <p className="text-sm text-muted-foreground">Reviewing your session…</p>
+          <div className="h-3 w-11/12 animate-pulse rounded bg-muted" />
+          <div className="h-3 w-3/4 animate-pulse rounded bg-muted" />
+        </div>
+      ) : coach.isError ? (
+        <div className="mt-2 flex items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">{coach.error.message}</p>
+          <button onClick={() => coach.refetch()} className="flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-primary">
+            <RotateCw className="h-3.5 w-3.5" /> Retry
+          </button>
+        </div>
+      ) : (
+        <div className="mt-2 flex items-center justify-between gap-3">
+          <p className="text-sm text-muted-foreground">Get a short review and what to change next time.</p>
+          <button onClick={() => setAsked(true)} className="h-9 shrink-0 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground">
+            Review
+          </button>
+        </div>
+      )}
+    </section>
   );
 }

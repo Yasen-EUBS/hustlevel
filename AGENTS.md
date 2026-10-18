@@ -10,7 +10,8 @@
 <!-- LOVABLE:END -->
 
 ## HustLevel architecture
-- Program content (programs/program_days/program_exercises) is read-only from the client and fully data-driven; never hard-code exercises in components.
+- Program content (programs/program_days/program_exercises) is read-only from the client and fully data-driven; new programs are created only through the validated SECURITY DEFINER `import_program` RPC (screenshot import). Each user follows `profiles.program_id` (NULL = the default `is_active` program) and `fetchActiveProgram` resolves it; never hard-code exercises in components.
+- Progression rules (double progression on the rep range) live in `src/lib/progression.ts` as pure functions shared by the session hints and `/api/coach-summary`; never duplicate them. AI server routes use `src/lib/server/ai.ts` (caller-JWT Supabase client so RLS applies, `ai_calls` daily quota) and must stay grounded in data passed to the model.
 - Exercise history keys on `set_logs.exercise_key` (lower-cased, trimmed name) so it carries across program blocks.
 - workout_sessions and set_logs are readable by every signed-in user (shared leaderboards); every personal query (history, Last, Working Max, charts) must filter by the current user_id. Writes stay owner-only. profiles holds only public fields (no email).
 - All signed-in pages live under `src/routes/_authenticated/` and query the database from the browser client with RLS. Pages with child detail routes use `x.index.tsx` so the list file is not a layout.

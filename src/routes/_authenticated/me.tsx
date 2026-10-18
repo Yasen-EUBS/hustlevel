@@ -7,6 +7,7 @@ import { BookOpen, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageTitle, TabShell } from "@/components/TabShell";
 import { Switch } from "@/components/ui/switch";
+import { setTipsEnabled, useTipsEnabled } from "@/lib/prefs";
 
 export const Route = createFileRoute("/_authenticated/me")({
   head: () => ({
@@ -32,6 +33,7 @@ function MePage() {
   // Same key and fetcher as Training/session: sharing ["program"] with a partial
   // select overwrote the cached program and crashed Training (no program_days).
   const program = useQuery({ queryKey: ["program"], queryFn: fetchActiveProgram });
+  const tipsOn = useTipsEnabled();
   const [name, setName] = useState("");
   useEffect(() => {
     setName(profile.data?.display_name ?? "");
@@ -61,6 +63,21 @@ function MePage() {
           <div className="text-[11px] font-bold tracking-widest text-muted-foreground">EMAIL</div>
           <div className="mt-1 text-lg font-semibold">{user.email}</div>
         </div>
+        <Link to="/program" className="flex items-center justify-between gap-3 rounded-2xl bg-card p-4">
+          <span className="min-w-0">
+            <span className="block text-[11px] font-bold tracking-widest text-muted-foreground">PROGRAM</span>
+            <span className="mt-1 block truncate text-lg font-semibold">{program.data?.name ?? "—"}</span>
+            <span className="block truncate text-sm text-muted-foreground">Switch, or import one from screenshots</span>
+          </span>
+          <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+        </Link>
+        <label className="flex items-center justify-between gap-4 rounded-2xl bg-card p-4">
+          <span>
+            <span className="block font-semibold">Progression tips</span>
+            <span className="text-sm text-muted-foreground">Suggests when to go heavier or lighter, based on your rep range.</span>
+          </span>
+          <Switch checked={tipsOn} onCheckedChange={setTipsEnabled} />
+        </label>
         <label className="flex items-center justify-between gap-4 rounded-2xl bg-card p-4">
           <span>
             <span className="block font-semibold">Share finished workouts to HustLevel Squad</span>

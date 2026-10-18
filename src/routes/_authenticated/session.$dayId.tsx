@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Check, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Trophy } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Friends } from "@/components/Friends";
 import { DurationEditor, fromDurationParts, toDurationParts } from "@/components/DurationEditor";
@@ -12,6 +12,8 @@ import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
 import { SelectTimerButton, TimerSheet } from "@/components/Timers";
 import { timers } from "@/lib/timers";
 import { SQUAD_ID, type WorkoutPost } from "@/lib/chat";
+import { nextWeight, rangeText, setTip } from "@/lib/progression";
+import { useTipsEnabled } from "@/lib/prefs";
 import {
   beep,
   epley,
@@ -135,13 +137,17 @@ function SessionPage() {
     return out;
   }, [history.data, keys]);
 
+  const tipsOn = useTipsEnabled();
   const [rows, setRows] = useState<Record<string, Row[]> | null>(null);
+  // Why today's suggested weights differ from last session (per exercise), shown as one line.
+  const [adjusted, setAdjusted] = useState<Record<string, { up: number; down: number }>>({});
   const [notes, setNotes] = useState<Record<string, string>>({});
   const persisted = useRef<Record<string, Set<number>>>({});
 
   useEffect(() => {
     if (rows || !logs.data || !history.data) return;
     const init: Record<string, Row[]> = {};
+    const adj: Record<string, { up: number; down: number }> = {};
     exercises.forEach((e) => {
       const k = normKey(e.name);
       const mine = logs.data.sets.filter((s) => s.exercise_key === k).sort((a, b) => a.set_number - b.set_number);
@@ -152,13 +158,23 @@ function SessionPage() {
         const m = mine.find((x) => x.set_number === i + 1);
         if (m) return { reps: m.reps?.toString() ?? "", kg: m.weight_kg?.toString() ?? "", done: m.completed };
         const prev = last[i] ?? last[last.length - 1];
-        const kg = prev?.weight_kg != null ? String(prev.weight_kg) : "";
+        let kg = prev?.weight_kg != null ? String(prev.weight_kg) : "";
+        // Double progression: a set that hit the top of its range last time starts heavier,
+        // one that fell under the range starts lighter.
+        const same = last[i];
+        const nw = tipsOn && same && !e.duration_seconds ? nextWeight(e, same.reps, same.weight_kg) : null;
+        if (nw) {
+          kg = String(nw.kg);
+          const a = (adj[k] ??= { up: 0, down: 0 });
+          a[nw.verdict === "up" ? "up" : "down"]++;
+        }
         return { reps: "", kg, done: false, suggestedKg: kg || undefined };
       });
     });
+    setAdjusted(adj);
     setRows(init);
     setNotes(Object.fromEntries(logs.data.notes.map((n) => [n.exercise_key, n.note])));
-  }, [logs.data, history.data, rows, exercises, stats]);
+  }, [logs.data, history.data, rows, exercises, stats, tipsOn]);
 
   const [idx, setIdx] = useState(exParam ?? 0);
   const total = exercises.length;
@@ -247,7 +263,8 @@ function SessionPage() {
     if (next.done && !Object.values(rows!).some((list) => list.some((r) => r.done))) startClock();
     if (next.done && !e.duration_seconds && next.reps === "") next.reps = String(e.rep_min ?? "");
     updateRow(e, i, next);
-    if (next.done && next.kg !== "") carryWeightForward(k, i, next.kg);
+    // Only a weight the lifter typed carries forward; untouched sets keep their own suggestion.
+    if (next.done && next.kg !== "" && next.kg !== row.suggestedKg) carryWeightForward(k, i, next.kg);
     persist(e, i, next);
     const running = timers.get().timer;
     if (next.done && !e.duration_seconds && (!running || running.type === "rest")) timers.startRest(e.rest_min_seconds, e.rest_max_seconds);
@@ -482,6 +499,7 @@ function SessionPage() {
               />
             ) : (
               <>
+                {tipsOn && adjusted[k] && <AdjustNote range={ex} up={adjusted[k].up} down={adjusted[k].down} />}
                 <div className="mt-5 grid grid-cols-[3rem_1fr_1fr_3.5rem] gap-2 px-1 text-xs font-bold tracking-widest text-muted-foreground">
                   <div>SETS</div>
                   <div className="text-center">REPS</div>
@@ -489,8 +507,9 @@ function SessionPage() {
                   <div />
                 </div>
                 <div className="mt-2 space-y-2">
-                  {(rows![k] ?? []).map((r, i) => (
-                    <div key={i} className="grid grid-cols-[3rem_1fr_1fr_3.5rem] items-center gap-2">
+                  {(rows![k] ?? []).map((r, i, list) => (
+                    <div key={i}>
+                    <div className="grid grid-cols-[3rem_1fr_1fr_3.5rem] items-center gap-2">
                       <div className="pl-2 text-lg font-bold">{i + 1}</div>
                       <input
                         inputMode="numeric"
@@ -520,6 +539,15 @@ function SessionPage() {
                       >
                         {r.done && <Check className="h-6 w-6" strokeWidth={3} />}
                       </button>
+                    </div>
+                    {tipsOn && r.done && i === lastDoneIndex(list) && (
+                      <SetTipLine
+                        range={ex}
+                        reps={parseInt(r.reps, 10)}
+                        kg={parseFloat(r.kg.replace(",", ".")) || 0}
+                        hasNextSet={list.slice(i + 1).some((x) => !x.done)}
+                      />
+                    )}
                     </div>
                   ))}
                 </div>
@@ -606,6 +634,40 @@ function SessionPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+const lastDoneIndex = (list: Row[]) => list.reduce((acc, r, i) => (r.done ? i : acc), -1);
+
+/** One quiet line under the most recent ticked set; nothing when reps land inside the range. */
+function SetTipLine({ range, reps, kg, hasNextSet }: { range: ProgramExercise; reps: number; kg: number; hasNextSet: boolean }) {
+  if (!Number.isFinite(reps)) return null;
+  const tip = setTip(range, reps, kg, hasNextSet);
+  if (!tip) return null;
+  const Icon = tip.tone === "up" ? ArrowUp : ArrowDown;
+  return (
+    <p role="status" className={`flex items-start gap-1.5 px-2 pt-1.5 text-xs font-semibold ${tip.tone === "up" ? "text-primary" : "text-partial"}`}>
+      <Icon className="mt-px h-3.5 w-3.5 shrink-0" strokeWidth={2.5} />
+      {tip.text}
+    </p>
+  );
+}
+
+/** Explains why today's pre-filled weights differ from last session. */
+function AdjustNote({ range, up, down }: { range: ProgramExercise; up: number; down: number }) {
+  const r = rangeText(range);
+  const text =
+    up && !down
+      ? `Weights raised: you hit the top of ${r} last time.`
+      : down && !up
+        ? `Weights lowered: last time some sets fell under ${range.rep_min} reps.`
+        : `Weights adjusted to keep each set in ${r}, based on last time.`;
+  const Icon = down && !up ? ArrowDown : ArrowUp;
+  return (
+    <p className="mt-4 flex items-start gap-1.5 rounded-xl bg-card px-3 py-2 text-xs font-semibold text-muted-foreground">
+      <Icon className={`mt-px h-3.5 w-3.5 shrink-0 ${down && !up ? "text-partial" : "text-primary"}`} strokeWidth={2.5} />
+      {text}
+    </p>
   );
 }
 

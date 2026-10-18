@@ -15,12 +15,16 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/guide'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
+import { Route as ApiCoachSummaryRouteImport } from './routes/api/coach-summary'
 import { Route as ApiGuideChatRouteImport } from './routes/api/guide-chat'
+import { Route as ApiProgramImportRouteImport } from './routes/api/program-import'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
 import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated/chat.$conversationId'
 import { Route as AuthenticatedGuideReadRouteImport } from './routes/_authenticated/guide_.read'
 import { Route as AuthenticatedHistoryIndexRouteImport } from './routes/_authenticated/history.index'
 import { Route as AuthenticatedHistorySessionIdRouteImport } from './routes/_authenticated/history.$sessionId'
+import { Route as AuthenticatedProgramIndexRouteImport } from './routes/_authenticated/program.index'
+import { Route as AuthenticatedProgramImportRouteImport } from './routes/_authenticated/program.import'
 import { Route as AuthenticatedProgressIndexRouteImport } from './routes/_authenticated/progress.index'
 import { Route as AuthenticatedProgressKeyRouteImport } from './routes/_authenticated/progress.$key'
 import { Route as AuthenticatedSessionDayIdRouteImport } from './routes/_authenticated/session.$dayId'
@@ -54,9 +58,19 @@ const AuthenticatedTrainingRoute = AuthenticatedTrainingRouteImport.update({
   path: '/training',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiCoachSummaryRoute = ApiCoachSummaryRouteImport.update({
+  id: '/api/coach-summary',
+  path: '/api/coach-summary',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGuideChatRoute = ApiGuideChatRouteImport.update({
   id: '/api/guide-chat',
   path: '/api/guide-chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProgramImportRoute = ApiProgramImportRouteImport.update({
+  id: '/api/program-import',
+  path: '/api/program-import',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
@@ -87,6 +101,18 @@ const AuthenticatedHistorySessionIdRoute =
     path: '/history/$sessionId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedProgramIndexRoute =
+  AuthenticatedProgramIndexRouteImport.update({
+    id: '/program/',
+    path: '/program/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProgramImportRoute =
+  AuthenticatedProgramImportRouteImport.update({
+    id: '/program/import',
+    path: '/program/import',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProgressIndexRoute =
   AuthenticatedProgressIndexRouteImport.update({
     id: '/progress/',
@@ -112,14 +138,18 @@ export interface FileRoutesByFullPath {
   '/guide': typeof AuthenticatedGuideRoute
   '/me': typeof AuthenticatedMeRoute
   '/training': typeof AuthenticatedTrainingRoute
+  '/api/coach-summary': typeof ApiCoachSummaryRoute
   '/api/guide-chat': typeof ApiGuideChatRoute
+  '/api/program-import': typeof ApiProgramImportRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
+  '/program/import': typeof AuthenticatedProgramImportRoute
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
   '/chat/': typeof AuthenticatedChatIndexRoute
   '/history/': typeof AuthenticatedHistoryIndexRoute
+  '/program/': typeof AuthenticatedProgramIndexRoute
   '/progress/': typeof AuthenticatedProgressIndexRoute
 }
 export interface FileRoutesByTo {
@@ -128,14 +158,18 @@ export interface FileRoutesByTo {
   '/guide': typeof AuthenticatedGuideRoute
   '/me': typeof AuthenticatedMeRoute
   '/training': typeof AuthenticatedTrainingRoute
+  '/api/coach-summary': typeof ApiCoachSummaryRoute
   '/api/guide-chat': typeof ApiGuideChatRoute
+  '/api/program-import': typeof ApiProgramImportRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
+  '/program/import': typeof AuthenticatedProgramImportRoute
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
   '/chat': typeof AuthenticatedChatIndexRoute
   '/history': typeof AuthenticatedHistoryIndexRoute
+  '/program': typeof AuthenticatedProgramIndexRoute
   '/progress': typeof AuthenticatedProgressIndexRoute
 }
 export interface FileRoutesById {
@@ -146,14 +180,18 @@ export interface FileRoutesById {
   '/_authenticated/guide': typeof AuthenticatedGuideRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/training': typeof AuthenticatedTrainingRoute
+  '/api/coach-summary': typeof ApiCoachSummaryRoute
   '/api/guide-chat': typeof ApiGuideChatRoute
+  '/api/program-import': typeof ApiProgramImportRoute
   '/_authenticated/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/_authenticated/guide_/read': typeof AuthenticatedGuideReadRoute
   '/_authenticated/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
+  '/_authenticated/program/import': typeof AuthenticatedProgramImportRoute
   '/_authenticated/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/_authenticated/session/$dayId': typeof AuthenticatedSessionDayIdRoute
   '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
   '/_authenticated/history/': typeof AuthenticatedHistoryIndexRoute
+  '/_authenticated/program/': typeof AuthenticatedProgramIndexRoute
   '/_authenticated/progress/': typeof AuthenticatedProgressIndexRoute
 }
 export interface FileRouteTypes {
@@ -164,14 +202,18 @@ export interface FileRouteTypes {
     | '/guide'
     | '/me'
     | '/training'
+    | '/api/coach-summary'
     | '/api/guide-chat'
+    | '/api/program-import'
     | '/chat/$conversationId'
     | '/guide/read'
     | '/history/$sessionId'
+    | '/program/import'
     | '/progress/$key'
     | '/session/$dayId'
     | '/chat/'
     | '/history/'
+    | '/program/'
     | '/progress/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -180,14 +222,18 @@ export interface FileRouteTypes {
     | '/guide'
     | '/me'
     | '/training'
+    | '/api/coach-summary'
     | '/api/guide-chat'
+    | '/api/program-import'
     | '/chat/$conversationId'
     | '/guide/read'
     | '/history/$sessionId'
+    | '/program/import'
     | '/progress/$key'
     | '/session/$dayId'
     | '/chat'
     | '/history'
+    | '/program'
     | '/progress'
   id:
     | '__root__'
@@ -197,14 +243,18 @@ export interface FileRouteTypes {
     | '/_authenticated/guide'
     | '/_authenticated/me'
     | '/_authenticated/training'
+    | '/api/coach-summary'
     | '/api/guide-chat'
+    | '/api/program-import'
     | '/_authenticated/chat/$conversationId'
     | '/_authenticated/guide_/read'
     | '/_authenticated/history/$sessionId'
+    | '/_authenticated/program/import'
     | '/_authenticated/progress/$key'
     | '/_authenticated/session/$dayId'
     | '/_authenticated/chat/'
     | '/_authenticated/history/'
+    | '/_authenticated/program/'
     | '/_authenticated/progress/'
   fileRoutesById: FileRoutesById
 }
@@ -212,7 +262,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiCoachSummaryRoute: typeof ApiCoachSummaryRoute
   ApiGuideChatRoute: typeof ApiGuideChatRoute
+  ApiProgramImportRoute: typeof ApiProgramImportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -259,11 +311,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTrainingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/coach-summary': {
+      id: '/api/coach-summary'
+      path: '/api/coach-summary'
+      fullPath: '/api/coach-summary'
+      preLoaderRoute: typeof ApiCoachSummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/guide-chat': {
       id: '/api/guide-chat'
       path: '/api/guide-chat'
       fullPath: '/api/guide-chat'
       preLoaderRoute: typeof ApiGuideChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/program-import': {
+      id: '/api/program-import'
+      path: '/api/program-import'
+      fullPath: '/api/program-import'
+      preLoaderRoute: typeof ApiProgramImportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/chat/': {
@@ -301,6 +367,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHistorySessionIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/program/': {
+      id: '/_authenticated/program/'
+      path: '/program'
+      fullPath: '/program/'
+      preLoaderRoute: typeof AuthenticatedProgramIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/program/import': {
+      id: '/_authenticated/program/import'
+      path: '/program/import'
+      fullPath: '/program/import'
+      preLoaderRoute: typeof AuthenticatedProgramImportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/progress/': {
       id: '/_authenticated/progress/'
       path: '/progress'
@@ -332,10 +412,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedChatConversationIdRoute: typeof AuthenticatedChatConversationIdRoute
   AuthenticatedGuideReadRoute: typeof AuthenticatedGuideReadRoute
   AuthenticatedHistorySessionIdRoute: typeof AuthenticatedHistorySessionIdRoute
+  AuthenticatedProgramImportRoute: typeof AuthenticatedProgramImportRoute
   AuthenticatedProgressKeyRoute: typeof AuthenticatedProgressKeyRoute
   AuthenticatedSessionDayIdRoute: typeof AuthenticatedSessionDayIdRoute
   AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
   AuthenticatedHistoryIndexRoute: typeof AuthenticatedHistoryIndexRoute
+  AuthenticatedProgramIndexRoute: typeof AuthenticatedProgramIndexRoute
   AuthenticatedProgressIndexRoute: typeof AuthenticatedProgressIndexRoute
 }
 
@@ -346,10 +428,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChatConversationIdRoute: AuthenticatedChatConversationIdRoute,
   AuthenticatedGuideReadRoute: AuthenticatedGuideReadRoute,
   AuthenticatedHistorySessionIdRoute: AuthenticatedHistorySessionIdRoute,
+  AuthenticatedProgramImportRoute: AuthenticatedProgramImportRoute,
   AuthenticatedProgressKeyRoute: AuthenticatedProgressKeyRoute,
   AuthenticatedSessionDayIdRoute: AuthenticatedSessionDayIdRoute,
   AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
   AuthenticatedHistoryIndexRoute: AuthenticatedHistoryIndexRoute,
+  AuthenticatedProgramIndexRoute: AuthenticatedProgramIndexRoute,
   AuthenticatedProgressIndexRoute: AuthenticatedProgressIndexRoute,
 }
 
@@ -360,7 +444,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiCoachSummaryRoute: ApiCoachSummaryRoute,
   ApiGuideChatRoute: ApiGuideChatRoute,
+  ApiProgramImportRoute: ApiProgramImportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

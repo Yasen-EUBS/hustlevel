@@ -81,14 +81,27 @@ export function formatDone(sets: SetRow[]) {
   return `${repPart} @ ${sameW ? fmtKg(ws[0] ?? 0) : ws.map(fmtKg).join(",")}kg`;
 }
 
+const PROGRAM_SELECT = "*, program_days(*, program_exercises(*))" as const;
+
+/** The program the signed-in user follows (profiles.program_id), else the built-in default (is_active). */
 export async function fetchActiveProgram() {
-  const { data, error } = await supabase
-    .from("programs")
-    .select("*, program_days(*, program_exercises(*))")
-    .eq("is_active", true)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const { data: auth } = await supabase.auth.getSession();
+  const uid = auth.session?.user.id;
+  const chosen = uid
+    ? (await supabase.from("profiles").select("program_id").eq("id", uid).maybeSingle()).data?.program_id ?? null
+    : null;
+  let { data, error } = chosen
+    ? await supabase.from("programs").select(PROGRAM_SELECT).eq("id", chosen).maybeSingle()
+    : { data: null, error: null };
+  if (!data) {
+    ({ data, error } = await supabase
+      .from("programs")
+      .select(PROGRAM_SELECT)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle());
+  }
   if (error) throw error;
   if (data) {
     data.program_days.forEach((d) => d.program_exercises.sort((a, b) => a.letter.localeCompare(b.letter)));
