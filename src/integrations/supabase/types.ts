@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_calls: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       conversation_members: {
         Row: {
           conversation_id: string
@@ -223,21 +244,32 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          program_id: string | null
           share_workouts: boolean
         }
         Insert: {
           created_at?: string
           display_name?: string | null
           id: string
+          program_id?: string | null
           share_workouts?: boolean
         }
         Update: {
           created_at?: string
           display_name?: string | null
           id?: string
+          program_id?: string | null
           share_workouts?: boolean
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       program_days: {
         Row: {
@@ -335,6 +367,7 @@ export type Database = {
           block_name: string
           coach_notes: string | null
           created_at: string
+          created_by: string | null
           guide_url: string | null
           id: string
           is_active: boolean
@@ -346,6 +379,7 @@ export type Database = {
           block_name: string
           coach_notes?: string | null
           created_at?: string
+          created_by?: string | null
           guide_url?: string | null
           id?: string
           is_active?: boolean
@@ -357,6 +391,7 @@ export type Database = {
           block_name?: string
           coach_notes?: string | null
           created_at?: string
+          created_by?: string | null
           guide_url?: string | null
           id?: string
           is_active?: boolean
@@ -415,6 +450,7 @@ export type Database = {
       }
       workout_sessions: {
         Row: {
+          coach_summary: string | null
           completed_at: string | null
           day_title: string | null
           id: string
@@ -425,6 +461,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          coach_summary?: string | null
           completed_at?: string | null
           day_title?: string | null
           id?: string
@@ -435,6 +472,7 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          coach_summary?: string | null
           completed_at?: string | null
           day_title?: string | null
           id?: string
@@ -461,6 +499,7 @@ export type Database = {
     Functions: {
       can_see_message: { Args: { _message_id: string }; Returns: boolean }
       get_or_create_dm: { Args: { other_user_id: string }; Returns: string }
+      import_program: { Args: { p: Json }; Returns: string }
       is_member: { Args: { _conversation_id: string }; Returns: boolean }
       is_member_path: { Args: { _path: string }; Returns: boolean }
       my_conversations: {
