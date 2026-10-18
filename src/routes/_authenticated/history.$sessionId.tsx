@@ -29,13 +29,14 @@ function SessionDetail() {
   const q = useQuery({
     queryKey: ["session-detail", sessionId],
     queryFn: async () => {
-      const [s, l, n] = await Promise.all([
+      const [s, l, n, r] = await Promise.all([
         supabase.from("workout_sessions").select("*").eq("id", sessionId).single(),
         supabase.from("set_logs").select("*").eq("session_id", sessionId).order("created_at"),
         supabase.from("exercise_notes").select("*").eq("session_id", sessionId),
+        supabase.from("session_reviews").select("summary").eq("session_id", sessionId).maybeSingle(),
       ]);
       if (s.error) throw s.error;
-      return { session: s.data, sets: l.data ?? [], notes: n.data ?? [] };
+      return { session: s.data, sets: l.data ?? [], notes: n.data ?? [], review: r.data?.summary ?? null };
     },
   });
 
@@ -67,7 +68,7 @@ function SessionDetail() {
             />
           )}
           {q.data.session.user_id === user.id && q.data.session.completed_at && q.data.sets.some((x) => x.completed) && (
-            <CoachCard sessionId={sessionId} saved={q.data.session.coach_summary} completedAt={q.data.session.completed_at} />
+            <CoachCard sessionId={sessionId} saved={q.data.review} completedAt={q.data.session.completed_at} />
           )}
           <div className="mt-6 space-y-4 pb-8">
             {groups.map((g) => {

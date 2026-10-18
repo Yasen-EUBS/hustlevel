@@ -80,15 +80,19 @@ function MePage() {
         </label>
         <label className="flex items-center justify-between gap-4 rounded-2xl bg-card p-4">
           <span>
-            <span className="block font-semibold">Share finished workouts to HustLevel Squad</span>
-            <span className="text-sm text-muted-foreground">Posts a summary card when you tap Finish.</span>
+            <span className="block font-semibold">Share my workouts</span>
+            <span className="text-sm text-muted-foreground">
+              Others see your lifts on leaderboards, and finished workouts post to HustLevel Squad. When off, your
+              training is private to you.
+            </span>
           </span>
           <Switch
-            checked={profile.data?.share_workouts ?? true}
+            checked={profile.data?.share_workouts ?? false}
             onCheckedChange={async (v) => {
-              const { error } = await supabase.from("profiles").update({ share_workouts: v }).eq("id", user.id);
+              const { error } = await supabase.from("profiles").upsert({ id: user.id, share_workouts: v });
               if (error) toast.error(error.message);
               qc.invalidateQueries({ queryKey: ["profile"] });
+              qc.invalidateQueries({ queryKey: ["board"] });
             }}
           />
         </label>

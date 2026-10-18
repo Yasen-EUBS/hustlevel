@@ -158,10 +158,29 @@ const medals = ["bg-medal-gold", "bg-medal-silver", "bg-medal-bronze"];
 
 function Leaderboard({ exerciseKey, me }: { exerciseKey: string; me: string }) {
   const q = useQuery({ queryKey: ["board", exerciseKey], queryFn: () => fetchBoard(exerciseKey) });
+  const sharing = useQuery({
+    queryKey: ["profile", me],
+    queryFn: async () => (await supabase.from("profiles").select("*").eq("id", me).maybeSingle()).data,
+  });
+  const hidden = sharing.isSuccess && !sharing.data?.share_workouts;
   if (q.isLoading) return <p className="mt-6 text-muted-foreground">Loading…</p>;
   const rows = q.data ?? [];
-  if (!rows.length) return <p className="mt-6 rounded-2xl bg-card p-6 text-center text-muted-foreground">Nobody has logged this yet.</p>;
+  const note = hidden ? (
+    <p className="mt-4 rounded-2xl bg-card p-4 text-sm text-muted-foreground">
+      Only you can see your lifts. Turn on <b className="text-foreground">Share my workouts</b> in Me to appear on the
+      leaderboard.
+    </p>
+  ) : null;
+  if (!rows.length)
+    return (
+      <>
+        {note}
+        <p className="mt-6 rounded-2xl bg-card p-6 text-center text-muted-foreground">Nobody has logged this yet.</p>
+      </>
+    );
   return (
+    <>
+    {note}
     <ol className="mt-4 space-y-2 pb-10">
       {rows.map((e, i) => (
         <li
@@ -185,5 +204,6 @@ function Leaderboard({ exerciseKey, me }: { exerciseKey: string; me: string }) {
         </li>
       ))}
     </ol>
+    </>
   );
 }

@@ -37,13 +37,17 @@ export const Route = createFileRoute("/api/coach-summary")({
 
         const { data: session } = await sb
           .from("workout_sessions")
-          .select(
-            "id, user_id, program_day_id, day_title, session_date, completed_at, coach_summary",
-          )
+          .select("id, user_id, program_day_id, day_title, session_date, completed_at")
           .eq("id", sessionId)
           .maybeSingle();
         if (!session || session.user_id !== userId) return fail(404, "Session not found.");
-        if (session.coach_summary) return json(200, { summary: session.coach_summary });
+        // Reviews live in the owner-only session_reviews table, never on the shared session row.
+        const { data: saved } = await sb
+          .from("session_reviews")
+          .select("summary")
+          .eq("session_id", sessionId)
+          .maybeSingle();
+        if (saved) return json(200, { summary: saved.summary });
         if (!session.completed_at) return fail(400, "Finish the session first.");
 
         const { data: logs } = await sb
@@ -162,7 +166,9 @@ export const Route = createFileRoute("/api/coach-summary")({
         });
         if (!out.ok) return fail(out.status, out.error);
         const summary = out.text.slice(0, 2000);
-        await sb.from("workout_sessions").update({ coach_summary: summary }).eq("id", sessionId);
+        await sb
+          .from("session_reviews")
+          .insert({ session_id: sessionId, user_id: userId, summary });
         return json(200, { summary });
       },
     },
