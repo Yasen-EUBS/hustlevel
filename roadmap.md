@@ -1,4 +1,10 @@
 # HustLevel rebrand
+
+## Exercise how-to text
+- [x] Add nullable setup/execution columns to exercise media (read-only as before), regenerate types.
+- [x] Show SETUP/EXECUTION in the demo sheet above the YouTube link; render nothing when both are empty.
+- [x] Verify both states in the live app on an iPhone-sized screen, then delete the temporary account.
+
 - [x] Render all replacement PNGs from the app SVG: three web icons, docs logo/cover, legacy JPG, 15 Android launcher layers and 11 splash images; remove unused source PNG. Verify original sizes, opaque RGB, dark corners and both volt colors.
 - [x] Update visible names, metadata, palette, logo and SVG icons without changing data or behavior.
 - [x] Verify desktop/iPhone-sized login and signup, metadata, icon serving and five existing routing/timer tests; preserve stored names, keys, URLs and Android signing/application identifiers. Signed-in appearance not verified: no requesting-user account/session available.
