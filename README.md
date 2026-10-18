@@ -28,7 +28,11 @@ My training program runs in TrainHeroic. My friends and I wanted to log the same
 - **Leaderboards:** every lift ranks all athletes by working max, and you can see friends' last sets while you train.
 - **Seven timers:** rest timer (starts automatically when you tick a set), stopwatch, AMRAP, For Time, Tabata, EMOM and custom intervals. Timing uses wall-clock deltas, so it stays accurate when the phone locks.
 - **Chat:** a group chat and private DMs with photos, form-check videos and reactions. A finished workout posts a summary card to the group.
-- **Demo videos:** a technique video from an evidence-based coach for every exercise.
+- **Demo videos:** a technique video from an evidence-based coach for every exercise, with setup and execution cues underneath.
+- **Progression tips:** the app applies double progression to your rep range. A set that hit the top of its range last time starts heavier, one that fell short starts lighter, and each suggestion comes with a one-line reason. After every set you get a quiet tip only when you leave the range. The rules are deterministic, so the numbers can be trusted.
+- **AI coach review:** after each workout, a short review lists your wins and what to change next session. The model only phrases weights the progression rules already computed, so it can't invent numbers.
+- **Import any program from screenshots:** an AI vision model turns screenshots of any coach's program into a structured plan. You review and fix it before it's saved through a validated database function. Friends can follow the same program, and history and leaderboards carry over by exercise name.
+- **Ask the guide:** a chatbot that answers only from the program's training guide.
 
 ## Architecture
 
