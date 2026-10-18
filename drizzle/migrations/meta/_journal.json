@@ -64,6 +64,13 @@
       "when": 1792342704065,
       "tag": "0008_exercise_media_instructions",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792345441390,
+      "tag": "0009_user_programs_and_ai_calls",
+      "breakpoints": true
     }
   ]
 }
