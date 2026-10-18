@@ -2,8 +2,8 @@
 
 ## Live AI endpoint verification
 - [x] Verify screenshot extraction and import_program with a temporary account.
-- [ ] Correct and retest truncated coaching, saved summary, and cached second call.
-- [ ] Explicitly delete test programs before removing workouts and the temporary account; verify no test data remains.
+- [x] Correct and retest truncated coaching, saved summary, and cached second call; preserve model and output budgets. Seven tests passed.
+- [x] Explicitly delete test programs before removing workouts and the temporary account; verify no test data remains.
 
 ## Exercise how-to text
 - [x] Add nullable setup/execution columns to exercise media (read-only as before), regenerate types.
