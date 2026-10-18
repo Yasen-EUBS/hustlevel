@@ -10,9 +10,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Yasen-EUBS/nss-gym/releases/latest/download/NSS.apk"><b>Download for Android</b></a> &nbsp;·&nbsp;
+  <a href="https://github.com/Yasen-EUBS/hustlevel/releases/latest/download/NSS.apk"><b>Download for Android</b></a> &nbsp;·&nbsp;
   <a href="https://nss-gym.lovable.app"><b>Open on iPhone</b></a> &nbsp;·&nbsp;
-  <a href="https://yasen-eubs.github.io/nss-gym/"><b>Project page</b></a>
+  <a href="https://yasen-eubs.github.io/hustlevel/"><b>Project page</b></a>
 </p>
 
 ---
