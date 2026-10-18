@@ -62,14 +62,16 @@ The best warm-up is the exercise itself with less weight. It prepares the exact 
 
 If you've been sitting all day and feel stiff, start with 5 to 10 minutes of easy walking or cycling. Then do 2 or 3 lighter sets before the first working set for each muscle. None of them should feel hard.
 
-Here's an example for a working weight of 80 kg:
+Base the warm-up sets on your working weight:
 
-| Set | Weight | Reps | Focus |
+| Set | % of working weight | Reps | Focus |
 |---|---|---|---|
-| Warm-up 1 | 40 kg | 10 | Slow and full range of motion |
-| Warm-up 2 | 55 kg | 5 | Same tempo as your working sets |
-| Warm-up 3 | 70 kg | 2 | Fast and clean |
-| Working sets | 80 kg | 8-12 | As written in the app |
+| Warm-up 1 | 50% | 10 | Slow and full range of motion |
+| Warm-up 2 | 70% | 5 | Same tempo as your working sets |
+| Warm-up 3 | 85% | 2 | Fast and clean |
+| Working sets | 100% | As written | The rep range in the app |
+
+For example, with a working weight of 80 kg, warm up with about 40 kg, 55 kg and 70 kg. Round to whatever plates or pin settings your gym has.
 
 Between warm-up sets, rest only until your breathing settles, usually under a minute. Later exercises for a muscle that's already warm need one warm-up set or none.
 
