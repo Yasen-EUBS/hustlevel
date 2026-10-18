@@ -1,4 +1,5 @@
 # HustLevel rebrand
+- [ ] Render replacement PNGs from the app SVG, replace Android/doc legacy images, remove unused source PNG and verify colors/sizes.
 - [x] Update visible names, metadata, palette, logo and SVG icons without changing data or behavior.
 - [x] Verify desktop/iPhone-sized login and signup, metadata, icon serving and five existing routing/timer tests; preserve stored names, keys, URLs and Android signing/application identifiers. Signed-in appearance not verified: no requesting-user account/session available.
 
