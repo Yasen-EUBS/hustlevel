@@ -1,4 +1,8 @@
-# NSS rebrand
+# HustLevel rebrand
+- [x] Update visible names, metadata, palette, logo and SVG icons without changing data or behavior.
+- [x] Verify desktop/iPhone-sized login and signup, metadata, icon serving and five existing routing/timer tests; preserve stored names, keys, URLs and Android signing/application identifiers. Signed-in appearance not verified: no requesting-user account/session available.
+
+## Previous rebrand
 - [x] Rename user-facing app names without changing the coach program.
 - [x] Generate and install logo and all icon sizes.
 - [x] Verify names, icon sizes, login and signup in the live app; verify Training logo and preserved program name in source. Signed-in visual check unavailable without a preview session.

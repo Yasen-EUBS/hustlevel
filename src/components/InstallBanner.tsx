@@ -52,7 +52,7 @@ export function InstallPrompt({ variant }: { variant: "card" | "banner" }) {
       <div className="mt-5 flex items-center gap-3 rounded-2xl bg-card p-4 text-left">
         <Share className="h-5 w-5 shrink-0 text-primary" aria-hidden />
         <p className="min-w-0 flex-1 text-sm font-semibold leading-snug">
-          Install NSS: tap Share, then Add to Home Screen.
+          Install HustLevel: tap Share, then Add to Home Screen.
         </p>
         <button onClick={dismiss} aria-label="Dismiss install hint" className="shrink-0 rounded-full p-1.5 active:bg-muted">
           <X className="h-4 w-4 text-muted-foreground" />
@@ -64,8 +64,8 @@ export function InstallPrompt({ variant }: { variant: "card" | "banner" }) {
   return (
     <div className="flex items-center gap-2.5 rounded-full bg-card px-4 py-2.5 shadow-lg ring-1 ring-border">
       <Share className="h-4 w-4 shrink-0 text-primary" aria-hidden />
-      <p className="min-w-0 flex-1 truncate text-[13px] font-semibold leading-snug">
-        Install NSS: tap Share, then Add to Home Screen.
+      <p className="min-w-0 flex-1 text-[13px] font-semibold leading-snug">
+        Install HustLevel: tap Share, then Add to Home Screen.
       </p>
       <button onClick={dismiss} aria-label="Dismiss install hint" className="shrink-0 rounded-full p-1 active:bg-muted">
         <X className="h-4 w-4 text-muted-foreground" />

@@ -1,3 +1,4 @@
+import { rebrandText } from "@/lib/brand";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -14,10 +15,10 @@ export const Route = createFileRoute("/_authenticated/chat/")({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { title: "Chat — NSS" },
-      { name: "description", content: "Chat with the NSS Squad and message training partners." },
-      { property: "og:title", content: "Chat — NSS" },
-      { property: "og:description", content: "Chat with the NSS Squad and message training partners." },
+      { title: "Chat — HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "Chat — HustLevel" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
     ],
   }),
   component: ChatList,
@@ -46,7 +47,7 @@ function ChatList() {
       </div>
       <ul className="px-3">
         {(convs.data ?? []).map((c) => {
-          const name = c.type === "group" ? c.name ?? "NSS Squad" : c.other_name || "Athlete";
+          const name = c.type === "group" ? rebrandText(c.name ?? "HustLevel Squad") : c.other_name || "Athlete";
           const t = new Date(c.last_at);
           return (
             <li key={c.id}>

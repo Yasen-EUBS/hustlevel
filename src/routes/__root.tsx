@@ -58,7 +58,7 @@ function ErrorComponent({ error }: ErrorComponentProps) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold text-foreground">
-          {stale ? "Updating NSS…" : "This page didn't load"}
+          {stale ? "Updating HustLevel…" : "This page didn't load"}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {stale ? "A new version is available. Reloading." : "Check your connection, then try again."}
@@ -79,26 +79,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "NSS" },
-      { name: "description", content: "Strength-training logger for the Titan Build program." },
-      { name: "theme-color", content: "#0b0b0f" },
+      { title: "HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { name: "theme-color", content: "#0B0F14" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "NSS" },
+      { name: "apple-mobile-web-app-title", content: "HustLevel" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
       },
     ],
   }),

@@ -8,10 +8,10 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated/guide")({
   head: () => ({
     meta: [
-      { title: "Training guide — NSS" },
-      { name: "description", content: "Read the training guide and ask questions answered only from it." },
-      { property: "og:title", content: "Training guide — NSS" },
-      { property: "og:description", content: "Read the training guide and ask questions answered only from it." },
+      { title: "Training guide — HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "Training guide — HustLevel" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

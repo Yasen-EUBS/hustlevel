@@ -32,10 +32,10 @@ export const Route = createFileRoute("/_authenticated/session/$dayId")({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { title: "Session — NSS" },
-      { name: "description", content: "Log your sets, reps and weights." },
-      { property: "og:title", content: "Session — NSS" },
-      { property: "og:description", content: "Log your sets, reps and weights." },
+      { title: "Session — HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "Session — HustLevel" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
     ],
   }),
   component: SessionPage,
@@ -571,9 +571,9 @@ function SessionPage() {
                 <ul className="space-y-2">
                   {prs.map((p) => (
                     <li key={p.name} className="flex items-center gap-3 rounded-xl bg-card p-4">
-                      <Trophy className="h-5 w-5 text-chart-3" />
+                      <Trophy className="h-5 w-5 text-primary" />
                       <span className="flex-1 font-semibold">{p.name}</span>
-                      <span className="font-bold text-success">{p.best} kg</span>
+                      <span className="font-bold text-primary">{p.best} kg</span>
                     </li>
                   ))}
                 </ul>

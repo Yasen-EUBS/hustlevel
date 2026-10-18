@@ -13,10 +13,10 @@ export const Route = createFileRoute("/_authenticated/me")({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { title: "Me — NSS" },
-      { name: "description", content: "Your NSS account." },
-      { property: "og:title", content: "Me — NSS" },
-      { property: "og:description", content: "Your NSS account." },
+      { title: "Me — HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "Me — HustLevel" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
     ],
   }),
   component: MePage,
@@ -63,7 +63,7 @@ function MePage() {
         </div>
         <label className="flex items-center justify-between gap-4 rounded-2xl bg-card p-4">
           <span>
-            <span className="block font-semibold">Share finished workouts to NSS Squad</span>
+            <span className="block font-semibold">Share finished workouts to HustLevel Squad</span>
             <span className="text-sm text-muted-foreground">Posts a summary card when you tap Finish.</span>
           </span>
           <Switch

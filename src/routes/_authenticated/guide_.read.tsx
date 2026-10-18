@@ -1,3 +1,4 @@
+import { rebrandText } from "@/lib/brand";
 import { createFileRoute, useCanGoBack, useNavigate, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Children, isValidElement, type ReactNode } from "react";
@@ -13,10 +14,10 @@ import guide from "../../../supabase/functions/guide-chat/guide.md?raw";
 export const Route = createFileRoute("/_authenticated/guide_/read")({
   head: () => ({
     meta: [
-      { title: "Full training guide — NSS" },
-      { name: "description", content: "The complete hypertrophy training guide." },
-      { property: "og:title", content: "Full training guide — NSS" },
-      { property: "og:description", content: "The complete hypertrophy training guide." },
+      { title: "Full training guide — HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "Full training guide — HustLevel" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/guide_/read")({
 });
 
 // Drop the document title; the screen header already names it.
-const BODY = guide.replace(/^# .*\n/, "");
+const BODY = rebrandText(guide).replace(/^# .*\n/, "");
 const SECTIONS = [...BODY.matchAll(/^# (.+)$/gm)].map((m) => m[1]!.trim());
 
 function textOf(node: ReactNode): string {
@@ -72,7 +73,7 @@ function GuideReader() {
           <button
             aria-label="Share or save PDF"
             onClick={() =>
-              navigator.share({ title: "NSS training guide", url: pdfUrl }).catch(() => undefined)
+              navigator.share({ title: "HustLevel training guide", url: pdfUrl }).catch(() => undefined)
             }
             className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-bold text-primary"
           >

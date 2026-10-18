@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/logo.png" alt="NSS logo" width="120" height="120">
+  <img src="docs/logo.svg" alt="HustLevel logo" width="120" height="120">
 </p>
 
-<h1 align="center">NSS</h1>
+<h1 align="center">HustLevel</h1>
 
 <p align="center">
   A training log for a small crew of friends on the same program.<br>
@@ -19,7 +19,7 @@
 
 ## Why I built it
 
-My training program runs in TrainHeroic. My friends and I wanted to log the same program side by side, compare numbers on every lift and keep the banter in one place, without each of us paying for a separate app. NSS does that for a private group: one shared program, everyone's own logs, and leaderboards for the whole crew.
+My training program runs in TrainHeroic. My friends and I wanted to log the same program side by side, compare numbers on every lift and keep the banter in one place, without each of us paying for a separate app. HustLevel does that for a private group: one shared program, everyone's own logs, and leaderboards for the whole crew.
 
 ## Features
 
@@ -55,7 +55,7 @@ My training program runs in TrainHeroic. My friends and I wanted to log the same
 
 **One codebase, two install paths.**
 - **Android:** the app in [`mobile/`](mobile) is a Capacitor shell that loads the live web app. Updates reach installed phones the moment the site is republished, with no reinstall.
-- **iPhone:** NSS installs as a web app from Safari's Share menu, with its own icon and full-screen view, so it doesn't need the App Store.
+- **iPhone:** HustLevel installs as a web app from Safari's Share menu, with its own icon and full-screen view, so it doesn't need the App Store.
 
 ## Tech stack
 

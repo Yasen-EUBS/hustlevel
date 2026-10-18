@@ -1,3 +1,4 @@
+import { rebrandText } from "@/lib/brand";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -26,10 +27,10 @@ export const Route = createFileRoute("/_authenticated/chat/$conversationId")({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { title: "Conversation — NSS" },
-      { name: "description", content: "Messages with your NSS training partners." },
-      { property: "og:title", content: "Conversation — NSS" },
-      { property: "og:description", content: "Messages with your NSS training partners." },
+      { title: "Conversation — HustLevel" },
+      { name: "description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
+      { property: "og:title", content: "Conversation — HustLevel" },
+      { property: "og:description", content: "HustLevel — log your lifts, track your progress, level up with your crew." },
     ],
   }),
   component: Conversation,
@@ -82,7 +83,7 @@ function Conversation() {
 
   const convs = useConversations();
   const conv = convs.data?.find((c) => c.id === conversationId);
-  const title = conv ? (conv.type === "group" ? conv.name ?? "NSS Squad" : conv.other_name || "Athlete") : "";
+  const title = conv ? (conv.type === "group" ? rebrandText(conv.name ?? "HustLevel Squad") : conv.other_name || "Athlete") : "";
 
   const names = useQuery({
     queryKey: ["conv-names", conversationId],
@@ -364,7 +365,7 @@ function Bubble({ m, mine, me, name, showName, selected, onSelect, onReact, onUn
               <ul className="mt-3 space-y-1">
                 {workout.prs.map((p) => (
                   <li key={p.name} className="flex items-center gap-2 text-sm font-semibold">
-                    🏆 {p.name} <span className="ml-auto text-success">{p.kg} kg</span>
+                    🏆 {p.name} <span className="ml-auto text-primary">{p.kg} kg</span>
                   </li>
                 ))}
               </ul>
