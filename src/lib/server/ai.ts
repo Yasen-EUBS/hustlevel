@@ -75,7 +75,7 @@ export async function complete(opts: {
         { role: "system", content: opts.system },
         { role: "user", content: opts.user },
       ],
-    }, { signal: opts.signal, maxRetries: 0 });
+    }, { ...(opts.signal ? { signal: opts.signal } : {}), maxRetries: 0 });
   } catch (error) {
     if (error instanceof GatewayError && error.httpStatus === 429)
       return { ok: false, status: 429, error: "The AI is busy right now. Try again in a minute." };
