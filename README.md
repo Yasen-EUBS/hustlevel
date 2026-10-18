@@ -18,8 +18,7 @@
 ---
 
 ## Why I built it
-
-My training program runs in TrainHeroic. My friends and I wanted to log the same program side by side, compare numbers on every lift and keep the banter in one place, without each of us paying for a separate app. HustLevel does that for a private group: one shared program, everyone's own logs, and leaderboards for the whole crew.
+ My friends and I wanted to log the same program side by side, compare numbers on every lift and keep the banter in one place, without each of us paying for a separate app. HustLevel does that for a private group: one shared program, everyone's own logs, and leaderboards for the whole crew.
 
 ## Features
 
