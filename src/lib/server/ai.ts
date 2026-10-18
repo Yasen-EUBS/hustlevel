@@ -1,5 +1,6 @@
 // Server-only helpers for the /api/* routes. Never import from client components.
 import { createClient } from "@supabase/supabase-js";
+import { GatewayError, generateChatCompletion } from "@lovable.dev/ai-gateway";
 import type { Database } from "@/integrations/supabase/types";
 
 export const MODEL = "google/gemini-3.8-flash";
@@ -62,37 +63,32 @@ export async function complete(opts: {
   json?: boolean;
   signal?: AbortSignal;
 }): Promise<{ ok: true; text: string } | { ok: false; status: number; error: string }> {
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-    method: "POST",
-    ...(opts.signal ? { signal: opts.signal } : {}),
-    headers: {
-      Authorization: `Bearer ${process.env["LOVABLE_API_KEY"]}`,
-      "content-type": "application/json",
-      "X-Lovable-AIG-SDK": "fetch",
-    },
-    body: JSON.stringify({
+  let data;
+  try {
+    data = await generateChatCompletion({
       model: MODEL,
       max_completion_tokens: opts.maxTokens,
+      // Keep short coach answers from spending their output budget on hidden reasoning.
+      ...(!opts.json ? { reasoning_effort: "minimal" as const } : {}),
       ...(opts.json ? { response_format: { type: "json_object" } } : {}),
       messages: [
         { role: "system", content: opts.system },
         { role: "user", content: opts.user },
       ],
-    }),
-  });
-  if (res.status === 429)
-    return { ok: false, status: 429, error: "The AI is busy right now. Try again in a minute." };
-  if (res.status === 402)
-    return {
-      ok: false,
-      status: 402,
-      error: "The app is out of AI credits. Ask the app owner to top up.",
-    };
-  if (!res.ok)
+    }, { signal: opts.signal, maxRetries: 0 });
+  } catch (error) {
+    if (error instanceof GatewayError && error.httpStatus === 429)
+      return { ok: false, status: 429, error: "The AI is busy right now. Try again in a minute." };
+    if (error instanceof GatewayError && error.httpStatus === 402)
+      return {
+        ok: false,
+        status: 402,
+        error: "The app is out of AI credits. Ask the app owner to top up.",
+      };
     return { ok: false, status: 502, error: "The AI couldn't answer right now. Try again." };
-  const data = (await res.json().catch(() => null)) as {
-    choices?: { message?: { content?: string } }[];
-  } | null;
+  }
+  if (data.choices?.[0]?.finish_reason === "length")
+    return { ok: false, status: 502, error: "The AI answer was cut short. Try again." };
   const text = data?.choices?.[0]?.message?.content?.trim();
   if (!text)
     return { ok: false, status: 502, error: "The AI returned an empty answer. Try again." };
