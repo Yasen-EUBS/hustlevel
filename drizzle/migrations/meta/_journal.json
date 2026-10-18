@@ -71,6 +71,13 @@
       "when": 1792345441390,
       "tag": "0009_user_programs_and_ai_calls",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1792355844227,
+      "tag": "0010_session_reviews_owner_only",
+      "breakpoints": true
     }
   ]
 }
