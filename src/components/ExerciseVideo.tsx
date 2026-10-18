@@ -56,6 +56,22 @@ export function ExerciseVideoSheet({ media, onClose }: {
                 referrerPolicy="strict-origin-when-cross-origin"
               />
             </div>
+            {(media.setup?.trim() || media.execution?.trim()) && (
+              <div className="space-y-5 px-5 pt-5">
+                {media.setup?.trim() && (
+                  <div>
+                    <div className="mb-1.5 text-[11px] font-bold tracking-widest text-muted-foreground">SETUP</div>
+                    <p className="text-base leading-relaxed whitespace-pre-line text-foreground">{media.setup}</p>
+                  </div>
+                )}
+                {media.execution?.trim() && (
+                  <div>
+                    <div className="mb-1.5 text-[11px] font-bold tracking-widest text-muted-foreground">EXECUTION</div>
+                    <p className="text-base leading-relaxed whitespace-pre-line text-foreground">{media.execution}</p>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="flex justify-center px-5 py-3">
               <Button asChild variant="link" className="min-h-11">
                 <a href={`https://www.youtube.com/watch?v=${media.youtube_id}`} target="_blank" rel="noopener noreferrer">
