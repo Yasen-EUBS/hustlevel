@@ -1,205 +1,181 @@
-# Comprehensive Hypertrophy Training Manual & Exercise Handbook
+# HustLevel Training Guide
 
-An evidence-based guide to programming execution, warm-up protocols, movement substitutions, and hypertrophy fundamentals.
+How to run the workouts in HustLevel: what the numbers on each exercise mean, how to warm up, when to change the weight, and what to do when something doesn't fit your gym or your week.
 
-# Resources & Tooling
+This is general training information, not medical advice. If an exercise causes sharp or unusual pain, stop it and swap it for something else.
 
-- **Nutrition & Macronutrient Calculator**: Access your personalized calorie and macronutrient breakdown targets via the nutrition calculator portal.
+# Your first two weeks
 
-- **App Walkthrough Guide**: Review the training application tutorial video to familiarize yourself with logging workouts, tracking sets, and navigating your routine.
+## Finding your working weights
 
-# Starting Mid-Block: Onboarding & Acclimation Protocol
+Spend the first week or two finding the right weight for every exercise. Treat them as test weeks, not record weeks.
 
-If you are beginning your program after a training block is already underway:
+- **You've done the exercise before:** start from the weight in your old logs.
+- **The exercise is new:** add a little weight on each warm-up set until you find a weight you can lift for the rep range with 1 to 3 reps left.
+- **After that:** log every set. From then on, HustLevel uses your last session to suggest the next weight.
 
-- **Current Training Match**: If your prior routine closely mirrors the current block's volume, intensity, and movement selection, you may jump directly into the scheduled week.
+## Joining in the middle of a block
 
-- **New Training Style / Acclimation**: If the exercises or programming structure are unfamiliar, use your initial week as an introductory acclimation/deload phase.
+You can start the program in any week.
 
-- **Failure Management**: Regardless of which path you choose, refrain from taking sets to absolute failure during week one. This prevents premature systemic and muscular fatigue.
+- If your recent training looked similar (similar exercises and a similar number of sets), start in the current week as written.
+- If your recent training was different, make your first week an easy week. Do every set, but stop each one with 3 or 4 reps left.
 
-- **Acclimation Details**: When treating week one as an acclimation phase, avoid pushing excessive intensity. Focus on mastering movement mechanics and tempo. Aim for **3 to 4 Reps in Reserve (RIR)** on all working sets (leaving 3–4 reps before failure). If you are not familiar with RIR, simply ensure every set finishes well before mechanical failure. Thanks to the repeated bout effect, this submaximal entry sharply curtails excessive delayed-onset muscle soreness and fatigue as your body adapts.
+Either way, don't take any set to failure in your first week. New exercises cause the most soreness the first time you do them. An easy first week cuts that soreness a lot, and you lose nothing by it.
 
-# Fundamental Terminology
+# Reading a workout
 
-- **Eccentric (Negatives)**: The phase of a lift where the target muscle lengthens under tension (e.g., descending into a squat, lowering the bar toward your chest on a bench press, or the upward return on a lat pulldown).
+Every exercise in the app shows the same information:
 
-- **Isometric**: Holding a static position while actively maintaining force production, typically executed either at full peak contraction or in the fully lengthened stretch.
+| What you see | Example | What it means |
+|---|---|---|
+| Sets × reps | 2 × 8-12 | Two working sets. Each one should end somewhere between 8 and 12 reps. |
+| Tempo | 3-0-1-0 | How many seconds each part of a rep takes. See below. |
+| Rest | 2-3 min | Rest between sets. The rest timer starts when you tick a set. |
+| Notes | "Keep elbows tucked" | Extra instructions for that exercise. |
 
-- **AMRAP**: "As Many Reps As Possible" completed with strict technical execution.
+## Tempo
 
-- **Drop Set**: Completing a prescribed set to the target rep threshold, immediately dropping the resistance by 20–30%, and continuing the exercise to failure without resting.
+Tempo is four numbers, always in this order:
 
-- **Progressive Overload**: Systematically increasing the mechanical demands on your muscular system over time, primarily achieved by adding load, increasing repetitions, or improving execution quality.
+1. **Lowering:** seconds for the part of the rep where the muscle stretches. On a bench press that's the bar coming down. On a pulldown it's the bar going back up.
+2. **Pause in the stretch:** seconds to hold at the bottom. 0 means no pause.
+3. **Lifting:** seconds for the working part of the rep. 1 means lift with intent, as fast as you can while staying in control.
+4. **Pause at the top:** seconds to hold where the muscle is shortest and squeezed.
 
-- **Deload**: A planned reduction in training stress designed to dissipate accumulated systemic and localized fatigue. Deloads can be achieved by decreasing resistance, dialing back total set volume, leaving more reps in reserve, or altering training stimuli.
+So 3-0-1-0 on a press means: lower for 3 seconds, no pause, press up in about 1 second, no pause at the top.
 
-- **Tempo**: Expressed as a 4-digit sequence in seconds, read left to right:
+## Words you'll see
 
-  1.  *First number*: Duration of the eccentric (lowering/lengthening) phase.
+- **Reps in reserve (RIR):** how many more reps you could have done. Stopping with 2 reps left is 2 RIR.
+- **Failure:** the point where you can't complete another rep with good form.
+- **AMRAP:** as many reps as you can do with good form.
+- **Superset:** two exercises back to back. You rest only after the second one.
+- **Drop set:** finish the set, take off about a quarter of the weight straight away, and keep going until failure.
+- **Eccentric, concentric, isometric:** lowering, lifting, and holding still.
+- **Deload:** a lighter week that lets fatigue come down. You use less weight, do fewer sets, or stop further from failure.
+- **Progressive overload:** doing a bit more over time. That can be more weight, more reps, or cleaner reps with the same weight.
 
-  2.  *Second number*: Pause in the stretched/lengthened position (0 indicates no pause).
+# Warming up
 
-  3.  *Third number*: Speed of the concentric (lifting/shortening) phase (typically explosive/1 second).
+The best warm-up is the exercise itself with less weight. It prepares the exact muscles and joints you're about to use, and it shows you how strong you feel that day.
 
-  4.  *Fourth number*: Pause at full muscular contraction/shortening.
+If you've been sitting all day and feel stiff, start with 5 to 10 minutes of easy walking or cycling. Then do 2 or 3 lighter sets before the first working set for each muscle. None of them should feel hard.
 
-- **Superset**: Performing two exercises back-to-back with minimal to no rest between them.
+Here's an example for a working weight of 80 kg:
 
-# Warm-Up Protocol & Ramp-Up Sets
+| Set | Weight | Reps | Focus |
+|---|---|---|---|
+| Warm-up 1 | 40 kg | 10 | Slow and full range of motion |
+| Warm-up 2 | 55 kg | 5 | Same tempo as your working sets |
+| Warm-up 3 | 70 kg | 2 | Fast and clean |
+| Working sets | 80 kg | 8-12 | As written in the app |
 
-The most specific and effective warm-up is performing lighter preparation sets using the actual exercise scheduled:
+Between warm-up sets, rest only until your breathing settles, usually under a minute. Later exercises for a muscle that's already warm need one warm-up set or none.
 
-1.  **Optional General Warm-Up**: If you have been inactive or seated prior to your session and feel physically stiff, perform 10 minutes of low-intensity walking (e.g., 2.0–3.5 mph on a treadmill) before touching any weights.
+## Mobility
 
-2.  **Ramp-Up Structure**: Complete 1 to 3 non-taxing warm-up sets prior to your working sets. Do not push any warm-up sets to failure.
+Lifting through a full range of motion already trains your mobility, so you don't need a separate routine for it. If you like stretching, do it after training or on rest days, not before your working sets.
 
-    - **Warm-Up Set 1**: ~50% of your initial working load for 6–15 repetitions. Focus on a deep stretch, deliberate control, and a solid peak contraction. If you feel tight, slow down the eccentric and add a 1-second pause at both the stretched and contracted endpoints.
+# Making progress
 
-    - **Warm-Up Set 2**: 65–70% of working weight. Match the rep cadence and tempo of your working sets. Rest briefly—only until your heart rate and respiration normalize.
+## When to change the weight
 
-    - **Warm-Up Set 3**: 80–90% of working weight for 1–5 crisp reps.
+HustLevel uses double progression. You keep the same weight and add reps until you reach the top of the rep range. Then you add weight, which drops you back toward the bottom of the range, and you build the reps up again.
 
-    - *Adjustments*: If transitioning between large jumps in load, you may insert an intermediate set bridging 10–15% increments. Adjust total warm-up sets based on the lift and how warmed up you feel.
+After each set, check where you landed:
 
-# Exercise Substitutions Directory
+- **At the top of the range, and it felt fine:** add about 5 to 10%, or the smallest jump your gym allows.
+- **At the top of the range, but it was a real grind:** keep the weight. Next time, aim to reach the top more comfortably before you go up.
+- **Inside the range:** keep the weight and try to beat your reps next time.
+- **Below the bottom of the range:** the weight is too heavy. Take a little off so you land inside the range.
 
-If your gym lacks specific equipment, substitute with a movement that shares a nearly identical resistance profile and joint mechanic:
+The app does this for you. A short tip appears under a set when you go above or below the range, and your next session's weights start heavier or lighter with the reason shown. You can turn the tips off in the Me tab.
 
-## Glutes
+## How to tell it's working
 
-| Prescribed Exercise                     | Approved Substitutions                                                                       |
-|-----------------------------------------|----------------------------------------------------------------------------------------------|
-| **45-Degree Back Extensions**           | Barbell glute bridges, hip thrusts, cable glute-max kickbacks                                |
-| **Donkey Kickback**                     | Cable kickbacks, Smith machine kickbacks, barbell bridges/thrusts, 45-degree back extensions |
-| **Glute Bridge**                        | 45-degree back extensions, hip thrust variations, glute-ham raises (GHR)                     |
-| **Unilateral Leg Press (Glute-Biased)** | Glute-biased split squats or lunges, glute-biased barbell/Smith machine squats               |
-| **Glute Medius Kickback**               | Resistance band kickbacks, hip circle kickbacks, seated hip abductor machine (leaning back)  |
+- **Your logs.** More weight or more reps on the same exercise over several weeks is the clearest sign. Each exercise has a chart in the app, so you can see the trend.
+- **Your body.** Scale weight alone can mislead you. Take photos and measure your waist every few weeks. If your weight stays the same while your waist gets smaller and your lifts go up, you're losing fat and building muscle at the same time.
 
-## Quadriceps
+## What to expect
 
-| Prescribed Exercise                   | Approved Substitutions                                                                                                                     |
-|---------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-| **Hack Squat / Pendulum Squat**       | Heel-elevated SSB/barbell squats, barbell back squats, quad-biased leg press, quad-biased split squats, heel-elevated Smith machine squats |
-| **Leg Extensions**                    | Cable leg extensions, resistance band leg extensions                                                                                       |
-| **Bilateral Leg Press (Quad-Biased)** | Quad-biased split squats, forward lunges (in-place), Smith machine split squats or back squats                                             |
-| **Sissy Squat**                       | Reverse Nordics, lean-back leg extensions (minimizing hip flexion)                                                                         |
+How fast you build muscle depends on how long you've been training, your genetics, and how well you train, eat and sleep. Beginners progress fastest. After a year or two, progress slows down, which is normal. Put your attention on the things you control: showing up to every session, good form, enough food and enough sleep.
 
-## Hamstrings
+# Swapping an exercise
 
-| Prescribed Exercise                  | Approved Substitutions                                                      |
-|--------------------------------------|-----------------------------------------------------------------------------|
-| **Seated Hamstring Curls**           | Lying leg curls, banded dumbbell lying leg curls, any knee-flexion exercise |
-| **Stiff-Leg / Hamstring-Biased RDL** | Good mornings (Dumbbell, Barbell, or Trap Bar)                              |
+Sometimes a machine is taken or your gym doesn't have it. A good swap matches the original exercise in three ways:
 
-## Adductors
+1. **Same muscle.** A swap for a shoulder exercise should still train the shoulders.
+2. **Same movement.** A press for a press, a row for a row, a curl for a curl.
+3. **Hardest at the same point.** A cable lateral raise is hard at the bottom of the rep, while a dumbbell lateral raise is almost weightless there. So a cable raise is a closer swap for another cable raise than a dumbbell one is.
 
-| Prescribed Exercise  | Approved Substitutions                                         |
-|----------------------|----------------------------------------------------------------|
-| **Adductor Machine** | Copenhagen planks, cable hip adductions, banded hip adductions |
+Write the swap in the exercise's notes so you use the same one next time and your numbers stay comparable.
 
-## Chest (Pectorals)
+The tables below cover the exercises in the built-in program. For anything else, use the three rules above.
 
-| Prescribed Exercise                  | Approved Substitutions                                                                                                           |
-|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
-| **Bilateral Clavicular Cable Press** | Single-arm press-around, incline chest press machine, Smith machine incline press, dumbbell incline press, barbell incline bench |
-| **Bilateral Sternal Cable Press**    | Pec deck fly, flat chest press machine, sternal cable fly, Smith machine flat press                                              |
-| **Flat Dumbbell Bench Press**        | Flat barbell bench press, flat chest press machine, converging flat press, Smith machine flat bench                              |
-| **Incline Dumbbell Bench Press**     | Incline cable press, machine incline press, converging incline machine press, Smith machine incline press                        |
-| **Pec Deck / Chest Fly**             | Mid-to-low chest cable fly/press, flat chest press machine, dumbbell flys, flat dumbbell press                                   |
-| **Upper Chest Cable Press**          | Dumbbell incline bench, Smith machine incline bench, incline machine chest press                                                 |
+## Legs
 
-## Shoulders (Deltoids)
+| Exercise | Good swaps |
+|---|---|
+| Leg Extensions | Cable leg extension with an ankle strap on a low pulley, reverse Nordic |
+| Leg Press (quad or adductor focus) | Hack squat, Smith machine squat with feet slightly forward, heels-elevated goblet squat. Use a wider stance for more inner-thigh work. |
+| Seated Hamstring Curls | Lying leg curl, single-leg cable curl, assisted Nordic curl |
+| Glute Bridge | Barbell or machine hip thrust, cable pull-through, 45-degree back extension with a rounded upper back |
+| Straight Leg Calf Raises | Calf raise on the leg press, Smith machine calf raise, single-leg dumbbell calf raise on a step |
 
-| Prescribed Exercise                  | Approved Substitutions                                                                                                                          |
-|--------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Dumbbell Anterior Delt Press**     | Overhead converging shoulder press machine, standard overhead machine press, Smith machine shoulder press, standing/seated cable overhead press |
-| **Chest-Supported DB Lateral Raise** | Cable lateral raises, seated dumbbell lateral raises, lateral raise machine                                                                     |
-| **Chest-Supported DB Y-Raise**       | Cable Y-raises                                                                                                                                  |
-| **Hand-Height Cable Lateral Raise**  | Incline bench lying dumbbell lateral raises, leaning dumbbell lateral raises                                                                    |
-| **Rear Delt Fly**                    | Cable rear delt pull-arounds (slight arm bend), chest-supported dumbbell rear delt flys                                                         |
-| **Dumbbell Front Raise**             | Cable front raises                                                                                                                              |
+## Chest and shoulders
+
+| Exercise | Good swaps |
+|---|---|
+| Converging Flat Press | Flat dumbbell press, flat machine chest press, weighted push-up |
+| Press Deck | Any seated chest press machine, flat dumbbell press |
+| Neutral Grip Overhead Press | Seated dumbbell press with palms facing each other, machine shoulder press, landmine press |
+| Machine Lateral Raise | Cable lateral raise, lean-away dumbbell lateral raise, seated dumbbell lateral raise |
+| Mid Range Cable Lateral Raise | Machine lateral raise, cable lateral raise from a lower pulley, lean-away dumbbell lateral raise |
+| Chest Supported Front Raise | Cable front raise, plate front raise |
 
 ## Back
 
-| Prescribed Exercise                 | Approved Substitutions                                                                                                                |
-|-------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| **Cable Pullover**                  | Straight-arm lat pulldowns, standard lat pulldowns                                                                                    |
-| **Seated Lat-Biased Row**           | Step-back hammer/cable row, kneeling single-arm cable row (behind line of pull), chest-supported dumbbell row (elbows close to torso) |
-| **Lat-Biased Pulldown**             | Bilateral neutral-grip pulldowns (D-handles preferred over straight bars), kneeling high-to-low Hammer Strength row/pulldown          |
-| **T-Bar Row**                       | Seated cable row, chest-supported barbell or dumbbell row, chest-supported machine rows with equivalent arm path                      |
-| **Frontal Plane Pulldown**          | Wide-grip straight-bar pulldown, assisted pull-ups, dual-cable pulldowns, diverging machine pulldown                                  |
-| **Upper Back Row (45° & 90° path)** | Any chest-supported row matching prescribed arm abduction angle (dumbbells, barbells, seated cable rows, or machines)                 |
-| **Kelso Shrugs**                    | Chest-supported row machines/benches, dumbbell shrugs, Smith machine shrugs, barbell shrugs, standing machine shrugs                  |
+| Exercise | Good swaps |
+|---|---|
+| Pull Up | Assisted pull-up machine, lat pulldown with the same grip, slow negative pull-ups (jump up, lower for 3 to 5 seconds) |
+| Unilateral Lat Bias Pullaround | Single-arm cable pulldown, single-arm machine pulldown, straight-arm cable pulldown |
+| Seated Lat Bias Row | Single-arm dumbbell row pulling toward your hip, neutral-grip machine row with elbows close to your sides |
+| Upper Back Row | Wide-grip chest-supported T-bar row, seated cable row to the upper chest with elbows out |
+| Kelso Shrug | Lie face down on an incline bench with dumbbells and squeeze your shoulder blades together, or do the same squeeze on a seated cable row with straight arms |
 
-## Arms & Forearms
+## Arms and core
 
-| Prescribed Exercise                   | Approved Substitutions                                                                                             |
-|---------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| **Seated Overhead Triceps Extension** | JM press, overhead cable triceps extension                                                                         |
-| **Dips**                              | Overhead cable extensions, JM press, dip machine, bodyweight skull crushers, lying barbell/dumbbell skull crushers |
-| **Long-Rope / Cross-Cable Extension** | Resistance band pushdowns, dual-cable pushdowns                                                                    |
-| **Face-Away Cable Curl**              | Seated strict dumbbell curl (incline or flat), EZ-bar curl                                                         |
-| **Seated Supinated Dumbbell Curl**    | Cable curls, machine preacher/bicep curls                                                                          |
-| **Zottman Curl**                      | Alternating supinated curls, reverse grip curls                                                                    |
-| **EZ-Bar Reverse Curl**               | Cable reverse curls, dumbbell reverse curls                                                                        |
-| **Hammer Curl**                       | Cable rope hammer curls, neutral-grip dumbbell curls                                                               |
-| **Standing Wrist Flexion Curl**       | Bench-supported wrist curls (flexion/extension), cable wrist curls, behind-the-back barbell wrist curls            |
+| Exercise | Good swaps |
+|---|---|
+| Kneeling Pushdown | Standing cable pushdown, single-arm cable pushdown, close-grip push-up |
+| Mid Range Cable Curl | Standing dumbbell curl, EZ-bar curl, machine curl |
+| Half Bosu Crunch | Cable crunch, machine crunch, weighted crunch on a stability ball |
 
-## Abdominals
+# Recovery and scheduling
 
-| Prescribed Exercise | Approved Substitutions                                                          |
-|---------------------|---------------------------------------------------------------------------------|
-| **Cable Crunch**    | Floor crunches using an abdominal mat, decline bench crunches, Garhammer raises |
+## Training while sore
 
-# Frequently Asked Questions (FAQ)
+Mild soreness is fine. Train as planned. If soreness stops you from moving properly or lifting close to your normal weights, take an extra rest day. One extra day off won't hurt your progress. A forced, sloppy session just adds fatigue.
 
-## How do I accurately gauge progress?
+## Never sore at all
 
-1.  **Progressive Overload**: Muscle building takes time, but your performance metrics provide direct feedback. Tracking your training log and seeing steady improvements in load, rep counts, and mechanical execution week over week is the most reliable indicator of adaptation.
+You don't need soreness to grow. But if you're never sore and your numbers aren't going up either, you're probably stopping too far from failure. Check how many reps you really have left at the end of your sets.
 
-2.  **Body Composition Assessments**: Scale weight alone is incomplete. Regular physique check-in photos and consistent waist circumference measurements provide clarity. If your objective is fat loss and scale weight stays flat or drifts up, yet your waist measurement decreases and your muscle definition improves, you are gaining lean mass while shedding fat.
+## Missed or moved days
 
-## How much muscle can I realistically expect to build?
+The order of the workouts spreads the work across your muscles so each one gets time to recover. If you miss a day, don't squeeze two workouts together and don't change the order. Do the next workout on your next free day. Your week just shifts by a day.
 
-Your rate of muscular hypertrophy depends on your training age, genetics, and how rigorously you optimize your training stimulus, nutrition, and recovery. Rather than fixating on a specific numerical target, maximize execution across those core pillars. Doing so guarantees you achieve the best rate of growth possible for your physiology.
+# Equipment
 
-## Should I work out when I am still sore?
+## Lifting belt
 
-If residual muscle soreness noticeably impairs your ability to execute lifts with proper technique or output force, you will benefit more from inserting an extra rest day than forcing the workout. Do not panic about falling "off schedule"—individual recovery timelines vary. Training through deep muscular trauma creates unproductive fatigue and blunts adaptation. Building muscle is a long-term marathon; take recovery when needed.
+A belt helps on heavy exercises where you brace your whole torso, like squats and deadlifts. Learn to brace without one first: breathe deep into your belly, tighten your stomach as if someone is about to push you, then lift. You don't need a belt for curls, raises or machine isolation work.
 
-## How should I determine my working weights?
+## Lifting straps
 
-Use your first one to two weeks to calibrate appropriate loads for each prescribed repetition bracket. If you are already accustomed to a movement, rely on your past logs. If an exercise is unfamiliar, ramp up progressively across warm-ups until you find a resistance that places you at the designated proximity to failure within the target rep range.
+Use straps when your grip gives out before the muscle you're training. This happens most on heavy rows, pulldowns and Romanian deadlifts. Straps let your back or hamstrings do the work instead of your forearms. If your grip is a weak point, train it separately.
 
-## When and how do I increase the weight on working sets?
+# Fat loss or muscle gain
 
-When you successfully hit the upper ceiling of a prescribed rep range with clean form, advance your load:
-
-- If you hit the top of the rep target on an early set with relative ease, increase the load by 5–10% for the subsequent sets.
-
-- If hitting the top rep count was an intense grind, keep the load identical for the remaining sets and focus on hitting that target again next workout, or strive to add a single rep across your sets before adding weight.
-
-## Can I shuffle my workout days around?
-
-The training split is carefully arranged so that training sessions and recovery periods synergize. Shuffling workout days randomly risks overlapping muscular stress and under-recovering prime movers. If your schedule requires an adjustment, add an extra rest day and continue the workouts in their designated order rather than restructuring the sequence.
-
-## What if I rarely or never experience muscle soreness?
-
-Delayed-onset muscle soreness is not a mandatory prerequisite for hypertrophy. However, if you never experience even mild soreness or fatigue, re-evaluate your proximity to failure and set intensity. If you are pushing your sets close to true mechanical limits and advancing performance, you should periodically experience subtle soreness.
-
-## Is dedicated mobility work necessary?
-
-Strength training through a full active range of motion under load is one of the most effective mobility modalities available. Lifting properly conditions your joints, tendons, and muscles through deep lengthened positions. If you wish to incorporate supplementary static stretching, schedule it post-workout or on active recovery days.
-
-## Is this program tailored for fat loss, muscle growth, or body recomposition?
-
-This program functions effectively for cutting, lean gaining, or recomposition. Hypertrophy-focused resistance training is identical whether you are eating in a caloric deficit, surplus, or maintenance. Your dietary intake dictates whether you lose adipose tissue or build muscle, while the training ensures muscle mass is preserved or built.
-
-## When should I wear a lifting belt?
-
-A weightlifting belt should be utilized on heavy compound exercises that require intense intra-abdominal pressure and spinal bracing (such as heavy squats or deadlift variations). If you have not mastered the mechanics of intra-abdominal bracing, learn the technique first before relying on a belt. A belt is unnecessary on light isolations (e.g., standing arm curls).
-
-## When should I use lifting straps?
-
-Use lifting straps whenever grip endurance limits your performance before the target muscle gives out. Pulling exercises—such as heavy rows, Romanian deadlifts (RDLs), and lat pulldowns—frequently tax grip before the lats or hamstrings reach failure. Straps eliminate grip as a bottleneck, ensuring full stimulus to the intended muscle group.
+Train the same way whatever your goal is. What you eat decides the result. Eat less than you burn to lose fat, a little more than you burn to gain muscle, or about the same to slowly do both, which works best for beginners. In every case, the training is what tells your body to keep or build muscle.
