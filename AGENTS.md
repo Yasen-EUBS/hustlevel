@@ -24,3 +24,4 @@
 - Timers live in one module-level store (src/lib/timers.ts) computed from wall-clock deltas, so only one timer runs at a time and it survives route changes and backgrounding.
 - Chat access is gated by SECURITY DEFINER `is_member`; clients never insert conversation_members (DMs only via `get_or_create_dm`), and workout posts are deduped by a unique index on messages.workout_session_id.
 - A React Query key must always map to one fetcher and one data shape. Reuse `fetchActiveProgram` for `["program"]`; never cache a partial select under a shared key (it crashed Training after visiting Me).
+- The published web address is https://hustlevel.lovable.app. Always publish with slug `hustlevel`; publishing with any other slug moves the live app to a different address and breaks every installed home-screen app and the Android shell.

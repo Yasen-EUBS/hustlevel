@@ -1,6 +1,6 @@
 name: Android release
 
-# Builds the HustLevel Android app (a Capacitor shell around https://nss-gym.lovable.app)
+# Builds the HustLevel Android app (a Capacitor shell around https://hustlevel.lovable.app)
 # and publishes it as NSS.apk on a GitHub Release.
 on:
   workflow_dispatch:

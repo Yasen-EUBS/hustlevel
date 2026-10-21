@@ -3,11 +3,11 @@
   "appName": "HustLevel",
   "webDir": "www",
   "server": {
-    "url": "https://nss-gym.lovable.app",
+    "url": "https://hustlevel.lovable.app",
     "androidScheme": "https",
     "errorPath": "offline.html",
     "allowNavigation": [
-      "nss-gym.lovable.app",
+      "hustlevel.lovable.app",
       "*.supabase.co",
       "*.youtube-nocookie.com",
       "*.youtube.com",
