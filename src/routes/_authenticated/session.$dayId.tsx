@@ -477,13 +477,7 @@ function SessionPage() {
                       {ex.sets}x{range}
                     </b>
                   </span>
-                  {ex.tempo && (
-                    <span className="inline-flex items-center gap-0.5">
-                      <span className="text-muted-foreground">Tempo&nbsp;</span>
-                      <b>{ex.tempo}</b>
-                      <TempoHelp tempo={ex.tempo} />
-                    </span>
-                  )}
+                  {ex.tempo && <TempoHelp tempo={ex.tempo} />}
                   <span>
                     <span className="text-muted-foreground">Rest </span>
                     <b>{fmtRest(ex.rest_min_seconds, ex.rest_max_seconds)}</b>

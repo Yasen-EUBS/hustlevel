@@ -29,7 +29,10 @@ const PARTS: Part[] = [
 const isFast = (v: string) => /^x$/i.test(v);
 const secs = (v: string) => `${v} ${v === "1" ? "second" : "seconds"}`;
 
-/** Small "?" next to an exercise's tempo; explains it in place, with a link to the full guide section. */
+/**
+ * "Tempo 3-0-1-0 (?)" as one button: tapping the label, the numbers or the "?" explains the
+ * tempo in place, with a small link to the full guide section.
+ */
 export function TempoHelp({ tempo }: { tempo: string }) {
   const digits = tempo.split(/[-–\s]+/).filter(Boolean);
   const valid = digits.length === 4 && digits.every((d) => /^(\d{1,2}|x)$/i.test(d));
@@ -38,10 +41,12 @@ export function TempoHelp({ tempo }: { tempo: string }) {
     <Popover>
       <PopoverTrigger asChild>
         <button
-          aria-label={`What does tempo ${tempo} mean?`}
-          className="-my-2 inline-flex h-8 w-7 items-center justify-center text-muted-foreground active:text-primary data-[state=open]:text-primary"
+          aria-label={`Tempo ${tempo}. What does it mean?`}
+          className="group -my-2 inline-flex h-8 items-center gap-1 rounded-md"
         >
-          <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full border-[1.5px] border-current text-[11px] font-bold leading-none">
+          <span className="text-muted-foreground">Tempo</span>
+          <b className="group-data-[state=open]:text-primary">{tempo}</b>
+          <span className="ml-0.5 flex h-[18px] w-[18px] items-center justify-center rounded-full border-[1.5px] border-current text-[11px] font-bold leading-none text-muted-foreground group-active:text-primary group-data-[state=open]:text-primary">
             ?
           </span>
         </button>
