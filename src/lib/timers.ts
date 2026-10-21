@@ -194,6 +194,7 @@ export const timers = {
     unlockAudio();
     saveConfig(type, cfg);
     const now = Date.now();
+    nowCache = now;
     store = {
       ...store,
       view: type,
@@ -215,7 +216,8 @@ export const timers = {
     const t = store.timer;
     if (!t || t.startedAt || t.finished) return;
     unlockAudio();
-    setTimer({ startedAt: Date.now() });
+    nowCache = Date.now();
+    setTimer({ startedAt: nowCache });
     ensureTicker();
   },
   reset() {
@@ -256,10 +258,18 @@ export function useTimers() {
   return useSyncExternalStore(timers.subscribe, timers.get, timers.get);
 }
 
-/** Re-render roughly every 200ms while a timer runs; returns current wall time. */
+const getNow = () => nowCache;
+
+/**
+ * Re-render roughly every 200ms while a timer runs; returns current wall time.
+ * The tick only updates nowCache (the store object stays the same), so the clock must be
+ * its own snapshot: subscribing to the store alone made React skip every tick and the
+ * countdown only moved when something else re-rendered the screen (e.g. a tap).
+ */
 export function useNow() {
   useTimers();
-  return nowCache || Date.now();
+  const now = useSyncExternalStore(timers.subscribe, getNow, getNow);
+  return now || Date.now();
 }
 
 // ---------- remembered settings ----------
