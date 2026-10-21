@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, Check, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Trophy } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Friends } from "@/components/Friends";
 import { DurationEditor, fromDurationParts, toDurationParts } from "@/components/DurationEditor";
@@ -14,6 +14,8 @@ import { timers } from "@/lib/timers";
 import { SQUAD_ID, type WorkoutPost } from "@/lib/chat";
 import { nextWeight, rangeText, setTip } from "@/lib/progression";
 import { useTipsEnabled } from "@/lib/prefs";
+import { LevelTick } from "@/components/LevelTick";
+import { TempoHelp } from "@/components/TempoHelp";
 import {
   beep,
   epley,
@@ -476,9 +478,10 @@ function SessionPage() {
                     </b>
                   </span>
                   {ex.tempo && (
-                    <span>
-                      <span className="text-muted-foreground">Tempo </span>
+                    <span className="inline-flex items-center gap-0.5">
+                      <span className="text-muted-foreground">Tempo&nbsp;</span>
                       <b>{ex.tempo}</b>
+                      <TempoHelp tempo={ex.tempo} />
                     </span>
                   )}
                   <span>
@@ -535,9 +538,9 @@ function SessionPage() {
                       <button
                         aria-label={`Complete set ${i + 1}`}
                         onClick={() => toggleSet(ex, i)}
-                        className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full border-[3px] transition ${r.done ? "border-success bg-success text-success-foreground" : "border-success/50"}`}
+                        className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full border-[3px] transition ${r.done ? "level-pop border-primary bg-background" : "border-success/50"}`}
                       >
-                        {r.done && <Check className="h-6 w-6" strokeWidth={3} />}
+                        {r.done && <LevelTick className="h-6 w-[26px]" />}
                       </button>
                     </div>
                     {tipsOn && r.done && i === lastDoneIndex(list) && (
@@ -708,9 +711,9 @@ function CardioBlock({ seconds, done, onToggle }: { seconds: number; done: boole
       </div>
       <button
         onClick={onToggle}
-        className={`flex h-14 items-center gap-2 rounded-full border-[3px] px-6 font-bold ${done ? "border-success bg-success text-success-foreground" : "border-success/50"}`}
+        className={`flex h-14 items-center gap-2 rounded-full border-[3px] px-6 font-bold ${done ? "level-pop border-primary bg-background text-primary" : "border-success/50"}`}
       >
-        <Check className="h-5 w-5" strokeWidth={3} /> Done
+        {done ? <LevelTick className="h-5 w-[22px]" /> : null} Done
       </button>
     </div>
   );

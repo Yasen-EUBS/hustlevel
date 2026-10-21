@@ -113,3 +113,22 @@
 .guide-doc table { font-size: 0.875rem; }
 
 .hustlevel-logo { font-family: var(--font-sans); letter-spacing: -0.025em; }
+
+/* Completed-set mark: chevrons rise in, front first, then the back one ("level up"). */
+@keyframes level-rise {
+  from { transform: translateY(55%); opacity: 0; }
+  60% { opacity: 1; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes level-pop {
+  0% { transform: scale(0.86); }
+  55% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.level-tick polyline { transform-box: fill-box; transform-origin: center; }
+.level-tick-front { animation: level-rise 300ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both; }
+.level-tick-back { animation: level-rise 300ms 90ms cubic-bezier(0.2, 0.9, 0.3, 1.25) both; }
+.level-pop { animation: level-pop 280ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .level-tick-front, .level-tick-back, .level-pop { animation: none; }
+}

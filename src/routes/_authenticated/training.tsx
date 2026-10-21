@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ExerciseVideoSheet } from "@/components/ExerciseVideo";
 import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchActiveProgram, fetchSessions, formatDone, fromISO, isoWeekday, normKey, repText, toISO, weekOf } from "@/lib/titan";
+import { fetchActiveProgram, fetchSessions, formatDone, fromISO, isoWeekday, myId, normKey, repText, toISO, weekOf } from "@/lib/titan";
 
 export const Route = createFileRoute("/_authenticated/training")({
   validateSearch: z.object({ date: z.string().optional() }),
@@ -46,11 +46,45 @@ function TrainingPage() {
 
   const weekStart = startOfWeek(sel, { weekStartsOn: 1 });
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-  const sessionDates = useMemo(() => new Set((sessions.data ?? []).map((s) => s.session_date)), [sessions.data]);
+  // Day dots: olive = planned, amber = started (a set is ticked) but not finished, volt = finished.
+  // Opening a day creates a session row, so a row alone doesn't mean the workout started.
+  const weekIsos = useMemo(() => new Set(days.map(toISO)), [days]);
+  const openIds = useMemo(
+    () =>
+      (sessions.data ?? [])
+        .filter((s) => !s.completed_at && weekIsos.has(s.session_date))
+        .map((s) => s.id)
+        .sort(),
+    [sessions.data, weekIsos],
+  );
+  const started = useQuery({
+    queryKey: ["week-started", openIds.join(",")],
+    enabled: openIds.length > 0,
+    queryFn: async () => {
+      const uid = await myId();
+      const { data, error } = await supabase
+        .from("set_logs")
+        .select("session_id")
+        .eq("user_id", uid)
+        .eq("completed", true)
+        .in("session_id", openIds);
+      if (error) throw error;
+      return new Set(data.map((d) => d.session_id));
+    },
+  });
 
   const p = program.data;
   const day = p?.program_days?.find((d) => d.weekday === isoWeekday(sel));
   const session = (sessions.data ?? []).find((s) => s.session_date === selected && s.program_day_id === day?.id);
+
+  function dayStatus(d: Date): "done" | "started" | "planned" | null {
+    const iso = toISO(d);
+    const rows = (sessions.data ?? []).filter((s) => s.session_date === iso);
+    if (rows.some((s) => s.completed_at)) return "done";
+    if (rows.some((s) => started.data?.has(s.id))) return "started";
+    const planned = p?.program_days?.find((x) => x.weekday === isoWeekday(d));
+    return planned && !/\brest\b/i.test(planned.title) ? "planned" : null;
+  }
   const week = p ? weekOf(p.start_date, sel) : 0;
 
   // Completed sets for the selected day's session, to mark exercises done like TrainHeroic.
@@ -75,8 +109,23 @@ function TrainingPage() {
 
   return (
     <TabShell>
-      <div className="px-5 pb-2 pt-3"><HustLevelLogo className="text-2xl" /></div>
-      <header className="flex flex-wrap items-center justify-between gap-y-2 px-5 pb-3 pt-3">
+      <div className="flex items-center justify-between gap-2 px-5 pb-2 pt-3">
+        <HustLevelLogo className="min-w-0 text-xl" />
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            onClick={() => timers.openSheet()}
+            aria-label="Timers"
+            title="Timers"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-card"
+          >
+            <Timer className="h-[18px] w-[18px] text-primary" />
+          </button>
+          <Link to="/guide" className="flex h-9 items-center gap-1.5 rounded-full bg-card px-3 text-[13px] font-bold">
+            <BookOpen className="h-4 w-4 text-primary" /> Training guide
+          </Link>
+        </div>
+      </div>
+      <header className="flex items-center justify-between px-5 pb-3 pt-3">
         <div className="flex items-baseline gap-3">
           <button onClick={() => setMonthOpen((o) => !o)} className="flex items-center gap-1 font-display text-3xl font-extrabold uppercase">
             {format(sel, "MMM ''yy")}
@@ -87,14 +136,6 @@ function TrainingPage() {
               Today
             </button>
           )}
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => timers.openSheet()} aria-label="Timers" className="flex items-center gap-1.5 rounded-full bg-card px-3 py-2 text-sm font-bold">
-            <Timer className="h-4 w-4 text-primary" /> Timers
-          </button>
-          <Link to="/guide" className="flex items-center gap-1.5 rounded-full bg-card px-3 py-2 text-sm font-bold">
-            <BookOpen className="h-4 w-4 text-primary" /> Guide
-          </Link>
         </div>
       </header>
       {monthOpen && (
@@ -135,7 +176,11 @@ function TrainingPage() {
               >
                 {format(d, "d")}
               </span>
-              <span className={`h-1.5 w-1.5 rounded-full ${sessionDates.has(iso) ? "bg-success" : "bg-transparent"}`} />
+              <span
+                aria-label={{ done: "Finished", started: "In progress", planned: "Planned" }[dayStatus(d) ?? "planned"]}
+                aria-hidden={!dayStatus(d)}
+                className={`h-1.5 w-1.5 rounded-full ${DOT[dayStatus(d) ?? "none"]}`}
+              />
             </button>
           );
         })}
@@ -172,7 +217,7 @@ function TrainingPage() {
               search={{ date: selected }}
               className="mt-5 flex h-14 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground"
             >
-              {session ? "Resume Session" : "Start Session"}
+              {session && started.data?.has(session.id) ? "Resume Session" : "Start Session"}
             </Link>
           )}
 
@@ -266,3 +311,10 @@ function TrainingPage() {
     </TabShell>
   );
 }
+
+const DOT = {
+  done: "bg-success",
+  started: "bg-partial",
+  planned: "bg-secondary-accent",
+  none: "bg-transparent",
+} as const;
