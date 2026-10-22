@@ -7,7 +7,7 @@ import { ArrowDown, ArrowUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Paus
 import { supabase } from "@/integrations/supabase/client";
 import { Friends } from "@/components/Friends";
 import { DurationEditor, fromDurationParts, toDurationParts } from "@/components/DurationEditor";
-import { ExerciseVideoSheet, ExerciseVideoTile } from "@/components/ExerciseVideo";
+import { ExerciseVideoSheet, ExerciseVideoTile, TechniqueSearchTile } from "@/components/ExerciseVideo";
 import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
 import { SelectTimerButton, TimerSheet } from "@/components/Timers";
 import { timers } from "@/lib/timers";
@@ -447,7 +447,11 @@ function SessionPage() {
 
             {(demo || !ex.duration_seconds) && (
               <div className="mt-4 flex items-stretch gap-3">
-                {demo && <ExerciseVideoTile media={demo} name={ex.name} onPlay={() => setPlaying(demo)} />}
+                {demo ? (
+                  <ExerciseVideoTile media={demo} name={ex.name} onPlay={() => setPlaying(demo)} />
+                ) : (
+                  <TechniqueSearchTile name={ex.name} />
+                )}
                 {!ex.duration_seconds && (
                 <div className="grid min-w-0 flex-1 grid-cols-2 divide-x divide-border rounded-2xl bg-card py-4 text-center">
                 <div className="min-w-0 px-1">

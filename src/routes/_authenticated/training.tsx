@@ -9,7 +9,7 @@ import { BookOpen, Check, ChevronDown, ChevronRight, Play, Timer } from "lucide-
 import { timers } from "@/lib/timers";
 import { TabShell } from "@/components/TabShell";
 import { Button } from "@/components/ui/button";
-import { ExerciseVideoSheet } from "@/components/ExerciseVideo";
+import { ExerciseVideoSheet, techniqueSearchUrl } from "@/components/ExerciseVideo";
 import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchActiveProgram, fetchSessions, formatDone, fromISO, isoWeekday, myId, normKey, repText, toISO, weekOf } from "@/lib/titan";
@@ -299,6 +299,18 @@ function TrainingPage() {
                     >
                       <Play className="fill-current" />
                     </Button>
+                  )}
+                  {!demo && !e.duration_seconds && (
+                    <a
+                      href={techniqueSearchUrl(e.name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Watch ${e.name} technique on YouTube`}
+                      title="Watch technique on YouTube"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-primary active:bg-card"
+                    >
+                      <Play className="h-5 w-5" />
+                    </a>
                   )}
                   </div>
                 </li>

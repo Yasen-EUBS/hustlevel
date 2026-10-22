@@ -85,3 +85,25 @@ export function ExerciseVideoSheet({ media, onClose }: {
     </Sheet>
   );
 }
+/** YouTube search for an exercise's technique, for exercises without a curated demo video. */
+export const techniqueSearchUrl = (name: string) =>
+  `https://www.youtube.com/results?search_query=${encodeURIComponent(`${name.trim()} technique`)}`;
+
+/** Takes the demo tile's place when an exercise has no video (e.g. imported programs). */
+export function TechniqueSearchTile({ name }: { name: string }) {
+  return (
+    <a
+      href={techniqueSearchUrl(name)}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Watch ${name} technique on YouTube`}
+      className="flex min-h-24 w-28 shrink-0 flex-col items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-card px-2 text-center text-xs font-bold text-primary active:scale-[0.98] sm:w-36"
+    >
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-background ring-1 ring-primary/40">
+        <Play className="h-4 w-4" />
+      </span>
+      Watch technique
+      <span className="-mt-1 text-[10px] font-medium text-muted-foreground">YouTube search</span>
+    </a>
+  );
+}
