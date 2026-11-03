@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Check, ChevronLeft, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchActiveProgram } from "@/lib/titan";
+import { fetchActiveProgram, fromISO } from "@/lib/titan";
 
 export const Route = createFileRoute("/_authenticated/program/")({
   head: () => ({
@@ -25,15 +25,31 @@ type Listed = {
   name: string;
   block_name: string;
   created_by: string | null;
+  is_active: boolean;
+  start_date: string;
+  total_weeks: number;
   days: number;
   creator: string | null;
 };
 
+// Built-in blocks that are no longer the default stay listed as "Previous block" so anyone can go back to one.
+const rank = (p: Listed) => (p.created_by ? 2 : p.is_active ? 0 : 1);
+
+/** "7 Sep – 1 Nov": the block's first and last day. */
+function blockDates(p: Listed) {
+  const start = fromISO(p.start_date);
+  const end = new Date(start);
+  end.setDate(end.getDate() + p.total_weeks * 7 - 1);
+  const f = (d: Date) => d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+  return `${f(start)} – ${f(end)}`;
+}
+
 async function fetchPrograms(): Promise<Listed[]> {
   const { data, error } = await supabase
     .from("programs")
-    .select("id, name, block_name, created_by, created_at, is_active, program_days(id)")
-    .or("is_active.eq.true,created_by.not.is.null")
+    .select(
+      "id, name, block_name, created_by, created_at, is_active, start_date, total_weeks, program_days(id)",
+    )
     .order("created_at", { ascending: false });
   if (error) throw error;
   const ids = [...new Set(data.map((p) => p.created_by).filter((x): x is string => !!x))];
@@ -46,12 +62,15 @@ async function fetchPrograms(): Promise<Listed[]> {
       name: p.name,
       block_name: p.block_name,
       created_by: p.created_by,
+      is_active: p.is_active,
+      start_date: p.start_date,
+      total_weeks: p.total_weeks,
       days: p.program_days.length,
       creator: p.created_by
         ? (names.find((n) => n.id === p.created_by)?.display_name ?? "Athlete")
         : null,
     }))
-    .sort((a, b) => Number(!!a.created_by) - Number(!!b.created_by)); // built-in first, then newest
+    .sort((a, b) => rank(a) - rank(b)); // current built-in, previous built-ins, then imports (newest first)
 }
 
 function ProgramsPage() {
@@ -66,9 +85,11 @@ function ProgramsPage() {
     if (p.id === current.data?.id) return;
     setBusy(p.id);
     // NULL means "the built-in default", so it follows future default blocks automatically.
+    // A previous built-in block or an imported program is pinned by id.
+    const pinned = p.created_by !== null || !p.is_active;
     const { error } = await supabase
       .from("profiles")
-      .upsert({ id: user.id, program_id: p.created_by ? p.id : null });
+      .upsert({ id: user.id, program_id: pinned ? p.id : null });
     setBusy(null);
     if (error) {
       toast.error(error.message);
@@ -76,7 +97,13 @@ function ProgramsPage() {
     }
     await qc.invalidateQueries({ queryKey: ["program"] });
     qc.invalidateQueries({ queryKey: ["profile"] });
-    toast.success(`Now following ${p.name}`);
+    toast.success(
+      p.created_by
+        ? `Now following ${p.name}`
+        : p.is_active
+          ? "Back on the current block"
+          : `Switched to ${p.block_name}`,
+    );
   }
 
   return (
@@ -119,13 +146,24 @@ function ProgramsPage() {
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-semibold">{p.name}</span>
                   <span className="block truncate text-sm text-muted-foreground">
-                    {p.block_name} · {p.days} {p.days === 1 ? "day" : "days"} ·{" "}
-                    {p.created_by
-                      ? p.created_by === user.id
-                        ? "by you"
-                        : `by ${p.creator}`
-                      : "Built-in"}
+                    {p.created_by ? (
+                      <>
+                        {p.block_name} · {p.days} {p.days === 1 ? "day" : "days"} ·{" "}
+                        {p.created_by === user.id ? "by you" : `by ${p.creator}`}
+                      </>
+                    ) : (
+                      <>
+                        {p.block_name} · {blockDates(p)}
+                      </>
+                    )}
                   </span>
+                  {!p.created_by && (
+                    <span
+                      className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-bold tracking-wide ${p.is_active ? "bg-primary/15 text-primary" : "bg-background text-muted-foreground"}`}
+                    >
+                      {p.is_active ? "CURRENT BLOCK" : "PREVIOUS BLOCK"}
+                    </span>
+                  )}
                 </span>
                 {active ? (
                   <Check className="h-5 w-5 shrink-0 text-primary" strokeWidth={3} />

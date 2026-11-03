@@ -67,7 +67,9 @@ function MePage() {
           <span className="min-w-0">
             <span className="block text-[11px] font-bold tracking-widest text-muted-foreground">PROGRAM</span>
             <span className="mt-1 block truncate text-lg font-semibold">{program.data?.name ?? "—"}</span>
-            <span className="block truncate text-sm text-muted-foreground">Switch, or import one from screenshots</span>
+            <span className="block truncate text-sm text-muted-foreground">
+              {program.data?.block_name ? `${program.data.block_name} · ` : ""}Switch to a previous block, or import one
+            </span>
           </span>
           <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
         </Link>
