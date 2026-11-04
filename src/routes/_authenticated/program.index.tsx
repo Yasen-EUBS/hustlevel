@@ -96,6 +96,7 @@ function ProgramsPage() {
       return;
     }
     await qc.invalidateQueries({ queryKey: ["program"] });
+    qc.invalidateQueries({ queryKey: ["program-timeline"] });
     qc.invalidateQueries({ queryKey: ["profile"] });
     toast.success(
       p.created_by
@@ -177,7 +178,11 @@ function ProgramsPage() {
           );
         })}
       </ul>
-      <p className="px-1 pb-8 pt-4 text-sm text-muted-foreground">
+      <p className="px-1 pt-4 text-sm text-muted-foreground">
+        On the current block, every block keeps its own dates: past weeks show what ran then.
+        Following a previous block repeats it every week instead.
+      </p>
+      <p className="px-1 pb-8 pt-2 text-sm text-muted-foreground">
         Your history, charts and leaderboards carry over when you switch, because they're matched by
         exercise name.
       </p>

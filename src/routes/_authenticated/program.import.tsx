@@ -170,6 +170,7 @@ function ImportPage() {
       return;
     }
     await qc.invalidateQueries({ queryKey: ["program"] });
+    qc.invalidateQueries({ queryKey: ["program-timeline"] });
     qc.invalidateQueries({ queryKey: ["programs-list"] });
     qc.invalidateQueries({ queryKey: ["profile"] });
     toast.success(`Imported. You're now following ${draft.name}.`);

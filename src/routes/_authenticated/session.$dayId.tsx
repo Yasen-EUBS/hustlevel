@@ -19,7 +19,7 @@ import { TempoHelp } from "@/components/TempoHelp";
 import {
   beep,
   epley,
-  fetchActiveProgram,
+  fetchProgramOfDay,
   fmtDuration,
 
   fmtRest,
@@ -56,7 +56,8 @@ function SessionPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  const program = useQuery({ queryKey: ["program"], queryFn: fetchActiveProgram });
+  // Load the day's own block, so a past session (an earlier block) opens with that block's exercises.
+  const program = useQuery({ queryKey: ["program-of-day", dayId], queryFn: () => fetchProgramOfDay(dayId) });
   const media = useExerciseMedia();
   const [playing, setPlaying] = useState<ExerciseMedia | null>(null);
   const day = program.data?.program_days?.find((d) => d.id === dayId);
@@ -381,7 +382,7 @@ function SessionPage() {
   const go = (d: number) => setIdx((i) => Math.min(total, Math.max(0, i + d)));
 
   if (program.isLoading || !rows) {
-    return <div className="flex min-h-[100dvh] items-center justify-center text-muted-foreground">{program.data && !day ? "Day not found" : "Loading session…"}</div>;
+    return <div className="flex min-h-[100dvh] items-center justify-center text-muted-foreground">{program.isFetched && !day ? "Day not found" : "Loading session…"}</div>;
   }
 
   const ex = exercises[idx];

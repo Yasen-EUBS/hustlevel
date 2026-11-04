@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ExerciseVideoSheet, techniqueSearchUrl } from "@/components/ExerciseVideo";
 import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchActiveProgram, fetchSessions, formatDone, fromISO, isoWeekday, myId, normKey, repText, toISO, weekOf } from "@/lib/titan";
+import { blockFor, fetchProgramTimeline, fetchSessions, formatDone, fromISO, isoWeekday, myId, normKey, repText, toISO, weekOf } from "@/lib/titan";
 
 export const Route = createFileRoute("/_authenticated/training")({
   validateSearch: z.object({ date: z.string().optional() }),
@@ -37,7 +37,8 @@ function TrainingPage() {
   const sel = fromISO(selected);
   const setDate = (d: Date) => navigate({ search: { date: toISO(d) }, replace: true });
 
-  const program = useQuery({ queryKey: ["program"], queryFn: fetchActiveProgram });
+  // Every block on its own dates: past weeks show the block that ran then, not today's.
+  const timeline = useQuery({ queryKey: ["program-timeline"], queryFn: fetchProgramTimeline });
   const sessions = useQuery({ queryKey: ["sessions"], queryFn: fetchSessions });
   const media = useExerciseMedia();
   const [playing, setPlaying] = useState<ExerciseMedia | null>(null);
@@ -73,7 +74,7 @@ function TrainingPage() {
     },
   });
 
-  const p = program.data;
+  const p = blockFor(timeline.data, sel);
   const day = p?.program_days?.find((d) => d.weekday === isoWeekday(sel));
   const session = (sessions.data ?? []).find((s) => s.session_date === selected && s.program_day_id === day?.id);
 
@@ -82,7 +83,7 @@ function TrainingPage() {
     const rows = (sessions.data ?? []).filter((s) => s.session_date === iso);
     if (rows.some((s) => s.completed_at)) return "done";
     if (rows.some((s) => started.data?.has(s.id))) return "started";
-    const planned = p?.program_days?.find((x) => x.weekday === isoWeekday(d));
+    const planned = blockFor(timeline.data, d)?.program_days?.find((x) => x.weekday === isoWeekday(d));
     return planned && !/\brest\b/i.test(planned.title) ? "planned" : null;
   }
   const week = p ? weekOf(p.start_date, sel) : 0;
@@ -186,7 +187,7 @@ function TrainingPage() {
         })}
       </div>
 
-      {program.isLoading ? (
+      {timeline.isLoading ? (
         <div className="px-5 text-muted-foreground">Loading…</div>
       ) : !p ? (
         <div className="px-5 text-muted-foreground">No active program.</div>

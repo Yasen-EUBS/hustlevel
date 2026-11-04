@@ -103,10 +103,61 @@ export async function fetchActiveProgram() {
       .maybeSingle());
   }
   if (error) throw error;
-  if (data) {
-    data.program_days.forEach((d) => d.program_exercises.sort((a, b) => a.letter.localeCompare(b.letter)));
-  }
+  if (data) sortExercises(data);
   return data;
+}
+
+export type FullProgram = NonNullable<Awaited<ReturnType<typeof fetchActiveProgram>>>;
+
+function sortExercises<T extends { program_days: { program_exercises: { letter: string }[] }[] }>(p: T): T {
+  p.program_days.forEach((d) => d.program_exercises.sort((a, b) => a.letter.localeCompare(b.letter)));
+  return p;
+}
+
+/**
+ * The blocks Training shows, oldest first. Following the built-in default (program_id NULL) returns every
+ * built-in block, so each date shows the block that ran on it; a pinned program (a previous block chosen
+ * on purpose, or an import) is the only entry and repeats on every date.
+ */
+export async function fetchProgramTimeline(): Promise<FullProgram[]> {
+  const { data: auth } = await supabase.auth.getSession();
+  const uid = auth.session?.user.id;
+  const chosen = uid
+    ? (await supabase.from("profiles").select("program_id").eq("id", uid).maybeSingle()).data?.program_id ?? null
+    : null;
+  if (chosen) {
+    const { data, error } = await supabase.from("programs").select(PROGRAM_SELECT).eq("id", chosen).maybeSingle();
+    if (error) throw error;
+    if (data) return [sortExercises(data)];
+  }
+  const { data, error } = await supabase
+    .from("programs")
+    .select(PROGRAM_SELECT)
+    .is("created_by", null)
+    .order("start_date", { ascending: true });
+  if (error) throw error;
+  return data.map(sortExercises);
+}
+
+/** The block covering `date`: the latest one that had started by then (the first block for earlier dates). */
+export function blockFor<T extends { start_date: string }>(blocks: T[] | undefined, date: Date): T | undefined {
+  let pick = blocks?.[0];
+  for (const b of blocks ?? []) if (fromISO(b.start_date) <= date) pick = b;
+  return pick;
+}
+
+/** The program a given day belongs to, whichever block or program the lifter follows now. */
+export async function fetchProgramOfDay(dayId: string): Promise<FullProgram | null> {
+  const { data: day, error: dayError } = await supabase
+    .from("program_days")
+    .select("program_id")
+    .eq("id", dayId)
+    .maybeSingle();
+  if (dayError) throw dayError;
+  if (!day) return null;
+  const { data, error } = await supabase.from("programs").select(PROGRAM_SELECT).eq("id", day.program_id).maybeSingle();
+  if (error) throw error;
+  return data ? sortExercises(data) : null;
 }
 
 export function weekOf(startDate: string, date: Date) {
