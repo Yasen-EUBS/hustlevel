@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { complete, fail, json, takeQuota, userFromRequest } from "@/lib/server/ai";
 import { nextWeight, rangeText, verdict, type RepRange } from "@/lib/progression";
+import { swapFor } from "@/lib/swaps";
 
 const SYSTEM = `You are the HustLevel coach. Write a short post-workout review for the lifter using ONLY the session data provided.
 Rules:
@@ -68,11 +69,20 @@ export const Route = createFileRoute("/api/coach-summary")({
           const { data: day } = await sb
             .from("program_days")
             .select(
-              "program_exercises(name, sets, rep_min, rep_max, duration_seconds), programs(coach_notes)",
+              "program_exercises(id, name, sets, rep_min, rep_max, duration_seconds), programs(coach_notes)",
             )
             .eq("id", session.program_day_id)
             .maybeSingle();
-          for (const e of day?.program_exercises ?? []) ranges[e.name.trim().toLowerCase()] = e;
+          // A swapped exercise is logged under its new name but keeps the programmed targets.
+          const { data: swaps } = await sb
+            .from("exercise_swaps")
+            .select("id, program_exercise_id, exercise_name, start_date, end_date, created_at")
+            .eq("user_id", userId)
+            .in("program_exercise_id", (day?.program_exercises ?? []).map((e) => e.id));
+          for (const e of day?.program_exercises ?? []) {
+            const name = swapFor(swaps ?? [], e.id, session.session_date)?.exercise_name ?? e.name;
+            ranges[name.trim().toLowerCase()] = e;
+          }
           coachNotes =
             (day?.programs as { coach_notes: string | null } | null)?.coach_notes?.slice(0, 1200) ??
             "";

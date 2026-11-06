@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { toast } from "sonner";
-import { ArrowDown, ArrowUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Trophy } from "lucide-react";
+import { ArrowDown, ArrowLeftRight, ArrowUp, ChevronDown, ChevronLeft, ChevronRight, Minus, Pause, Play, Plus, Trophy } from "lucide-react";
+import { SwapSheet, type SwapScope } from "@/components/SwapSheet";
+import { applySwaps, swapFor, type Swapped } from "@/lib/swaps";
 import { supabase } from "@/integrations/supabase/client";
 import { Friends } from "@/components/Friends";
 import { DurationEditor, fromDurationParts, toDurationParts } from "@/components/DurationEditor";
@@ -19,11 +21,14 @@ import { TempoHelp } from "@/components/TempoHelp";
 import {
   beep,
   epley,
+  fetchExerciseNames,
   fetchProgramOfDay,
+  fetchSwaps,
   fmtDuration,
 
   fmtRest,
   formatLast,
+  fromISO,
   normKey,
   toISO,
   unlockAudio,
@@ -61,7 +66,12 @@ function SessionPage() {
   const media = useExerciseMedia();
   const [playing, setPlaying] = useState<ExerciseMedia | null>(null);
   const day = program.data?.program_days?.find((d) => d.id === dayId);
-  const exercises = (day?.program_exercises ?? []) as ProgramExercise[];
+  // A swapped exercise takes the new name everywhere below (sets, history, video), keeping the programmed targets.
+  const swaps = useQuery({ queryKey: ["swaps"], queryFn: fetchSwaps });
+  const exercises: Swapped<ProgramExercise>[] = useMemo(
+    () => applySwaps((day?.program_exercises ?? []) as ProgramExercise[], swaps.data, date),
+    [day, swaps.data, date],
+  );
   const keys = useMemo(() => exercises.map((e) => normKey(e.name)), [exercises]);
 
   const session = useQuery({
@@ -107,6 +117,8 @@ function SessionPage() {
     queryKey: ["history-for", keys.join("|"), sessionId],
     enabled: !!sessionId && keys.length > 0,
     staleTime: Infinity,
+    // Keep the other exercises' Last/Working Max on screen while a swapped one's history loads.
+    placeholderData: keepPreviousData,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("set_logs")
@@ -147,11 +159,14 @@ function SessionPage() {
   const [notes, setNotes] = useState<Record<string, string>>({});
   const persisted = useRef<Record<string, Set<number>>>({});
 
+  // Builds the set rows once, then again only for an exercise that was just swapped in.
   useEffect(() => {
-    if (rows || !logs.data || !history.data) return;
+    if (!logs.data || !history.data || history.isPlaceholderData || !swaps.data) return;
+    const todo = rows ? exercises.filter((e) => !rows[normKey(e.name)]) : exercises;
+    if (rows && todo.length === 0) return;
     const init: Record<string, Row[]> = {};
     const adj: Record<string, { up: number; down: number }> = {};
-    exercises.forEach((e) => {
+    todo.forEach((e) => {
       const k = normKey(e.name);
       const mine = logs.data.sets.filter((s) => s.exercise_key === k).sort((a, b) => a.set_number - b.set_number);
       persisted.current[k] = new Set(mine.map((m) => m.set_number));
@@ -174,10 +189,10 @@ function SessionPage() {
         return { reps: "", kg, done: false, suggestedKg: kg || undefined };
       });
     });
-    setAdjusted(adj);
-    setRows(init);
-    setNotes(Object.fromEntries(logs.data.notes.map((n) => [n.exercise_key, n.note])));
-  }, [logs.data, history.data, rows, exercises, stats, tipsOn]);
+    setAdjusted((a) => ({ ...a, ...adj }));
+    setRows((r) => ({ ...(r ?? {}), ...init }));
+    setNotes((n) => ({ ...Object.fromEntries(logs.data.notes.map((x) => [x.exercise_key, x.note])), ...n }));
+  }, [logs.data, history.data, history.isPlaceholderData, swaps.data, rows, exercises, stats, tipsOn]);
 
   const [idx, setIdx] = useState(exParam ?? 0);
   const total = exercises.length;
@@ -292,6 +307,104 @@ function SessionPage() {
       await supabase.from("set_logs").delete().eq("session_id", sessionId).eq("exercise_key", k).eq("set_number", n);
       persisted.current[k].delete(n);
     }
+  }
+
+  // ---- Swapping an exercise (today only or for the rest of the block) ----
+  const names = useQuery({ queryKey: ["exercise-names"], queryFn: fetchExerciseNames, staleTime: 5 * 60_000 });
+  const [swapOpen, setSwapOpen] = useState(false);
+
+  /** Moves this session's logged sets and note to another exercise, so they follow what was actually done. */
+  async function moveLogged(fromKey: string, toName: string) {
+    if (!sessionId) return true;
+    const toKey = normKey(toName);
+    const { error } = await supabase
+      .from("set_logs")
+      .update({ exercise_key: toKey, exercise_name: toName })
+      .eq("session_id", sessionId)
+      .eq("exercise_key", fromKey);
+    if (error) {
+      toast.error("Couldn't move your logged sets: " + error.message);
+      return false;
+    }
+    await supabase.from("exercise_notes").update({ exercise_key: toKey }).eq("session_id", sessionId).eq("exercise_key", fromKey);
+    return true;
+  }
+
+  /** Reloads sets and swaps, then rebuilds the rows of the exercise whose name changed. */
+  async function afterSwap(fromKey: string, toKey: string) {
+    await qc.refetchQueries({ queryKey: ["session-logs", sessionId] });
+    await qc.refetchQueries({ queryKey: ["swaps"] });
+    setRows((r) => {
+      if (!r) return r;
+      const next = { ...r };
+      delete next[fromKey];
+      delete next[toKey];
+      return next;
+    });
+    delete persisted.current[fromKey];
+    delete persisted.current[toKey];
+    setAdjusted((a) => {
+      const next = { ...a };
+      delete next[fromKey];
+      delete next[toKey];
+      return next;
+    });
+    setNotes((n) => {
+      const next = { ...n };
+      if (next[fromKey] != null) next[toKey] = next[fromKey]!;
+      delete next[fromKey];
+      return next;
+    });
+    qc.invalidateQueries({ queryKey: ["exercise-names"] });
+    qc.invalidateQueries({ queryKey: ["day-logs"] });
+  }
+
+  async function swapExercise(e: Swapped<ProgramExercise>, name: string, scope: SwapScope) {
+    const fromKey = normKey(e.name);
+    const toKey = normKey(name);
+    if (toKey === fromKey) return true;
+    if (toKey === normKey(e.programmed_name)) return undoSwap(e);
+    if (exercises.some((x) => x.id !== e.id && normKey(x.name) === toKey)) {
+      toast.error(`${name} is already in today's workout`);
+      return false;
+    }
+    const { error } = await supabase.from("exercise_swaps").insert({
+      program_exercise_id: e.id,
+      exercise_name: name,
+      start_date: date,
+      end_date: scope === "today" ? date : null,
+    });
+    if (error) {
+      toast.error("Couldn't swap: " + error.message);
+      return false;
+    }
+    if (!(await moveLogged(fromKey, name))) return false;
+    await afterSwap(fromKey, toKey);
+    toast.success(scope === "today" ? `Doing ${name} today` : `Doing ${name} for the rest of the block`);
+    return true;
+  }
+
+  async function undoSwap(e: Swapped<ProgramExercise>) {
+    const s = e.swap;
+    if (!s) return true;
+    // A swap that started today is removed; one from an earlier day ends yesterday, so past sessions keep it.
+    const prev = fromISO(date);
+    prev.setDate(prev.getDate() - 1);
+    const ended = s.start_date < date ? { ...s, end_date: toISO(prev) } : null;
+    const { error } = ended
+      ? await supabase.from("exercise_swaps").update({ end_date: ended.end_date }).eq("id", s.id)
+      : await supabase.from("exercise_swaps").delete().eq("id", s.id);
+    if (error) {
+      toast.error("Couldn't undo the swap: " + error.message);
+      return false;
+    }
+    // An older swap (e.g. one for the rest of the block) can still apply underneath a today-only one.
+    const remaining = (swaps.data ?? []).filter((x) => x.id !== s.id).concat(ended ? [ended] : []);
+    const back = swapFor(remaining, e.id, date)?.exercise_name ?? e.programmed_name;
+    if (!(await moveLogged(normKey(e.name), back))) return false;
+    await afterSwap(normKey(e.name), normKey(back));
+    toast.success(`Back to ${back}`);
+    return true;
   }
 
   async function saveNote(e: ProgramExercise) {
@@ -444,7 +557,26 @@ function SessionPage() {
             <div className="pt-3 text-sm font-semibold text-primary">
               {ex.letter}. {ex.section === "RECOVERY" ? "Recovery" : "Strength/Power"}
             </div>
-            <h1 className="font-display text-3xl font-extrabold uppercase leading-tight">{ex.name}</h1>
+            <div className="flex items-start gap-2">
+              <h1 className="min-w-0 flex-1 font-display text-3xl font-extrabold uppercase leading-tight">{ex.name}</h1>
+              {!ex.duration_seconds && (
+                <button
+                  aria-label={`Swap ${ex.name}`}
+                  title="Swap exercise"
+                  onClick={() => setSwapOpen(true)}
+                  className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-card text-primary transition active:scale-95"
+                >
+                  <ArrowLeftRight className="h-5 w-5" />
+                </button>
+              )}
+            </div>
+            {ex.swap && (
+              <button onClick={() => setSwapOpen(true)} className="mt-1 text-left text-sm text-muted-foreground">
+                <ArrowLeftRight className="mr-1 inline h-3.5 w-3.5 text-primary" />
+                Swapped from <b className="text-foreground">{ex.programmed_name}</b>
+                {ex.swap.end_date === null ? " for the rest of the block" : ex.swap.start_date === ex.swap.end_date ? " for today" : ""}
+              </button>
+            )}
 
             {(demo || !ex.duration_seconds) && (
               <div className="mt-4 flex items-stretch gap-3">
@@ -620,6 +752,18 @@ function SessionPage() {
         )}
       </main>
       <ExerciseVideoSheet media={playing} onClose={() => setPlaying(null)} />
+      {ex && (
+        <SwapSheet
+          open={swapOpen}
+          onClose={() => setSwapOpen(false)}
+          programmedName={ex.programmed_name}
+          currentName={ex.name}
+          swapped={!!ex.swap}
+          suggestions={names.data ?? []}
+          onSwap={(name, scope) => swapExercise(ex, name, scope)}
+          onUndo={() => undoSwap(ex)}
+        />
+      )}
       <TimerSheet />
 
       <footer className="fixed inset-x-0 bottom-0 border-t bg-background/95 backdrop-blur pb-safe">

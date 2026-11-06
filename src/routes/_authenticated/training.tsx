@@ -5,14 +5,15 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { addDays, addMonths, format, startOfMonth, startOfWeek } from "date-fns";
-import { BookOpen, Check, ChevronDown, ChevronRight, Play, Timer } from "lucide-react";
+import { ArrowLeftRight, BookOpen, Check, ChevronDown, ChevronRight, Play, Timer } from "lucide-react";
 import { timers } from "@/lib/timers";
 import { TabShell } from "@/components/TabShell";
 import { Button } from "@/components/ui/button";
 import { ExerciseVideoSheet, techniqueSearchUrl } from "@/components/ExerciseVideo";
 import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
 import { supabase } from "@/integrations/supabase/client";
-import { blockFor, fetchProgramTimeline, fetchSessions, formatDone, fromISO, isoWeekday, myId, normKey, repText, toISO, weekOf } from "@/lib/titan";
+import { applySwaps } from "@/lib/swaps";
+import { blockFor, fetchProgramTimeline, fetchSessions, fetchSwaps, formatDone, fromISO, isoWeekday, myId, normKey, repText, toISO, weekOf } from "@/lib/titan";
 
 export const Route = createFileRoute("/_authenticated/training")({
   validateSearch: z.object({ date: z.string().optional() }),
@@ -76,6 +77,9 @@ function TrainingPage() {
 
   const p = blockFor(timeline.data, sel);
   const day = p?.program_days?.find((d) => d.weekday === isoWeekday(sel));
+  // Swapped exercises show under the name actually done that day.
+  const swaps = useQuery({ queryKey: ["swaps"], queryFn: fetchSwaps });
+  const dayExercises = useMemo(() => (day ? applySwaps(day.program_exercises, swaps.data, selected) : []), [day, swaps.data, selected]);
   const session = (sessions.data ?? []).find((s) => s.session_date === selected && s.program_day_id === day?.id);
 
   function dayStatus(d: Date): "done" | "started" | "planned" | null {
@@ -249,8 +253,8 @@ function TrainingPage() {
           </div>
 
           <ul className="mt-5 space-y-1 pb-4">
-            {day.program_exercises.map((e, i) => {
-              const showSection = i === 0 || day.program_exercises[i - 1]?.section !== e.section;
+            {dayExercises.map((e, i) => {
+              const showSection = i === 0 || dayExercises[i - 1]?.section !== e.section;
               const demo = media.data?.[normKey(e.name)];
               const done = dayLogs.data?.[normKey(e.name)] ?? [];
               const target = e.duration_seconds ? 1 : e.sets;
@@ -277,7 +281,12 @@ function TrainingPage() {
                       {e.letter}
                     </span>
                     <div className="min-w-0">
-                      <div className="font-semibold">{e.name}</div>
+                      <div className="font-semibold">
+                        {e.name}
+                        {e.swap && (
+                          <ArrowLeftRight className="ml-1.5 inline h-3.5 w-3.5 text-primary" aria-label={`Swapped from ${e.programmed_name}`} />
+                        )}
+                      </div>
                       {status === "none" ? (
                         <div className="text-sm font-semibold text-primary">{repText(e)}</div>
                       ) : (

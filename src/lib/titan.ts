@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { ExerciseSwap } from "@/lib/swaps";
 
 export const normKey = (name: string) => name.trim().toLowerCase();
 
@@ -208,4 +209,43 @@ export function beep() {
     });
   } catch {}
   if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+}
+
+/** The signed-in lifter's exercise swaps (owner-only table), oldest first. */
+export async function fetchSwaps(): Promise<ExerciseSwap[]> {
+  const { data, error } = await supabase
+    .from("exercise_swaps")
+    .select("id, program_exercise_id, exercise_name, start_date, end_date, created_at")
+    .eq("user_id", await myId())
+    .order("start_date", { ascending: true });
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Exercise names to suggest when swapping: ones the lifter has logged (most recent first), then every
+ * exercise in the programs. Deduplicated by key, so "RDL" typed once is reused instead of a new spelling.
+ */
+export async function fetchExerciseNames(): Promise<string[]> {
+  const uid = await myId();
+  const [logged, programmed] = await Promise.all([
+    supabase
+      .from("set_logs")
+      .select("exercise_name, created_at")
+      .eq("user_id", uid)
+      .order("created_at", { ascending: false })
+      .limit(1000),
+    supabase.from("program_exercises").select("name").is("duration_seconds", null),
+  ]);
+  if (logged.error) throw logged.error;
+  if (programmed.error) throw programmed.error;
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const name of [...logged.data.map((r) => r.exercise_name), ...programmed.data.map((r) => r.name)]) {
+    const k = normKey(name);
+    if (!k || seen.has(k) || k === "cardio") continue;
+    seen.add(k);
+    out.push(name.trim());
+  }
+  return out;
 }
