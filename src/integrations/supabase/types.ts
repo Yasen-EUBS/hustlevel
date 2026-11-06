@@ -141,6 +141,44 @@ export type Database = {
           },
         ]
       }
+      exercise_swaps: {
+        Row: {
+          created_at: string
+          end_date: string | null
+          exercise_name: string
+          id: string
+          program_exercise_id: string
+          start_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_date?: string | null
+          exercise_name: string
+          id?: string
+          program_exercise_id: string
+          start_date: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string | null
+          exercise_name?: string
+          id?: string
+          program_exercise_id?: string
+          start_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_swaps_program_exercise_id_fkey"
+            columns: ["program_exercise_id"]
+            isOneToOne: false
+            referencedRelation: "program_exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guide_questions: {
         Row: {
           created_at: string
