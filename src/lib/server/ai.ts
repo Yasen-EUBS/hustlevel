@@ -38,7 +38,7 @@ type Sb = NonNullable<Awaited<ReturnType<typeof userFromRequest>>>["sb"];
 export async function takeQuota(
   sb: Sb,
   userId: string,
-  kind: "program_import" | "coach_summary",
+  kind: "program_import" | "coach_summary" | "nutrition_plan" | "meal_estimate",
   limit: number,
 ) {
   const since = new Date(Date.now() - 86_400_000).toISOString();

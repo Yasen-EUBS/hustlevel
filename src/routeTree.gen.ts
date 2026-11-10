@@ -17,9 +17,13 @@ import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
 import { Route as ApiCoachSummaryRouteImport } from './routes/api/coach-summary'
 import { Route as ApiGuideChatRouteImport } from './routes/api/guide-chat'
+import { Route as ApiMealEstimateRouteImport } from './routes/api/meal-estimate'
+import { Route as ApiNutritionPlanRouteImport } from './routes/api/nutrition-plan'
 import { Route as ApiProgramImportRouteImport } from './routes/api/program-import'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
 import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated/chat.$conversationId'
+import { Route as AuthenticatedFoodIndexRouteImport } from './routes/_authenticated/food.index'
+import { Route as AuthenticatedFoodSetupRouteImport } from './routes/_authenticated/food.setup'
 import { Route as AuthenticatedGuideReadRouteImport } from './routes/_authenticated/guide_.read'
 import { Route as AuthenticatedHistoryIndexRouteImport } from './routes/_authenticated/history.index'
 import { Route as AuthenticatedHistorySessionIdRouteImport } from './routes/_authenticated/history.$sessionId'
@@ -68,6 +72,16 @@ const ApiGuideChatRoute = ApiGuideChatRouteImport.update({
   path: '/api/guide-chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiMealEstimateRoute = ApiMealEstimateRouteImport.update({
+  id: '/api/meal-estimate',
+  path: '/api/meal-estimate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNutritionPlanRoute = ApiNutritionPlanRouteImport.update({
+  id: '/api/nutrition-plan',
+  path: '/api/nutrition-plan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiProgramImportRoute = ApiProgramImportRouteImport.update({
   id: '/api/program-import',
   path: '/api/program-import',
@@ -84,6 +98,16 @@ const AuthenticatedChatConversationIdRoute =
     path: '/chat/$conversationId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFoodIndexRoute = AuthenticatedFoodIndexRouteImport.update({
+  id: '/food/',
+  path: '/food/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFoodSetupRoute = AuthenticatedFoodSetupRouteImport.update({
+  id: '/food/setup',
+  path: '/food/setup',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedGuideReadRoute = AuthenticatedGuideReadRouteImport.update({
   id: '/guide_/read',
   path: '/guide/read',
@@ -140,14 +164,18 @@ export interface FileRoutesByFullPath {
   '/training': typeof AuthenticatedTrainingRoute
   '/api/coach-summary': typeof ApiCoachSummaryRoute
   '/api/guide-chat': typeof ApiGuideChatRoute
+  '/api/meal-estimate': typeof ApiMealEstimateRoute
+  '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
+  '/food/setup': typeof AuthenticatedFoodSetupRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/program/import': typeof AuthenticatedProgramImportRoute
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
   '/chat/': typeof AuthenticatedChatIndexRoute
+  '/food/': typeof AuthenticatedFoodIndexRoute
   '/history/': typeof AuthenticatedHistoryIndexRoute
   '/program/': typeof AuthenticatedProgramIndexRoute
   '/progress/': typeof AuthenticatedProgressIndexRoute
@@ -160,14 +188,18 @@ export interface FileRoutesByTo {
   '/training': typeof AuthenticatedTrainingRoute
   '/api/coach-summary': typeof ApiCoachSummaryRoute
   '/api/guide-chat': typeof ApiGuideChatRoute
+  '/api/meal-estimate': typeof ApiMealEstimateRoute
+  '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
+  '/food/setup': typeof AuthenticatedFoodSetupRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/program/import': typeof AuthenticatedProgramImportRoute
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
   '/chat': typeof AuthenticatedChatIndexRoute
+  '/food': typeof AuthenticatedFoodIndexRoute
   '/history': typeof AuthenticatedHistoryIndexRoute
   '/program': typeof AuthenticatedProgramIndexRoute
   '/progress': typeof AuthenticatedProgressIndexRoute
@@ -182,14 +214,18 @@ export interface FileRoutesById {
   '/_authenticated/training': typeof AuthenticatedTrainingRoute
   '/api/coach-summary': typeof ApiCoachSummaryRoute
   '/api/guide-chat': typeof ApiGuideChatRoute
+  '/api/meal-estimate': typeof ApiMealEstimateRoute
+  '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
   '/_authenticated/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
+  '/_authenticated/food/setup': typeof AuthenticatedFoodSetupRoute
   '/_authenticated/guide_/read': typeof AuthenticatedGuideReadRoute
   '/_authenticated/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/_authenticated/program/import': typeof AuthenticatedProgramImportRoute
   '/_authenticated/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/_authenticated/session/$dayId': typeof AuthenticatedSessionDayIdRoute
   '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
+  '/_authenticated/food/': typeof AuthenticatedFoodIndexRoute
   '/_authenticated/history/': typeof AuthenticatedHistoryIndexRoute
   '/_authenticated/program/': typeof AuthenticatedProgramIndexRoute
   '/_authenticated/progress/': typeof AuthenticatedProgressIndexRoute
@@ -204,14 +240,18 @@ export interface FileRouteTypes {
     | '/training'
     | '/api/coach-summary'
     | '/api/guide-chat'
+    | '/api/meal-estimate'
+    | '/api/nutrition-plan'
     | '/api/program-import'
     | '/chat/$conversationId'
+    | '/food/setup'
     | '/guide/read'
     | '/history/$sessionId'
     | '/program/import'
     | '/progress/$key'
     | '/session/$dayId'
     | '/chat/'
+    | '/food/'
     | '/history/'
     | '/program/'
     | '/progress/'
@@ -224,14 +264,18 @@ export interface FileRouteTypes {
     | '/training'
     | '/api/coach-summary'
     | '/api/guide-chat'
+    | '/api/meal-estimate'
+    | '/api/nutrition-plan'
     | '/api/program-import'
     | '/chat/$conversationId'
+    | '/food/setup'
     | '/guide/read'
     | '/history/$sessionId'
     | '/program/import'
     | '/progress/$key'
     | '/session/$dayId'
     | '/chat'
+    | '/food'
     | '/history'
     | '/program'
     | '/progress'
@@ -245,14 +289,18 @@ export interface FileRouteTypes {
     | '/_authenticated/training'
     | '/api/coach-summary'
     | '/api/guide-chat'
+    | '/api/meal-estimate'
+    | '/api/nutrition-plan'
     | '/api/program-import'
     | '/_authenticated/chat/$conversationId'
+    | '/_authenticated/food/setup'
     | '/_authenticated/guide_/read'
     | '/_authenticated/history/$sessionId'
     | '/_authenticated/program/import'
     | '/_authenticated/progress/$key'
     | '/_authenticated/session/$dayId'
     | '/_authenticated/chat/'
+    | '/_authenticated/food/'
     | '/_authenticated/history/'
     | '/_authenticated/program/'
     | '/_authenticated/progress/'
@@ -264,6 +312,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ApiCoachSummaryRoute: typeof ApiCoachSummaryRoute
   ApiGuideChatRoute: typeof ApiGuideChatRoute
+  ApiMealEstimateRoute: typeof ApiMealEstimateRoute
+  ApiNutritionPlanRoute: typeof ApiNutritionPlanRoute
   ApiProgramImportRoute: typeof ApiProgramImportRoute
 }
 
@@ -325,6 +375,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGuideChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/meal-estimate': {
+      id: '/api/meal-estimate'
+      path: '/api/meal-estimate'
+      fullPath: '/api/meal-estimate'
+      preLoaderRoute: typeof ApiMealEstimateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/nutrition-plan': {
+      id: '/api/nutrition-plan'
+      path: '/api/nutrition-plan'
+      fullPath: '/api/nutrition-plan'
+      preLoaderRoute: typeof ApiNutritionPlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/program-import': {
       id: '/api/program-import'
       path: '/api/program-import'
@@ -344,6 +408,20 @@ declare module '@tanstack/react-router' {
       path: '/chat/$conversationId'
       fullPath: '/chat/$conversationId'
       preLoaderRoute: typeof AuthenticatedChatConversationIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/food/': {
+      id: '/_authenticated/food/'
+      path: '/food'
+      fullPath: '/food/'
+      preLoaderRoute: typeof AuthenticatedFoodIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/food/setup': {
+      id: '/_authenticated/food/setup'
+      path: '/food/setup'
+      fullPath: '/food/setup'
+      preLoaderRoute: typeof AuthenticatedFoodSetupRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/guide_/read': {
@@ -410,12 +488,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRoute
   AuthenticatedChatConversationIdRoute: typeof AuthenticatedChatConversationIdRoute
+  AuthenticatedFoodSetupRoute: typeof AuthenticatedFoodSetupRoute
   AuthenticatedGuideReadRoute: typeof AuthenticatedGuideReadRoute
   AuthenticatedHistorySessionIdRoute: typeof AuthenticatedHistorySessionIdRoute
   AuthenticatedProgramImportRoute: typeof AuthenticatedProgramImportRoute
   AuthenticatedProgressKeyRoute: typeof AuthenticatedProgressKeyRoute
   AuthenticatedSessionDayIdRoute: typeof AuthenticatedSessionDayIdRoute
   AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
+  AuthenticatedFoodIndexRoute: typeof AuthenticatedFoodIndexRoute
   AuthenticatedHistoryIndexRoute: typeof AuthenticatedHistoryIndexRoute
   AuthenticatedProgramIndexRoute: typeof AuthenticatedProgramIndexRoute
   AuthenticatedProgressIndexRoute: typeof AuthenticatedProgressIndexRoute
@@ -426,12 +506,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedTrainingRoute: AuthenticatedTrainingRoute,
   AuthenticatedChatConversationIdRoute: AuthenticatedChatConversationIdRoute,
+  AuthenticatedFoodSetupRoute: AuthenticatedFoodSetupRoute,
   AuthenticatedGuideReadRoute: AuthenticatedGuideReadRoute,
   AuthenticatedHistorySessionIdRoute: AuthenticatedHistorySessionIdRoute,
   AuthenticatedProgramImportRoute: AuthenticatedProgramImportRoute,
   AuthenticatedProgressKeyRoute: AuthenticatedProgressKeyRoute,
   AuthenticatedSessionDayIdRoute: AuthenticatedSessionDayIdRoute,
   AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
+  AuthenticatedFoodIndexRoute: AuthenticatedFoodIndexRoute,
   AuthenticatedHistoryIndexRoute: AuthenticatedHistoryIndexRoute,
   AuthenticatedProgramIndexRoute: AuthenticatedProgramIndexRoute,
   AuthenticatedProgressIndexRoute: AuthenticatedProgressIndexRoute,
@@ -446,6 +528,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ApiCoachSummaryRoute: ApiCoachSummaryRoute,
   ApiGuideChatRoute: ApiGuideChatRoute,
+  ApiMealEstimateRoute: ApiMealEstimateRoute,
+  ApiNutritionPlanRoute: ApiNutritionPlanRoute,
   ApiProgramImportRoute: ApiProgramImportRoute,
 }
 export const routeTree = rootRouteImport
