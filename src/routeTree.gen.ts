@@ -22,6 +22,7 @@ import { Route as ApiNutritionPlanRouteImport } from './routes/api/nutrition-pla
 import { Route as ApiProgramImportRouteImport } from './routes/api/program-import'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
 import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated/chat.$conversationId'
+import { Route as AuthenticatedFoodSetupRouteImport } from './routes/_authenticated/food.setup'
 import { Route as AuthenticatedGuideReadRouteImport } from './routes/_authenticated/guide_.read'
 import { Route as AuthenticatedHistoryIndexRouteImport } from './routes/_authenticated/history.index'
 import { Route as AuthenticatedHistorySessionIdRouteImport } from './routes/_authenticated/history.$sessionId'
@@ -96,6 +97,11 @@ const AuthenticatedChatConversationIdRoute =
     path: '/chat/$conversationId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFoodSetupRoute = AuthenticatedFoodSetupRouteImport.update({
+  id: '/food/setup',
+  path: '/food/setup',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedGuideReadRoute = AuthenticatedGuideReadRouteImport.update({
   id: '/guide_/read',
   path: '/guide/read',
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
+  '/food/setup': typeof AuthenticatedFoodSetupRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/program/import': typeof AuthenticatedProgramImportRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
+  '/food/setup': typeof AuthenticatedFoodSetupRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
   '/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/program/import': typeof AuthenticatedProgramImportRoute
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
   '/_authenticated/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
+  '/_authenticated/food/setup': typeof AuthenticatedFoodSetupRoute
   '/_authenticated/guide_/read': typeof AuthenticatedGuideReadRoute
   '/_authenticated/history/$sessionId': typeof AuthenticatedHistorySessionIdRoute
   '/_authenticated/program/import': typeof AuthenticatedProgramImportRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/api/nutrition-plan'
     | '/api/program-import'
     | '/chat/$conversationId'
+    | '/food/setup'
     | '/guide/read'
     | '/history/$sessionId'
     | '/program/import'
@@ -248,6 +258,7 @@ export interface FileRouteTypes {
     | '/api/nutrition-plan'
     | '/api/program-import'
     | '/chat/$conversationId'
+    | '/food/setup'
     | '/guide/read'
     | '/history/$sessionId'
     | '/program/import'
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/api/nutrition-plan'
     | '/api/program-import'
     | '/_authenticated/chat/$conversationId'
+    | '/_authenticated/food/setup'
     | '/_authenticated/guide_/read'
     | '/_authenticated/history/$sessionId'
     | '/_authenticated/program/import'
@@ -386,6 +398,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChatConversationIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/food/setup': {
+      id: '/_authenticated/food/setup'
+      path: '/food/setup'
+      fullPath: '/food/setup'
+      preLoaderRoute: typeof AuthenticatedFoodSetupRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/guide_/read': {
       id: '/_authenticated/guide_/read'
       path: '/guide/read'
@@ -450,6 +469,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedTrainingRoute: typeof AuthenticatedTrainingRoute
   AuthenticatedChatConversationIdRoute: typeof AuthenticatedChatConversationIdRoute
+  AuthenticatedFoodSetupRoute: typeof AuthenticatedFoodSetupRoute
   AuthenticatedGuideReadRoute: typeof AuthenticatedGuideReadRoute
   AuthenticatedHistorySessionIdRoute: typeof AuthenticatedHistorySessionIdRoute
   AuthenticatedProgramImportRoute: typeof AuthenticatedProgramImportRoute
@@ -466,6 +486,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedTrainingRoute: AuthenticatedTrainingRoute,
   AuthenticatedChatConversationIdRoute: AuthenticatedChatConversationIdRoute,
+  AuthenticatedFoodSetupRoute: AuthenticatedFoodSetupRoute,
   AuthenticatedGuideReadRoute: AuthenticatedGuideReadRoute,
   AuthenticatedHistorySessionIdRoute: AuthenticatedHistorySessionIdRoute,
   AuthenticatedProgramImportRoute: AuthenticatedProgramImportRoute,
