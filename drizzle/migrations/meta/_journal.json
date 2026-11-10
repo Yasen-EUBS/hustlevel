@@ -85,6 +85,13 @@
       "when": 1793981105517,
       "tag": "0011_exercise_swaps",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1794345810745,
+      "tag": "0012_nutrition_tracker",
+      "breakpoints": true
     }
   ]
 }
