@@ -22,6 +22,7 @@ import { Route as ApiNutritionPlanRouteImport } from './routes/api/nutrition-pla
 import { Route as ApiProgramImportRouteImport } from './routes/api/program-import'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
 import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated/chat.$conversationId'
+import { Route as AuthenticatedFoodIndexRouteImport } from './routes/_authenticated/food.index'
 import { Route as AuthenticatedFoodSetupRouteImport } from './routes/_authenticated/food.setup'
 import { Route as AuthenticatedGuideReadRouteImport } from './routes/_authenticated/guide_.read'
 import { Route as AuthenticatedHistoryIndexRouteImport } from './routes/_authenticated/history.index'
@@ -97,6 +98,11 @@ const AuthenticatedChatConversationIdRoute =
     path: '/chat/$conversationId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFoodIndexRoute = AuthenticatedFoodIndexRouteImport.update({
+  id: '/food/',
+  path: '/food/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFoodSetupRoute = AuthenticatedFoodSetupRouteImport.update({
   id: '/food/setup',
   path: '/food/setup',
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
   '/chat/': typeof AuthenticatedChatIndexRoute
+  '/food/': typeof AuthenticatedFoodIndexRoute
   '/history/': typeof AuthenticatedHistoryIndexRoute
   '/program/': typeof AuthenticatedProgramIndexRoute
   '/progress/': typeof AuthenticatedProgressIndexRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/session/$dayId': typeof AuthenticatedSessionDayIdRoute
   '/chat': typeof AuthenticatedChatIndexRoute
+  '/food': typeof AuthenticatedFoodIndexRoute
   '/history': typeof AuthenticatedHistoryIndexRoute
   '/program': typeof AuthenticatedProgramIndexRoute
   '/progress': typeof AuthenticatedProgressIndexRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/_authenticated/progress/$key': typeof AuthenticatedProgressKeyRoute
   '/_authenticated/session/$dayId': typeof AuthenticatedSessionDayIdRoute
   '/_authenticated/chat/': typeof AuthenticatedChatIndexRoute
+  '/_authenticated/food/': typeof AuthenticatedFoodIndexRoute
   '/_authenticated/history/': typeof AuthenticatedHistoryIndexRoute
   '/_authenticated/program/': typeof AuthenticatedProgramIndexRoute
   '/_authenticated/progress/': typeof AuthenticatedProgressIndexRoute
@@ -242,6 +251,7 @@ export interface FileRouteTypes {
     | '/progress/$key'
     | '/session/$dayId'
     | '/chat/'
+    | '/food/'
     | '/history/'
     | '/program/'
     | '/progress/'
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/progress/$key'
     | '/session/$dayId'
     | '/chat'
+    | '/food'
     | '/history'
     | '/program'
     | '/progress'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/_authenticated/progress/$key'
     | '/_authenticated/session/$dayId'
     | '/_authenticated/chat/'
+    | '/_authenticated/food/'
     | '/_authenticated/history/'
     | '/_authenticated/program/'
     | '/_authenticated/progress/'
@@ -398,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChatConversationIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/food/': {
+      id: '/_authenticated/food/'
+      path: '/food'
+      fullPath: '/food/'
+      preLoaderRoute: typeof AuthenticatedFoodIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/food/setup': {
       id: '/_authenticated/food/setup'
       path: '/food/setup'
@@ -476,6 +495,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProgressKeyRoute: typeof AuthenticatedProgressKeyRoute
   AuthenticatedSessionDayIdRoute: typeof AuthenticatedSessionDayIdRoute
   AuthenticatedChatIndexRoute: typeof AuthenticatedChatIndexRoute
+  AuthenticatedFoodIndexRoute: typeof AuthenticatedFoodIndexRoute
   AuthenticatedHistoryIndexRoute: typeof AuthenticatedHistoryIndexRoute
   AuthenticatedProgramIndexRoute: typeof AuthenticatedProgramIndexRoute
   AuthenticatedProgressIndexRoute: typeof AuthenticatedProgressIndexRoute
@@ -493,6 +513,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProgressKeyRoute: AuthenticatedProgressKeyRoute,
   AuthenticatedSessionDayIdRoute: AuthenticatedSessionDayIdRoute,
   AuthenticatedChatIndexRoute: AuthenticatedChatIndexRoute,
+  AuthenticatedFoodIndexRoute: AuthenticatedFoodIndexRoute,
   AuthenticatedHistoryIndexRoute: AuthenticatedHistoryIndexRoute,
   AuthenticatedProgramIndexRoute: AuthenticatedProgramIndexRoute,
   AuthenticatedProgressIndexRoute: AuthenticatedProgressIndexRoute,

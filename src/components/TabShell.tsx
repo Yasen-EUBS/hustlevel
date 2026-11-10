@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Dumbbell, History, MessageCircle, TrendingUp, User } from "lucide-react";
+import { Dumbbell, History, MessageCircle, TrendingUp, User, Utensils } from "lucide-react";
 import { HustLevelLogo } from "@/components/HustLevelLogo";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { readFlag } from "@/lib/food";
 import { MiniTimer, TimerSheet } from "@/components/Timers";
 import { InstallPrompt } from "@/components/InstallBanner";
 import { useChatRealtime, useConversations } from "@/lib/chat";
@@ -10,6 +11,7 @@ const tabs = [
   { to: "/training", label: "Training", icon: Dumbbell },
   { to: "/history", label: "History", icon: History },
   { to: "/progress", label: "Progress", icon: TrendingUp },
+  { to: "/food", label: "Food", icon: Utensils },
   { to: "/chat", label: "Chat", icon: MessageCircle },
   { to: "/me", label: "Me", icon: User },
 ] as const;
@@ -17,6 +19,8 @@ const tabs = [
 export function TabShell({ children }: { children: ReactNode }) {
   const convs = useConversations();
   useChatRealtime("tabs");
+  const [foodNew, setFoodNew] = useState(false);
+  useEffect(() => setFoodNew(!readFlag("hl_food_seen")), []);
   const unread = (convs.data ?? []).reduce((n, c) => n + (c.unread ?? 0), 0);
   return (
     <div className="mx-auto min-h-[100dvh] max-w-lg pt-safe">
@@ -38,11 +42,14 @@ export function TabShell({ children }: { children: ReactNode }) {
             <Link
               key={to}
               to={to}
-              className="relative flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-semibold text-muted-foreground"
+              className="relative flex min-w-0 flex-1 flex-col items-center gap-1 whitespace-nowrap py-2.5 text-[10.5px] font-semibold text-muted-foreground"
               activeProps={{ className: "text-primary" }}
             >
               <Icon className="h-6 w-6" />
               {label}
+              {to === "/food" && foodNew && (
+                <span className="absolute left-1/2 top-1 ml-1.5 rounded-full bg-primary px-1 text-[8px] font-extrabold leading-3.5 text-primary-foreground">NEW</span>
+              )}
               {to === "/chat" && unread > 0 && (
                 <span aria-label={`${unread} unread`} className="absolute left-1/2 top-1 ml-2 min-w-5 rounded-full bg-destructive px-1.5 text-center text-[11px] font-bold leading-5 text-destructive-foreground">
                   {unread > 99 ? "99+" : unread}
