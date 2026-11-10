@@ -17,6 +17,8 @@ import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
 import { Route as ApiCoachSummaryRouteImport } from './routes/api/coach-summary'
 import { Route as ApiGuideChatRouteImport } from './routes/api/guide-chat'
+import { Route as ApiMealEstimateRouteImport } from './routes/api/meal-estimate'
+import { Route as ApiNutritionPlanRouteImport } from './routes/api/nutrition-plan'
 import { Route as ApiProgramImportRouteImport } from './routes/api/program-import'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
 import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated/chat.$conversationId'
@@ -66,6 +68,16 @@ const ApiCoachSummaryRoute = ApiCoachSummaryRouteImport.update({
 const ApiGuideChatRoute = ApiGuideChatRouteImport.update({
   id: '/api/guide-chat',
   path: '/api/guide-chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMealEstimateRoute = ApiMealEstimateRouteImport.update({
+  id: '/api/meal-estimate',
+  path: '/api/meal-estimate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiNutritionPlanRoute = ApiNutritionPlanRouteImport.update({
+  id: '/api/nutrition-plan',
+  path: '/api/nutrition-plan',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiProgramImportRoute = ApiProgramImportRouteImport.update({
@@ -140,6 +152,8 @@ export interface FileRoutesByFullPath {
   '/training': typeof AuthenticatedTrainingRoute
   '/api/coach-summary': typeof ApiCoachSummaryRoute
   '/api/guide-chat': typeof ApiGuideChatRoute
+  '/api/meal-estimate': typeof ApiMealEstimateRoute
+  '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
@@ -160,6 +174,8 @@ export interface FileRoutesByTo {
   '/training': typeof AuthenticatedTrainingRoute
   '/api/coach-summary': typeof ApiCoachSummaryRoute
   '/api/guide-chat': typeof ApiGuideChatRoute
+  '/api/meal-estimate': typeof ApiMealEstimateRoute
+  '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
@@ -182,6 +198,8 @@ export interface FileRoutesById {
   '/_authenticated/training': typeof AuthenticatedTrainingRoute
   '/api/coach-summary': typeof ApiCoachSummaryRoute
   '/api/guide-chat': typeof ApiGuideChatRoute
+  '/api/meal-estimate': typeof ApiMealEstimateRoute
+  '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
   '/_authenticated/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/_authenticated/guide_/read': typeof AuthenticatedGuideReadRoute
@@ -204,6 +222,8 @@ export interface FileRouteTypes {
     | '/training'
     | '/api/coach-summary'
     | '/api/guide-chat'
+    | '/api/meal-estimate'
+    | '/api/nutrition-plan'
     | '/api/program-import'
     | '/chat/$conversationId'
     | '/guide/read'
@@ -224,6 +244,8 @@ export interface FileRouteTypes {
     | '/training'
     | '/api/coach-summary'
     | '/api/guide-chat'
+    | '/api/meal-estimate'
+    | '/api/nutrition-plan'
     | '/api/program-import'
     | '/chat/$conversationId'
     | '/guide/read'
@@ -245,6 +267,8 @@ export interface FileRouteTypes {
     | '/_authenticated/training'
     | '/api/coach-summary'
     | '/api/guide-chat'
+    | '/api/meal-estimate'
+    | '/api/nutrition-plan'
     | '/api/program-import'
     | '/_authenticated/chat/$conversationId'
     | '/_authenticated/guide_/read'
@@ -264,6 +288,8 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ApiCoachSummaryRoute: typeof ApiCoachSummaryRoute
   ApiGuideChatRoute: typeof ApiGuideChatRoute
+  ApiMealEstimateRoute: typeof ApiMealEstimateRoute
+  ApiNutritionPlanRoute: typeof ApiNutritionPlanRoute
   ApiProgramImportRoute: typeof ApiProgramImportRoute
 }
 
@@ -323,6 +349,20 @@ declare module '@tanstack/react-router' {
       path: '/api/guide-chat'
       fullPath: '/api/guide-chat'
       preLoaderRoute: typeof ApiGuideChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/meal-estimate': {
+      id: '/api/meal-estimate'
+      path: '/api/meal-estimate'
+      fullPath: '/api/meal-estimate'
+      preLoaderRoute: typeof ApiMealEstimateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/nutrition-plan': {
+      id: '/api/nutrition-plan'
+      path: '/api/nutrition-plan'
+      fullPath: '/api/nutrition-plan'
+      preLoaderRoute: typeof ApiNutritionPlanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/program-import': {
@@ -446,6 +486,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ApiCoachSummaryRoute: ApiCoachSummaryRoute,
   ApiGuideChatRoute: ApiGuideChatRoute,
+  ApiMealEstimateRoute: ApiMealEstimateRoute,
+  ApiNutritionPlanRoute: ApiNutritionPlanRoute,
   ApiProgramImportRoute: ApiProgramImportRoute,
 }
 export const routeTree = rootRouteImport
