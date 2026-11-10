@@ -97,7 +97,7 @@ function SetupPage() {
     !body.activity ? "Pick your activity outside the gym." : !body.goal ? "Pick a goal." : null;
 
   async function build() {
-    if (missing) return toast.error(missing);
+    if (missing) { toast.error(missing); return; }
     setBusy(true);
     try {
       setPlan(await postAi<Plan>("/api/nutrition-plan", body));
@@ -119,7 +119,7 @@ function SetupPage() {
       plan_summary: plan.summary, plan_generated_at: new Date().toISOString(), updated_at: new Date().toISOString(),
     });
     setBusy(false);
-    if (error) return toast.error("Couldn't save your plan. Try again.");
+    if (error) { toast.error("Couldn't save your plan. Try again."); return; }
     await qc.invalidateQueries({ queryKey: ["nutrition-profile"] });
     navigate({ to: "/food" });
   }

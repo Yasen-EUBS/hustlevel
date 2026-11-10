@@ -209,11 +209,11 @@ function AddMealSheet({ open, onClose, date }: { open: boolean; onClose: () => v
 
   async function save() {
     const m = parseDraft(draft);
-    if (!m) return toast.error("Check the numbers: calories 0–10000, macros 0–1000 g.");
+    if (!m) { toast.error("Check the numbers: calories 0–10000, macros 0–1000 g."); return; }
     setBusy(true);
     const { error } = await supabase.from("meals").insert({ ...m, eaten_on: date, source, note: est?.note ?? null });
     setBusy(false);
-    if (error) return toast.error("Couldn't save the meal. Try again.");
+    if (error) { toast.error("Couldn't save the meal. Try again."); return; }
     qc.invalidateQueries({ queryKey: ["meals", date] });
     toast.success("Meal saved");
     close();
@@ -278,7 +278,7 @@ function EditMealSheet({ meal, onClose }: { meal: Meal | null; onClose: () => vo
     setBusy(true);
     const { error } = await fn();
     setBusy(false);
-    if (error) return toast.error("Something went wrong. Try again.");
+    if (error) { toast.error("Something went wrong. Try again."); return; }
     qc.invalidateQueries({ queryKey: ["meals", meal!.eaten_on] });
     toast.success(msg);
     onClose();
@@ -290,7 +290,7 @@ function EditMealSheet({ meal, onClose }: { meal: Meal | null; onClose: () => vo
           <MacroFields d={d} set={setD} />
           <Button className="h-12 w-full text-base" disabled={busy} onClick={() => {
             const m = parseDraft(d);
-            if (!m) return toast.error("Check the numbers: calories 0–10000, macros 0–1000 g.");
+            if (!m) { toast.error("Check the numbers: calories 0–10000, macros 0–1000 g."); return; }
             run(() => supabase.from("meals").update(m).eq("id", meal.id), "Meal updated");
           }}>Save changes</Button>
           <Button variant="destructive" className="h-12 w-full" disabled={busy} onClick={() => run(() => supabase.from("meals").delete().eq("id", meal.id), "Meal deleted")}>Delete meal</Button>
@@ -315,7 +315,7 @@ function SettingsSheet({ open, onClose, profile: p }: { open: boolean; onClose: 
       calories: r.calories, protein_g: r.protein_g, carbs_g: r.carbs_g, fat_g: r.fat_g, updated_at: new Date().toISOString(),
     }).eq("user_id", p.user_id);
     setBusy(false);
-    if (error) return toast.error("Couldn't save. Try again.");
+    if (error) { toast.error("Couldn't save. Try again."); return; }
     const { min, max } = calorieBounds(stats);
     if (r.clamped === "min") toast(`Calories raised to ${r.calories}, the safe minimum for your size (${min}).`);
     else if (r.clamped === "max") toast(`Calories lowered to ${r.calories}, the safe maximum for your size (${max}).`);
