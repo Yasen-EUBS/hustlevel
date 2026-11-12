@@ -92,6 +92,13 @@
       "when": 1794345810745,
       "tag": "0012_nutrition_tracker",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1794497882099,
+      "tag": "0013_tighten_shared_table_grants",
+      "breakpoints": true
     }
   ]
 }
