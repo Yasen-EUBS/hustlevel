@@ -5,8 +5,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { InstallPrompt } from "@/components/InstallBanner";
+import { oauthReturnPath } from "@/lib/oauth-return-path";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>): { next?: string } => (typeof s.next === "string" ? { next: s.next } : {}),
   head: () => ({
     meta: [
       { property: "og:type", content: "website" },
@@ -27,6 +29,8 @@ function AuthPage() {
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
+  const { next: rawNext } = Route.useSearch();
+  const next = rawNext ? oauthReturnPath(rawNext) : null;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,11 +45,12 @@ function AuthPage() {
         : await supabase.auth.signUp({
             email,
             password,
-            options: { emailRedirectTo: window.location.origin, data: { display_name: name.trim() } },
+            options: { emailRedirectTo: next ? new URL(next, window.location.origin).href : window.location.origin, data: { display_name: name.trim() } },
           });
     setBusy(false);
     if (res.error) { toast.error(res.error.message); return; }
     if (!res.data.session) { toast.success("Check your email to confirm your account."); return; }
+    if (next && next !== "/") { window.location.assign(next); return; }
     navigate({ to: "/training" });
   }
 
