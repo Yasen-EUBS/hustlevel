@@ -8,7 +8,7 @@ import { InstallPrompt } from "@/components/InstallBanner";
 import { oauthReturnPath } from "@/lib/oauth-return-path";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>): { next?: string } => (typeof s.next === "string" ? { next: s.next } : {}),
+  validateSearch: (s: Record<string, unknown>): { next?: string } => (typeof s["next"] === "string" ? { next: s["next"] } : {}),
   head: () => ({
     meta: [
       { property: "og:type", content: "website" },
