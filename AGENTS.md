@@ -27,3 +27,5 @@
 - A React Query key must always map to one fetcher and one data shape. Reuse `fetchActiveProgram` for `["program"]`; never cache a partial select under a shared key (it crashed Training after visiting Me).
 - The published web address is https://hustlevel.lovable.app. Always publish with slug `hustlevel`; publishing with any other slug moves the live app to a different address and breaks every installed home-screen app and the Android shell.
 - Calorie tracker (/food): owner-only `nutrition_profiles` and `meals` (RLS auth.uid() = user_id, never subject to share_workouts) must never feed leaderboards, chat, workout posts or the coach review. `/api/nutrition-plan` lets the AI pick targets, then `applyRails` in `src/lib/nutrition.ts` (pure, also used for manual edits) enforces safe calorie/macro bounds; `/api/meal-estimate` discards photos after estimating — no food photo is ever stored.
+
+- App MCP server lives in src/lib/mcp (one read-only tool per file, OAuth via managed auth issuer, caller-scoped client filtered by user_id); /auth honours a validated ?next= so OAuth consent survives sign-in.

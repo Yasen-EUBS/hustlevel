@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/guide'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedTrainingRouteImport } from './routes/_authenticated/training'
@@ -20,6 +22,7 @@ import { Route as ApiGuideChatRouteImport } from './routes/api/guide-chat'
 import { Route as ApiMealEstimateRouteImport } from './routes/api/meal-estimate'
 import { Route as ApiNutritionPlanRouteImport } from './routes/api/nutrition-plan'
 import { Route as ApiProgramImportRouteImport } from './routes/api/program-import'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedChatIndexRouteImport } from './routes/_authenticated/chat.index'
 import { Route as AuthenticatedChatConversationIdRouteImport } from './routes/_authenticated/chat.$conversationId'
 import { Route as AuthenticatedFoodIndexRouteImport } from './routes/_authenticated/food.index'
@@ -47,6 +50,17 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedGuideRoute = AuthenticatedGuideRouteImport.update({
   id: '/guide',
   path: '/guide',
@@ -85,6 +99,11 @@ const ApiNutritionPlanRoute = ApiNutritionPlanRouteImport.update({
 const ApiProgramImportRoute = ApiProgramImportRouteImport.update({
   id: '/api/program-import',
   path: '/api/program-import',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedChatIndexRoute = AuthenticatedChatIndexRouteImport.update({
@@ -159,6 +178,8 @@ const AuthenticatedSessionDayIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/mcp': typeof McpRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/me': typeof AuthenticatedMeRoute
   '/training': typeof AuthenticatedTrainingRoute
@@ -167,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/api/meal-estimate': typeof ApiMealEstimateRoute
   '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/food/setup': typeof AuthenticatedFoodSetupRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
@@ -183,6 +205,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/mcp': typeof McpRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/guide': typeof AuthenticatedGuideRoute
   '/me': typeof AuthenticatedMeRoute
   '/training': typeof AuthenticatedTrainingRoute
@@ -191,6 +215,7 @@ export interface FileRoutesByTo {
   '/api/meal-estimate': typeof ApiMealEstimateRoute
   '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/food/setup': typeof AuthenticatedFoodSetupRoute
   '/guide/read': typeof AuthenticatedGuideReadRoute
@@ -209,6 +234,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/mcp': typeof McpRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/guide': typeof AuthenticatedGuideRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/training': typeof AuthenticatedTrainingRoute
@@ -217,6 +244,7 @@ export interface FileRoutesById {
   '/api/meal-estimate': typeof ApiMealEstimateRoute
   '/api/nutrition-plan': typeof ApiNutritionPlanRoute
   '/api/program-import': typeof ApiProgramImportRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/_authenticated/chat/$conversationId': typeof AuthenticatedChatConversationIdRoute
   '/_authenticated/food/setup': typeof AuthenticatedFoodSetupRoute
   '/_authenticated/guide_/read': typeof AuthenticatedGuideReadRoute
@@ -235,6 +263,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/mcp'
+    | '/.well-known/oauth-protected-resource'
     | '/guide'
     | '/me'
     | '/training'
@@ -243,6 +273,7 @@ export interface FileRouteTypes {
     | '/api/meal-estimate'
     | '/api/nutrition-plan'
     | '/api/program-import'
+    | '/.lovable/oauth/consent'
     | '/chat/$conversationId'
     | '/food/setup'
     | '/guide/read'
@@ -259,6 +290,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/mcp'
+    | '/.well-known/oauth-protected-resource'
     | '/guide'
     | '/me'
     | '/training'
@@ -267,6 +300,7 @@ export interface FileRouteTypes {
     | '/api/meal-estimate'
     | '/api/nutrition-plan'
     | '/api/program-import'
+    | '/.lovable/oauth/consent'
     | '/chat/$conversationId'
     | '/food/setup'
     | '/guide/read'
@@ -284,6 +318,8 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/mcp'
+    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/guide'
     | '/_authenticated/me'
     | '/_authenticated/training'
@@ -292,6 +328,7 @@ export interface FileRouteTypes {
     | '/api/meal-estimate'
     | '/api/nutrition-plan'
     | '/api/program-import'
+    | '/.lovable/oauth/consent'
     | '/_authenticated/chat/$conversationId'
     | '/_authenticated/food/setup'
     | '/_authenticated/guide_/read'
@@ -310,11 +347,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  McpRoute: typeof McpRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiCoachSummaryRoute: typeof ApiCoachSummaryRoute
   ApiGuideChatRoute: typeof ApiGuideChatRoute
   ApiMealEstimateRoute: typeof ApiMealEstimateRoute
   ApiNutritionPlanRoute: typeof ApiNutritionPlanRoute
   ApiProgramImportRoute: typeof ApiProgramImportRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -338,6 +378,20 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/guide': {
@@ -394,6 +448,13 @@ declare module '@tanstack/react-router' {
       path: '/api/program-import'
       fullPath: '/api/program-import'
       preLoaderRoute: typeof ApiProgramImportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/chat/': {
@@ -526,11 +587,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  McpRoute: McpRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiCoachSummaryRoute: ApiCoachSummaryRoute,
   ApiGuideChatRoute: ApiGuideChatRoute,
   ApiMealEstimateRoute: ApiMealEstimateRoute,
   ApiNutritionPlanRoute: ApiNutritionPlanRoute,
   ApiProgramImportRoute: ApiProgramImportRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
