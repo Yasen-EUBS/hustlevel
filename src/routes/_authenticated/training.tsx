@@ -9,6 +9,7 @@ import { addDays, addMonths, format, startOfMonth, startOfWeek } from "date-fns"
 import { ArrowLeftRight, BookOpen, Check, ChevronDown, ChevronRight, Play, Timer } from "lucide-react";
 import { timers } from "@/lib/timers";
 import { TabShell } from "@/components/TabShell";
+import { ProgramSwitcher } from "@/components/ProgramPicker";
 import { Button } from "@/components/ui/button";
 import { ExerciseVideoSheet, techniqueSearchUrl } from "@/components/ExerciseVideo";
 import { useExerciseMedia, type ExerciseMedia } from "@/lib/exercise-media";
@@ -33,6 +34,7 @@ export const Route = createFileRoute("/_authenticated/training")({
 
 function TrainingPage() {
   const { date } = Route.useSearch();
+  const { user } = Route.useRouteContext();
   const navigate = useNavigate({ from: "/training" });
   const today = toISO(new Date());
   const selected = date ?? today;
@@ -196,15 +198,20 @@ function TrainingPage() {
       {timeline.isLoading ? (
         <div className="px-5 text-muted-foreground">Loading…</div>
       ) : !p ? (
-        <div className="px-5 text-muted-foreground">No active program.</div>
+        <div className="px-5 text-muted-foreground">
+          No active program. <ProgramSwitcher label="Choose a program" userId={user.id} />
+        </div>
       ) : !day ? (
-        <div className="mx-5 rounded-2xl bg-card p-6 text-center text-muted-foreground">No session scheduled for this day.</div>
+        <div className="px-5">
+          <ProgramSwitcher label={rebrandText(p.name)} userId={user.id} />
+          <div className="mt-2 rounded-2xl bg-card p-6 text-center text-muted-foreground">No session scheduled for this day.</div>
+        </div>
       ) : (
         <div className="px-5">
           <div className="flex items-center gap-3">
             <HustLevelMark className="h-14 w-14" />
             <div className="min-w-0">
-              <div className="truncate text-sm text-muted-foreground">{rebrandText(p.name)}</div>
+              <ProgramSwitcher label={rebrandText(p.name)} userId={user.id} />
               <div className="font-display text-2xl font-bold uppercase leading-tight">{day.title}</div>
             </div>
           </div>
