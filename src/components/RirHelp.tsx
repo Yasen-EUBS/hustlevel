@@ -23,13 +23,17 @@ export function rirFor(
  * with the exercise's own rep range as the example and a small link to the guide.
  */
 export function RirHelp({ rir, repMin, repMax }: { rir: string; repMin: number | null; repMax: number | null }) {
-  const simple = /^\d+(–\d+)?$/.test(rir); // "1–2", "3–4", "0" — not a free-text target like "1–2, last set 0"
-  const low = Number(rir.split("–")[0]);
-  const high = Number(rir.split("–")[1] ?? low);
+  // "1–2" or "1–2, last set 0": a target for every set, optionally a different one for the last set.
+  const m = rir.match(/^(\d+(?:–\d+)?)(?:,\s*last set (\d+))?$/);
+  const base = m?.[1] ?? null;
+  const last = m?.[2] ?? null;
+  const low = Number(base?.split("–")[0]);
+  const high = Number(base?.split("–")[1] ?? low);
   const example =
-    simple && repMin
-      ? `With ${repMin}${repMax && repMax !== repMin ? `–${repMax}` : ""} reps: pick a weight you could lift about ${repMin + low}${high !== low ? `–${repMin + high}` : ""} times at most. Doing ${repMin} then leaves ${rir} in the tank.`
+    base && repMin
+      ? `With ${repMin}${repMax && repMax !== repMin ? `–${repMax}` : ""} reps: pick a weight you could lift about ${repMin + low}${high !== low ? `–${repMin + high}` : ""} times at most. Doing ${repMin} then leaves ${base} in the tank.`
       : null;
+  const highlight = new Set([base, last]);
 
   return (
     <Popover>
@@ -59,7 +63,7 @@ export function RirHelp({ rir, repMin, repMax }: { rir: string; repMin: number |
           {SCALE.map((s) => (
             <li key={s.v} className="flex items-center gap-3 text-sm">
               <span
-                className={`flex h-7 min-w-9 shrink-0 items-center justify-center rounded-lg px-1.5 font-display text-base font-bold ${s.v === rir ? "bg-primary text-primary-foreground" : "bg-background text-primary"}`}
+                className={`flex h-7 min-w-9 shrink-0 items-center justify-center rounded-lg px-1.5 font-display text-base font-bold ${highlight.has(s.v) ? "bg-primary text-primary-foreground" : "bg-background text-primary"}`}
               >
                 {s.v}
               </span>
@@ -67,6 +71,13 @@ export function RirHelp({ rir, repMin, repMax }: { rir: string; repMin: number |
             </li>
           ))}
         </ol>
+        {last !== null && (
+          <p className="mt-3 text-sm">
+            <b>Every set:</b> stop with {base} reps left.{" "}
+            <b>Last set:</b>{" "}
+            {last === "0" ? "go to failure, until you can't do another clean rep." : `stop with ${last} reps left.`}
+          </p>
+        )}
         {example ? (
           <p className="mt-3 text-sm text-muted-foreground">{example}</p>
         ) : (
