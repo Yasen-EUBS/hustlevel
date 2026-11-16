@@ -18,6 +18,7 @@ import { nextWeight, rangeText, setTip } from "@/lib/progression";
 import { useTipsEnabled } from "@/lib/prefs";
 import { LevelTick } from "@/components/LevelTick";
 import { TempoHelp } from "@/components/TempoHelp";
+import { RirHelp, rirFor } from "@/components/RirHelp";
 import {
   beep,
   epley,
@@ -31,6 +32,7 @@ import {
   fromISO,
   normKey,
   toISO,
+  weekOf,
   unlockAudio,
   type ProgramExercise,
 } from "@/lib/titan";
@@ -505,6 +507,8 @@ function SessionPage() {
   const currentBest = ex ? Math.max(0, ...(rows![k] ?? []).filter((r) => r.done).map((r) => epley(parseFloat(r.kg) || 0, parseInt(r.reps, 10) || 0))) : 0;
   const workingMax = Math.max(st?.max ?? 0, currentBest);
   const range = ex ? (ex.rep_max && ex.rep_max !== ex.rep_min ? `${ex.rep_min}-${ex.rep_max}` : `${ex.rep_min ?? ""}`) : "";
+  // Reps-in-reserve target for this block (the lighter week-1 value during the first week).
+  const rir = program.data ? rirFor(program.data, weekOf(program.data.start_date, fromISO(date))) : null;
 
   return (
     <div
@@ -615,6 +619,7 @@ function SessionPage() {
                     </b>
                   </span>
                   {ex.tempo && <TempoHelp tempo={ex.tempo} />}
+                  {rir && <RirHelp rir={rir} repMin={ex.rep_min} repMax={ex.rep_max} />}
                   <span>
                     <span className="text-muted-foreground">Rest </span>
                     <b>{fmtRest(ex.rest_min_seconds, ex.rest_max_seconds)}</b>
