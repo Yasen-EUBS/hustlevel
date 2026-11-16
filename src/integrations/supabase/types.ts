@@ -515,6 +515,8 @@ export type Database = {
           id: string
           is_active: boolean
           name: string
+          rir: string | null
+          rir_week1: string | null
           start_date: string
           total_weeks: number
         }
@@ -527,6 +529,8 @@ export type Database = {
           id?: string
           is_active?: boolean
           name: string
+          rir?: string | null
+          rir_week1?: string | null
           start_date: string
           total_weeks: number
         }
@@ -539,6 +543,8 @@ export type Database = {
           id?: string
           is_active?: boolean
           name?: string
+          rir?: string | null
+          rir_week1?: string | null
           start_date?: string
           total_weeks?: number
         }
